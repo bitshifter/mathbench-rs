@@ -64,7 +64,7 @@ fn glam_benchmark(c: &mut Criterion) {
 }
 
 fn nalgebra_benchmark(c: &mut Criterion) {
-    use nalgebra_glm::{vec3, zero, Vec3};
+    use nalgebra_glm::{zero, Vec3};
     struct TestData {
         acceleration: Vec<Vec3>,
         velocity: Vec<Vec3>,
@@ -72,7 +72,7 @@ fn nalgebra_benchmark(c: &mut Criterion) {
     }
     let mut rng = Xoshiro256Plus::seed_from_u64(0);
     let mut data = TestData {
-        acceleration: vec![vec3(rng.gen(), rng.gen(), rng.gen()); NUM_OBJECTS],
+        acceleration: vec![rng.gen(); NUM_OBJECTS],
         velocity: vec![zero(); NUM_OBJECTS],
         position: vec![zero(); NUM_OBJECTS],
     };
