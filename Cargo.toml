@@ -1,0 +1,22 @@
+[package]
+name = "mathbench-rs"
+version = "0.1.0"
+authors = ["Cameron Hart <cameron.hart@gmail.com>"]
+edition = "2018"
+
+[dev-dependencies.cgmath]
+version = "~0.17"
+# features = ["simd"]
+default-features = false
+
+[dev-dependencies]
+criterion = "0.2"
+glam = { git = "https://github.com/bitshifter/glam-rs" }
+nalgebra-glm = "0.3"
+rand = "0.6"
+rand_xoshiro = "0.1"
+
+[[bench]]
+name = "eulerbench"
+harness = false
+
