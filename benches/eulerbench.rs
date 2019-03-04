@@ -43,7 +43,7 @@ fn glam_benchmark(c: &mut Criterion) {
     }
     let mut rng = Xoshiro256Plus::seed_from_u64(0);
     let mut data = TestData {
-        acceleration: vec![Vec3::new(rng.gen(), rng.gen(), rng.gen()); NUM_OBJECTS],
+        acceleration: vec![rng.gen(); NUM_OBJECTS],
         velocity: vec![Vec3::zero(); NUM_OBJECTS],
         position: vec![Vec3::zero(); NUM_OBJECTS],
     };
