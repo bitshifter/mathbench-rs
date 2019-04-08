@@ -20,3 +20,6 @@ rand_xoshiro = "0.1"
 name = "eulerbench"
 harness = false
 
+[[bench]]
+name = "mat4bench"
+harness = false
