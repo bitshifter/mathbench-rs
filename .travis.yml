@@ -10,4 +10,10 @@ rust:
 matrix:
   allow_failures:
     - rust: nightly
+  fast_finish: true
 
+git:
+  depth: 10
+
+after_success:
+  - ./after-success.sh
