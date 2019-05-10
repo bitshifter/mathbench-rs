@@ -23,3 +23,7 @@ harness = false
 [[bench]]
 name = "mat4bench"
 harness = false
+
+[[bench]]
+name = "transform"
+harness = false
