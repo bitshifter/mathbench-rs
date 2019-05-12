@@ -197,7 +197,7 @@ dependencies = [
 [[package]]
 name = "glam"
 version = "0.1.0"
-source = "git+https://github.com/bitshifter/glam-rs#46874b7673a19f7dfd2a6f678c8cc1a451543479"
+source = "git+https://github.com/bitshifter/glam-rs#da4f0dda94d4fa85effae1ce72fa9f3446cc8815"
 dependencies = [
  "approx 0.3.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "rand 0.6.5 (registry+https://github.com/rust-lang/crates.io-index)",
