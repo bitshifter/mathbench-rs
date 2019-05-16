@@ -4,8 +4,8 @@ mod macros;
 use criterion::{criterion_group, criterion_main};
 
 mod bench_cgmath {
-    use criterion::Criterion;
     use cgmath::{prelude::*, Matrix4};
+    use criterion::Criterion;
     bench_unop!(mat4_transpose, "cgmath mat4 transpose", op => transpose, ty => Matrix4<f32>);
     bench_unop!(mat4_determinant, "cgmath mat4 determinant", op => determinant, ty => Matrix4<f32>);
     bench_unop!(mat4_inverse, "cgmath mat4 inverse",  op => invert, ty => Matrix4<f32>);
