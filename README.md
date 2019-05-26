@@ -17,15 +17,14 @@ games and graphics development, including:
 All benchmarks are performed using [Criterion.rs].
 
 * `euler bench` - performs an Euler integration on arrays of 2D and 3D vectors
-* `mat4 bench` - performs common matrix operations such as transpose, inverse
-  and determinant
-* `transform bench` - performs matrix transformations on 4D vectors
+* `mat4 bench` - performs common matrix operations such as transpose, inverse,
+  determinant and multiply
+* `transform bench` - performs matrix transformations on vectors
 
 ## Future work
 
-* Add more benchmarks
 * Validate the correctness of each benchmark
-* Produce graphs comparing the different libraries at each task
+* Add more benchmarks
 * Add `packed_simd` to benchmarks
 * Add `ISPC` to benchmarks
 
