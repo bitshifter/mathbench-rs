@@ -64,10 +64,6 @@ fn bench_euler_2d(c: &mut Criterion) {
     );
 }
 
-criterion_group!(
-    benches,
-    bench_euler_2d,
-    bench_euler_3d,
-);
+criterion_group!(benches, bench_euler_2d, bench_euler_3d,);
 
 criterion_main!(benches);
