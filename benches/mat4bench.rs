@@ -60,10 +60,31 @@ fn bench_mat4_inverse(c: &mut Criterion) {
     );
 }
 
+fn bench_mat4_mul_mat4(c: &mut Criterion) {
+    use criterion::Benchmark;
+    use std::ops::Mul;
+    c.bench(
+        "mat4 mul mat4",
+        Benchmark::new("glam", |b| {
+            use glam::Mat4;
+            bench_binop!(b, op => mul, ty1 => Mat4, ty2 => Mat4);
+        })
+        .with_function("cgmath", |b| {
+            use cgmath::Matrix4;
+            bench_binop!(b, op => mul, ty1 => Matrix4<f32>, ty2 => Matrix4<f32>);
+        })
+        .with_function("nalgebra-glm", |b| {
+            use nalgebra_glm::Mat4;
+            bench_binop!(b, op => mul, ty1 => Mat4, ty2 => Mat4);
+        }),
+    );
+}
+
 criterion_group!(
     mat4_benches,
     bench_mat4_transpose,
     bench_mat4_determinant,
     bench_mat4_inverse,
+    bench_mat4_mul_mat4,
 );
 criterion_main!(mat4_benches);
