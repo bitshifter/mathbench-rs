@@ -1,6 +1,6 @@
 [package]
 name = "mathbench-rs"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Cameron Hart <cameron.hart@gmail.com>"]
 edition = "2018"
 
@@ -11,7 +11,7 @@ default-features = false
 
 [dev-dependencies]
 criterion = "0.2"
-glam = { git = "https://github.com/bitshifter/glam-rs" }
+glam = "0.4"
 nalgebra-glm = "0.3"
 rand = "0.6"
 rand_xoshiro = "0.1"
