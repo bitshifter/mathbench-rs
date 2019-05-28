@@ -1,7 +1,7 @@
 use criterion::{criterion_group, criterion_main, Criterion};
 
 const UPDATE_RATE: f32 = 1.0 / 60.0;
-const NUM_OBJECTS: usize = 10000;
+const NUM_OBJECTS: usize = 1 << 13;
 
 #[macro_export]
 macro_rules! bench_euler {
