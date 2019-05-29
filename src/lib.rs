@@ -209,6 +209,6 @@ mod test {
         assert!(cmi.is_some());
 
         assert_ulps_eq!(cmi.unwrap(), mmi.into(), epsilon = 0.00001);
-        assert_ulps_eq!(gmi, mmi.into());
+        assert_ulps_eq!(gmi, mmi.into(), epsilon = 0.00001);
     }
 }

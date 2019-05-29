@@ -28,6 +28,14 @@ name = "eulerbench"
 harness = false
 
 [[bench]]
+name = "mat2bench"
+harness = false
+
+[[bench]]
+name = "mat3bench"
+harness = false
+
+[[bench]]
 name = "mat4bench"
 harness = false
 
