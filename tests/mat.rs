@@ -1,51 +1,12 @@
 use approx::assert_ulps_eq;
 use cgmath;
 use glam;
+use mathbench::*;
 use nalgebra;
 use rand::{Rng, SeedableRng};
 use rand_xoshiro::Xoshiro256Plus;
 
 const NUM_ITERS: usize = 1024;
-
-fn random_vec3<R>(rng: &mut R) -> glam::Vec3
-where
-    R: Rng,
-{
-    rng.gen()
-}
-
-pub fn random_nonzero_vec3<R>(rng: &mut R) -> glam::Vec3
-where
-    R: Rng,
-{
-    loop {
-        let v: glam::Vec3 = rng.gen();
-        if v.length_squared() > 0.01 {
-            return v;
-        }
-    }
-}
-
-pub fn random_quat<R>(rng: &mut R) -> glam::Quat
-where
-    R: Rng,
-{
-    let yaw = rng.gen();
-    let pitch = rng.gen();
-    let roll = rng.gen();
-    glam::Quat::from_rotation_ypr(yaw, pitch, roll)
-}
-
-pub fn random_mat4<R>(rng: &mut R) -> glam::Mat4
-where
-    R: Rng
-{
-    glam::Mat4::from_scale_rotation_translation(
-        random_nonzero_vec3(rng),
-        random_quat(rng),
-        random_vec3(rng),
-        )
-}
 
 #[macro_export]
 macro_rules! semi_implicit_euler {

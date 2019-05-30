@@ -1,5 +1,5 @@
 [package]
-name = "mathbench-rs"
+name = "mathbench"
 version = "0.1.2"
 authors = ["Cameron Hart <cameron.hart@gmail.com>"]
 edition = "2018"
