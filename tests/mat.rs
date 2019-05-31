@@ -3,7 +3,7 @@ use cgmath;
 use glam;
 use mathbench::*;
 use nalgebra;
-use rand::{Rng, SeedableRng};
+use rand::{SeedableRng};
 use rand_xoshiro::Xoshiro256Plus;
 
 const NUM_ITERS: usize = 1024;
@@ -22,9 +22,11 @@ macro_rules! semi_implicit_euler {
 
 fn mat2_mul_compare() {
     let mut rng = Xoshiro256Plus::seed_from_u64(rand::random());
-    let glam1 = rng.gen::<glam::Mat2>();
-    let glam2 = rng.gen::<glam::Mat2>();
-    // TODO: order is not consistent
+    let mint1 = random_mat2(&mut rng);
+    let mint2 = random_mat2(&mut rng);
+
+    let glam1: glam::Mat2 = mint1.into();
+    let glam2: glam::Mat2 = mint2.into();
     let glam3 = glam1 * glam2;
 
     let mint1: mint::ColumnMatrix2<f32> = glam1.into();
@@ -48,12 +50,12 @@ fn mat2_mul_compare() {
 
 fn mat3_mul_compare() {
     let mut rng = Xoshiro256Plus::seed_from_u64(rand::random());
-    let glam1 = rng.gen::<glam::Mat3>();
-    let glam2 = rng.gen::<glam::Mat3>();
-    let glam3 = glam1 * glam2;
+    let mint1 = random_mat3(&mut rng);
+    let mint2 = random_mat3(&mut rng);
 
-    let mint1: mint::ColumnMatrix3<f32> = glam1.into();
-    let mint2: mint::ColumnMatrix3<f32> = glam2.into();
+    let glam1: glam::Mat3 = mint1.into();
+    let glam2: glam::Mat3 = mint2.into();
+    let glam3 = glam1 * glam2;
 
     let nalg1: nalgebra::Matrix3<f32> = mint1.into();
     let nalg2: nalgebra::Matrix3<f32> = mint2.into();
@@ -73,12 +75,12 @@ fn mat3_mul_compare() {
 
 fn mat4_mul_compare() {
     let mut rng = Xoshiro256Plus::seed_from_u64(rand::random());
-    let glam1 = rng.gen::<glam::Mat4>();
-    let glam2 = rng.gen::<glam::Mat4>();
-    let glam3 = glam1 * glam2;
+    let mint1 = random_mat4(&mut rng);
+    let mint2 = random_mat4(&mut rng);
 
-    let mint1: mint::ColumnMatrix4<f32> = glam1.into();
-    let mint2: mint::ColumnMatrix4<f32> = glam2.into();
+    let glam1: glam::Mat4 = mint1.into();
+    let glam2: glam::Mat4 = mint2.into();
+    let glam3 = glam1 * glam2;
 
     let nalg1: nalgebra::Matrix4<f32> = mint1.into();
     let nalg2: nalgebra::Matrix4<f32> = mint2.into();
@@ -100,10 +102,11 @@ fn mat2_det_compare() {
     use cgmath::prelude::*;
 
     let mut rng = Xoshiro256Plus::seed_from_u64(rand::random());
-    let gm1 = rng.gen::<glam::Mat2>();
+    let mm1 = random_mat2(&mut rng);
+
+    let gm1: glam::Mat2 = mm1.into();
     let gmd = gm1.determinant();
 
-    let mm1: mint::ColumnMatrix2<f32> = gm1.into();
 
     let nm1: nalgebra::Matrix2<f32> = mm1.into();
     let nmd = nm1.determinant();
@@ -120,27 +123,21 @@ fn mat2_inv_compare() {
     use cgmath::prelude::*;
 
     let mut rng = Xoshiro256Plus::seed_from_u64(rand::random());
-    let mut invertible_mat2 = || loop {
-        let tmp = rng.gen::<glam::Mat2>();
-        if tmp.determinant() != 0.0 {
-            return tmp;
-        }
-    };
-    let gm1 = invertible_mat2();
-    let gmi = gm1.inverse();
+    let mm1 = random_invertible_mat2(&mut rng);
 
-    let mm1: mint::ColumnMatrix2<f32> = gm1.into();
+    let gm1: glam::Mat2 = mm1.into();
+    let gmi = gm1.inverse();
 
     let nm1: nalgebra::Matrix2<f32> = mm1.into();
     let nmi = nm1.try_inverse();
     assert!(nmi.is_some());
 
-    // use nalgebra as assumed correct answer
-    let mmi: mint::ColumnMatrix2<f32> = nmi.unwrap().into();
-
     let cm1: cgmath::Matrix2<f32> = mm1.into();
     let cmi = cm1.invert();
     assert!(cmi.is_some());
+
+    // use nalgebra as assumed correct answer
+    let mmi: mint::ColumnMatrix2<f32> = nmi.unwrap().into();
 
     assert_ulps_eq!(cmi.unwrap(), mmi.into());
     assert_ulps_eq!(gmi, mmi.into());
@@ -150,27 +147,21 @@ fn mat3_inv_compare() {
     use cgmath::prelude::*;
 
     let mut rng = Xoshiro256Plus::seed_from_u64(rand::random());
-    let mut invertible_mat3 = || loop {
-        let tmp = rng.gen::<glam::Mat3>();
-        if tmp.determinant() != 0.0 {
-            return tmp;
-        }
-    };
-    let gm1 = invertible_mat3();
-    let gmi = gm1.inverse();
+    let mm1 = random_invertible_mat3(&mut rng);
 
-    let mm1: mint::ColumnMatrix3<f32> = gm1.into();
+    let gm1: glam::Mat3 = mm1.into();
+    let gmi = gm1.inverse();
 
     let nm1: nalgebra::Matrix3<f32> = mm1.into();
     let nmi = nm1.try_inverse();
     assert!(nmi.is_some());
 
-    // use nalgebra as assumed correct answer
-    let mmi: mint::ColumnMatrix3<f32> = nmi.unwrap().into();
-
     let cm1: cgmath::Matrix3<f32> = mm1.into();
     let cmi = cm1.invert();
     assert!(cmi.is_some());
+
+    // use nalgebra as assumed correct answer
+    let mmi: mint::ColumnMatrix3<f32> = nmi.unwrap().into();
 
     assert_ulps_eq!(cmi.unwrap(), mmi.into());
     assert_ulps_eq!(gmi, mmi.into());
@@ -179,13 +170,11 @@ fn mat3_inv_compare() {
 fn mat4_inv_compare() {
     use cgmath::prelude::*;
 
-    let seed = rand::random();
-    let mut rng = Xoshiro256Plus::seed_from_u64(seed);
+    let mut rng = Xoshiro256Plus::seed_from_u64(rand::random());
+    let mm1 = random_invertible_mat4(&mut rng);
 
-    let gm1 = random_mat4(&mut rng);
+    let gm1: glam::Mat4 = mm1.into();
     let gmi = gm1.inverse();
-
-    let mm1: mint::ColumnMatrix4<f32> = gm1.into();
 
     let nm1: nalgebra::Matrix4<f32> = mm1.into();
     let nmi = nm1.try_inverse();
