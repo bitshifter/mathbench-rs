@@ -1,42 +1,90 @@
 #[path = "support/macros.rs"]
 #[macro_use]
 mod macros;
-use criterion::{criterion_group, criterion_main};
+use criterion::{criterion_group, criterion_main, Criterion};
 
-mod bench_cgmath {
-    use cgmath::{prelude::*, Matrix4};
-    use criterion::Criterion;
-    bench_unop!(mat4_transpose, "cgmath mat4 transpose", op => transpose, ty => Matrix4<f32>);
-    bench_unop!(mat4_determinant, "cgmath mat4 determinant", op => determinant, ty => Matrix4<f32>);
-    bench_unop!(mat4_inverse, "cgmath mat4 inverse",  op => invert, ty => Matrix4<f32>);
+fn bench_mat4_transpose(c: &mut Criterion) {
+    use criterion::Benchmark;
+    c.bench(
+        "mat4 transpose",
+        Benchmark::new("glam", |b| {
+            use glam::Mat4;
+            bench_unop!(b, op => transpose, ty => Mat4);
+        })
+        .with_function("cgmath", |b| {
+            use cgmath::{prelude::*, Matrix4};
+            bench_unop!(b, op => transpose, ty => Matrix4<f32>);
+        })
+        .with_function("nalgebra-glm", |b| {
+            use nalgebra_glm::{transpose, Mat4};
+            bench_func!(b, op => transpose, ty => Mat4);
+        }),
+    );
 }
 
-mod bench_glam {
-    use criterion::Criterion;
-    use glam::f32::Mat4;
-    bench_unop!(mat4_transpose, "glam mat4 transpose",  op => transpose, ty => Mat4);
-    bench_unop!(mat4_determinant, "glam mat4 determinant",  op => determinant, ty => Mat4);
-    bench_unop!(mat4_inverse, "glam mat4 inverse",  op => inverse, ty => Mat4);
+fn bench_mat4_determinant(c: &mut Criterion) {
+    use criterion::Benchmark;
+    c.bench(
+        "mat4 determinant",
+        Benchmark::new("glam", |b| {
+            use glam::Mat4;
+            bench_unop!(b, op => determinant, ty => Mat4);
+        })
+        .with_function("cgmath", |b| {
+            use cgmath::{prelude::*, Matrix4};
+            bench_unop!(b, op => determinant, ty => Matrix4<f32>);
+        })
+        .with_function("nalgebra-glm", |b| {
+            use nalgebra_glm::{determinant, Mat4};
+            bench_func!(b, op => determinant, ty => Mat4);
+        }),
+    );
 }
 
-mod bench_nalgebra {
-    use criterion::Criterion;
-    use nalgebra_glm::{determinant, inverse, transpose, Mat4};
-    bench_func!(mat4_transpose, "nalgebra mat4 transpose",  op => transpose, ty => Mat4);
-    bench_func!(mat4_determinant, "nalgebra mat4 determinant",  op => determinant, ty => Mat4);
-    bench_func!(mat4_inverse, "nalgebra mat4 inverse",  op => inverse, ty => Mat4);
+fn bench_mat4_inverse(c: &mut Criterion) {
+    use criterion::Benchmark;
+    c.bench(
+        "mat4 inverse",
+        Benchmark::new("glam", |b| {
+            use glam::Mat4;
+            bench_unop!(b, op => inverse, ty => Mat4);
+        })
+        .with_function("cgmath", |b| {
+            use cgmath::{prelude::*, Matrix4};
+            bench_unop!(b, op => invert, ty => Matrix4<f32>);
+        })
+        .with_function("nalgebra-glm", |b| {
+            use nalgebra_glm::{inverse, Mat4};
+            bench_func!(b, op => inverse, ty => Mat4);
+        }),
+    );
+}
+
+fn bench_mat4_mul_mat4(c: &mut Criterion) {
+    use criterion::Benchmark;
+    use std::ops::Mul;
+    c.bench(
+        "mat4 mul mat4",
+        Benchmark::new("glam", |b| {
+            use glam::Mat4;
+            bench_binop!(b, op => mul, ty1 => Mat4, ty2 => Mat4);
+        })
+        .with_function("cgmath", |b| {
+            use cgmath::Matrix4;
+            bench_binop!(b, op => mul, ty1 => Matrix4<f32>, ty2 => Matrix4<f32>);
+        })
+        .with_function("nalgebra-glm", |b| {
+            use nalgebra_glm::Mat4;
+            bench_binop!(b, op => mul, ty1 => Mat4, ty2 => Mat4);
+        }),
+    );
 }
 
 criterion_group!(
     mat4_benches,
-    bench_cgmath::mat4_transpose,
-    bench_cgmath::mat4_determinant,
-    bench_cgmath::mat4_inverse,
-    bench_glam::mat4_transpose,
-    bench_glam::mat4_determinant,
-    bench_glam::mat4_inverse,
-    bench_nalgebra::mat4_transpose,
-    bench_nalgebra::mat4_determinant,
-    bench_nalgebra::mat4_inverse,
+    bench_mat4_transpose,
+    bench_mat4_determinant,
+    bench_mat4_inverse,
+    bench_mat4_mul_mat4,
 );
 criterion_main!(mat4_benches);

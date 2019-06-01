@@ -1,23 +1,38 @@
 [package]
-name = "mathbench-rs"
-version = "0.1.0"
+name = "mathbench"
+version = "0.1.2"
 authors = ["Cameron Hart <cameron.hart@gmail.com>"]
 edition = "2018"
 
-[dev-dependencies.cgmath]
+[dependencies]
+approx = "~0.3"
+glam = "~0.5"
+mint = "~0.5"
+nalgebra-glm = "~0.3"
+rand = "~0.6"
+rand_xoshiro = "~0.1"
+
+[dependencies.nalgebra]
+version = "~0.18"
+features = ["mint"]
+
+[dependencies.cgmath]
 version = "~0.17"
-# features = ["simd"]
-default-features = false
+features = ["mint"]
 
 [dev-dependencies]
-criterion = "0.2"
-glam = { git = "https://github.com/bitshifter/glam-rs" }
-nalgebra-glm = "0.3"
-rand = "0.6"
-rand_xoshiro = "0.1"
+criterion = "~0.2"
 
 [[bench]]
 name = "eulerbench"
+harness = false
+
+[[bench]]
+name = "mat2bench"
+harness = false
+
+[[bench]]
+name = "mat3bench"
 harness = false
 
 [[bench]]

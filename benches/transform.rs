@@ -1,33 +1,72 @@
 #[path = "support/macros.rs"]
 #[macro_use]
 mod macros;
-use criterion::{criterion_group, criterion_main};
+use criterion::{criterion_group, criterion_main, Criterion};
 
-mod bench_cgmath {
-    use cgmath::{Matrix4, Vector4};
-    use criterion::Criterion;
+fn bench_mat4_transform_vec4(c: &mut Criterion) {
+    use criterion::Benchmark;
     use std::ops::Mul;
-    bench_binop!(matrix4_mul_vector4, "cgmath Matrix4 mul Vector4", op => mul, ty1 => Matrix4<f32>, ty2 => Vector4<f32>);
+    c.bench(
+        "mat4 transform vec4",
+        Benchmark::new("glam", |b| {
+            use glam::{Mat4, Vec4};
+            bench_binop!(b, op => mul, ty1 => Vec4, ty2 => Mat4);
+        })
+        .with_function("cgmath", |b| {
+            use cgmath::{Matrix4, Vector4};
+            bench_binop!(b, op => mul, ty1 => Matrix4<f32>, ty2 => Vector4<f32>);
+        })
+        .with_function("nalgebra-glm", |b| {
+            use nalgebra_glm::{Mat4, Vec4};
+            bench_binop!(b, op => mul, ty1 => Mat4, ty2 => Vec4);
+        }),
+    );
 }
 
-mod bench_glam {
-    use criterion::Criterion;
-    use glam::f32::{Mat4, Vec4};
+fn bench_mat3_transform_vec3(c: &mut Criterion) {
+    use criterion::Benchmark;
     use std::ops::Mul;
-    bench_binop!(vec4_mul_mat4, "glam Vec4 mul Mat4", op => mul, ty1 => Vec4, ty2 => Mat4);
+    c.bench(
+        "mat3 transform vec3",
+        Benchmark::new("glam", |b| {
+            use glam::{Mat3, Vec3};
+            bench_binop!(b, op => mul, ty1 => Vec3, ty2 => Mat3);
+        })
+        .with_function("cgmath", |b| {
+            use cgmath::{Matrix3, Vector3};
+            bench_binop!(b, op => mul, ty1 => Matrix3<f32>, ty2 => Vector3<f32>);
+        })
+        .with_function("nalgebra-glm", |b| {
+            use nalgebra_glm::{Mat3, Vec3};
+            bench_binop!(b, op => mul, ty1 => Mat3, ty2 => Vec3);
+        }),
+    );
 }
 
-mod bench_nalgebra {
-    use criterion::Criterion;
-    use nalgebra_glm::{Mat4, Vec4};
+fn bench_mat2_transform_vec2(c: &mut Criterion) {
+    use criterion::Benchmark;
     use std::ops::Mul;
-    bench_binop!(mat4_mul_vec4, "nalgebra Mat4 mul Vec4", op => mul, ty1 => Mat4, ty2 => Vec4);
+    c.bench(
+        "mat2 transform vec2",
+        Benchmark::new("glam", |b| {
+            use glam::{Mat2, Vec2};
+            bench_binop!(b, op => mul, ty1 => Vec2, ty2 => Mat2);
+        })
+        .with_function("cgmath", |b| {
+            use cgmath::{Matrix3, Vector3};
+            bench_binop!(b, op => mul, ty1 => Matrix3<f32>, ty2 => Vector3<f32>);
+        })
+        .with_function("nalgebra-glm", |b| {
+            use nalgebra_glm::{Mat3, Vec3};
+            bench_binop!(b, op => mul, ty1 => Mat3, ty2 => Vec3);
+        }),
+    );
 }
 
 criterion_group!(
     transform_benches,
-    bench_cgmath::matrix4_mul_vector4,
-    bench_glam::vec4_mul_mat4,
-    bench_nalgebra::mat4_mul_vec4,
+    bench_mat2_transform_vec2,
+    bench_mat3_transform_vec3,
+    bench_mat4_transform_vec4,
 );
 criterion_main!(transform_benches);
