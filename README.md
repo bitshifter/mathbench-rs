@@ -10,16 +10,21 @@ compare the performance of `glam` with other similar 3D math libraries targeting
 games and graphics development, including:
 
 * [`cgmath`][cgmath]
-* [`nalgebra-glm`][nalgebra-glm]
+* [`nalgebra`][nalgebra]
 
 ## The benchmarks
 
 All benchmarks are performed using [Criterion.rs].
 
 * `euler bench` - performs an Euler integration on arrays of 2D and 3D vectors
-* `mat4 bench` - performs common matrix operations such as transpose, inverse,
+* `mat benches` - performs common matrix operations such as transpose, inverse,
   determinant and multiply
 * `transform bench` - performs matrix transformations on vectors
+
+Note that `cgmath` and `nalgebra` matrix inverse methods return an `Option`
+whereas `glam` does not, giving glam a performance advantage. If a
+non-invertible matrix is inverted by `glam` the result will be invalid (it will
+contain NaNs).
 
 ## Future work
 
@@ -57,7 +62,7 @@ If you are interested in contributing or have a request or suggestion
 [Criterion.rs]: https://bheisler.github.io/criterion.rs/book/index.html
 [glam]: https://github.com/bitshifter/glam-rs
 [cgmath]: https://github.com/rustgd/cgmath
-[nalgebra-glm]: https://github.com/rustsim/nalgebra
+[nalgebra]: https://github.com/rustsim/nalgebra
 [Criterion.rs]: https://bheisler.github.io/criterion.rs/book/index.html
 [Code of Conduct]: https://www.rust-lang.org/en-US/conduct.html
 [create an issue]: https://github.com/bitshifter/mathbench-rs/issues
