@@ -1,7 +1,54 @@
 use approx;
 use glam;
 use mint;
-use rand::Rng;
+use rand::{Rng, SeedableRng};
+use rand_xoshiro::Xoshiro256Plus;
+
+pub trait RandomVec {
+    type Value;
+    fn random_vec(seed: u64, len: usize) -> Vec<Self::Value>;
+}
+
+macro_rules! impl_random_vec {
+    ($t:ty) => {
+        impl RandomVec for $t {
+            type Value = Self;
+            fn random_vec(seed: u64, len: usize) -> Vec<Self::Value> {
+                let mut rng = Xoshiro256Plus::seed_from_u64(seed);
+                (0..len).map(|_| rng.gen::<Self::Value>().into()).collect()
+            }
+        }
+    };
+    ($t:ty, $f:expr) => {
+        impl RandomVec for $t {
+            type Value = Self;
+            fn random_vec(seed: u64, len: usize) -> Vec<Self::Value> {
+                let mut rng = Xoshiro256Plus::seed_from_u64(seed);
+                (0..len).map(|_| $f(&mut rng).into()).collect()
+            }
+        }
+    };
+}
+
+impl_random_vec!(glam::Mat2, random_invertible_mat2);
+impl_random_vec!(glam::Mat3, random_invertible_mat3);
+impl_random_vec!(glam::Mat4, random_invertible_mat4);
+impl_random_vec!(cgmath::Matrix2<f32>, random_invertible_mat2);
+impl_random_vec!(cgmath::Matrix3<f32>, random_invertible_mat3);
+impl_random_vec!(cgmath::Matrix4<f32>, random_invertible_mat4);
+impl_random_vec!(nalgebra::Matrix2<f32>, random_invertible_mat2);
+impl_random_vec!(nalgebra::Matrix3<f32>, random_invertible_mat3);
+impl_random_vec!(nalgebra::Matrix4<f32>, random_invertible_mat4);
+
+impl_random_vec!(glam::Vec2);
+impl_random_vec!(glam::Vec3);
+impl_random_vec!(glam::Vec4);
+impl_random_vec!(cgmath::Vector2<f32>);
+impl_random_vec!(cgmath::Vector3<f32>);
+impl_random_vec!(cgmath::Vector4<f32>);
+impl_random_vec!(nalgebra::Vector2<f32>);
+impl_random_vec!(nalgebra::Vector3<f32>);
+impl_random_vec!(nalgebra::Vector4<f32>);
 
 fn random_vec3<R>(rng: &mut R) -> glam::Vec3
 where
