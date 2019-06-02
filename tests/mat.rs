@@ -3,7 +3,7 @@ use cgmath;
 use glam;
 use mathbench::*;
 use nalgebra;
-use rand::{SeedableRng};
+use rand::SeedableRng;
 use rand_xoshiro::Xoshiro256Plus;
 
 const NUM_ITERS: usize = 1024;
@@ -20,7 +20,79 @@ macro_rules! semi_implicit_euler {
     }};
 }
 
-fn mat2_mul_compare() {
+fn mat2_mul_vec2_compare() {
+    let mut rng = Xoshiro256Plus::seed_from_u64(rand::random());
+    let mm = random_mat2(&mut rng);
+    let mv = random_vec2(&mut rng);
+
+    let gm: glam::Mat2 = mm.into();
+    let gv: glam::Vec2 = mv.into();
+    let gvm = gv * gm.transpose();
+
+    let nm: nalgebra::Matrix2<f32> = mm.into();
+    let nv: nalgebra::Vector2<f32> = mv.into();
+    let nmv = nm * nv;
+
+    let cm: cgmath::Matrix2<f32> = mm.into();
+    let cv: cgmath::Vector2<f32> = mv.into();
+    let cmv = cm * cv;
+
+    // use nalgebra as assumed correct answer
+    let mmv: mint::Vector2<f32> = nmv.into();
+
+    assert_ulps_eq!(cmv, mmv.into());
+    assert_ulps_eq!(gvm, mmv.into());
+}
+
+fn mat3_mul_vec3_compare() {
+    let mut rng = Xoshiro256Plus::seed_from_u64(rand::random());
+    let mm = random_mat3(&mut rng);
+    let mv = random_vec3(&mut rng);
+
+    let gm: glam::Mat3 = mm.into();
+    let gv: glam::Vec3 = mv.into();
+    let gvm = gv * gm.transpose();
+
+    let nm: nalgebra::Matrix3<f32> = mm.into();
+    let nv: nalgebra::Vector3<f32> = mv.into();
+    let nmv = nm * nv;
+
+    let cm: cgmath::Matrix3<f32> = mm.into();
+    let cv: cgmath::Vector3<f32> = mv.into();
+    let cmv = cm * cv;
+
+    // use nalgebra as assumed correct answer
+    let mmv: mint::Vector3<f32> = nmv.into();
+
+    assert_ulps_eq!(cmv, mmv.into());
+    assert_ulps_eq!(gvm, mmv.into());
+}
+
+fn mat4_mul_vec4_compare() {
+    let mut rng = Xoshiro256Plus::seed_from_u64(rand::random());
+    let mm = random_mat4(&mut rng);
+    let mv = random_vec4(&mut rng);
+
+    let gm: glam::Mat4 = mm.into();
+    let gv: glam::Vec4 = mv.into();
+    let gvm = gv * gm.transpose();
+
+    let nm: nalgebra::Matrix4<f32> = mm.into();
+    let nv: nalgebra::Vector4<f32> = mv.into();
+    let nmv = nm * nv;
+
+    let cm: cgmath::Matrix4<f32> = mm.into();
+    let cv: cgmath::Vector4<f32> = mv.into();
+    let cmv = cm * cv;
+
+    // use nalgebra as assumed correct answer
+    let mmv: mint::Vector4<f32> = nmv.into();
+
+    assert_ulps_eq!(cmv, mmv.into());
+    assert_ulps_eq!(gvm, mmv.into());
+}
+
+fn mat2_mul_mat2_compare() {
     let mut rng = Xoshiro256Plus::seed_from_u64(rand::random());
     let mint1 = random_mat2(&mut rng);
     let mint2 = random_mat2(&mut rng);
@@ -29,12 +101,8 @@ fn mat2_mul_compare() {
     let glam2: glam::Mat2 = mint2.into();
     let glam3 = glam1 * glam2;
 
-    let mint1: mint::ColumnMatrix2<f32> = glam1.into();
-    let mint2: mint::ColumnMatrix2<f32> = glam2.into();
-
     let nalg1: nalgebra::Matrix2<f32> = mint1.into();
     let nalg2: nalgebra::Matrix2<f32> = mint2.into();
-    // column vector multiplication order is right to left
     let nalg3 = nalg1 * nalg2;
 
     let cgm1: cgmath::Matrix2<f32> = mint1.into();
@@ -48,7 +116,7 @@ fn mat2_mul_compare() {
     assert_ulps_eq!(glam3, mint3.into());
 }
 
-fn mat3_mul_compare() {
+fn mat3_mul_mat3_compare() {
     let mut rng = Xoshiro256Plus::seed_from_u64(rand::random());
     let mint1 = random_mat3(&mut rng);
     let mint2 = random_mat3(&mut rng);
@@ -59,7 +127,6 @@ fn mat3_mul_compare() {
 
     let nalg1: nalgebra::Matrix3<f32> = mint1.into();
     let nalg2: nalgebra::Matrix3<f32> = mint2.into();
-    // column vector multiplication order is right to left
     let nalg3 = nalg1 * nalg2;
 
     let cgm1: cgmath::Matrix3<f32> = mint1.into();
@@ -73,7 +140,7 @@ fn mat3_mul_compare() {
     assert_ulps_eq!(glam3, mint3.into());
 }
 
-fn mat4_mul_compare() {
+fn mat4_mul_mat4_compare() {
     let mut rng = Xoshiro256Plus::seed_from_u64(rand::random());
     let mint1 = random_mat4(&mut rng);
     let mint2 = random_mat4(&mut rng);
@@ -84,7 +151,6 @@ fn mat4_mul_compare() {
 
     let nalg1: nalgebra::Matrix4<f32> = mint1.into();
     let nalg2: nalgebra::Matrix4<f32> = mint2.into();
-    // column vector multiplication order is right to left
     let nalg3 = nalg1 * nalg2;
 
     let cgm1: cgmath::Matrix4<f32> = mint1.into();
@@ -106,7 +172,6 @@ fn mat2_det_compare() {
 
     let gm1: glam::Mat2 = mm1.into();
     let gmd = gm1.determinant();
-
 
     let nm1: nalgebra::Matrix2<f32> = mm1.into();
     let nmd = nm1.determinant();
@@ -192,23 +257,44 @@ fn mat4_inv_compare() {
 }
 
 #[test]
-fn test_mat2_mul() {
+fn test_mat2_mul_vec2() {
     for _ in 0..NUM_ITERS {
-        mat2_mul_compare();
+        mat2_mul_vec2_compare();
     }
 }
 
 #[test]
-fn test_mat3_mul() {
+fn test_mat3_mul_vec3() {
     for _ in 0..NUM_ITERS {
-        mat3_mul_compare();
+        mat3_mul_vec3_compare();
     }
 }
 
 #[test]
-fn test_mat4_mul() {
+fn test_mat4_mul_vec4() {
     for _ in 0..NUM_ITERS {
-        mat4_mul_compare();
+        mat4_mul_vec4_compare();
+    }
+}
+
+#[test]
+fn test_mat2_mul_mat2() {
+    for _ in 0..NUM_ITERS {
+        mat2_mul_mat2_compare();
+    }
+}
+
+#[test]
+fn test_mat3_mul_mat3() {
+    for _ in 0..NUM_ITERS {
+        mat3_mul_mat3_compare();
+    }
+}
+
+#[test]
+fn test_mat4_mul_mat4() {
+    for _ in 0..NUM_ITERS {
+        mat4_mul_mat4_compare();
     }
 }
 

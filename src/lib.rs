@@ -50,33 +50,25 @@ impl_random_vec!(nalgebra::Vector2<f32>);
 impl_random_vec!(nalgebra::Vector3<f32>);
 impl_random_vec!(nalgebra::Vector4<f32>);
 
-fn random_vec3<R>(rng: &mut R) -> glam::Vec3
+pub fn random_vec2<R>(rng: &mut R) -> mint::Vector2<f32>
 where
     R: Rng,
 {
-    rng.gen()
+    rng.gen::<glam::Vec2>().into()
 }
 
-fn random_nonzero_vec3<R>(rng: &mut R) -> glam::Vec3
+pub fn random_vec3<R>(rng: &mut R) -> mint::Vector3<f32>
 where
     R: Rng,
 {
-    loop {
-        let v: glam::Vec3 = rng.gen();
-        if v.length_squared() > 0.1 {
-            return v;
-        }
-    }
+    rng.gen::<glam::Vec3>().into()
 }
 
-fn random_quat<R>(rng: &mut R) -> glam::Quat
+pub fn random_vec4<R>(rng: &mut R) -> mint::Vector4<f32>
 where
     R: Rng,
 {
-    let yaw = rng.gen();
-    let pitch = rng.gen();
-    let roll = rng.gen();
-    glam::Quat::from_rotation_ypr(yaw, pitch, roll)
+    rng.gen::<glam::Vec4>().into()
 }
 
 pub fn random_mat2<R>(rng: &mut R) -> mint::ColumnMatrix2<f32>
@@ -124,15 +116,44 @@ where
     }
 }
 
+fn random_glam_vec3<R>(rng: &mut R) -> glam::Vec3
+where
+    R: Rng,
+{
+    rng.gen()
+}
+
+fn random_nonzero_glam_vec3<R>(rng: &mut R) -> glam::Vec3
+where
+    R: Rng,
+{
+    loop {
+        let v: glam::Vec3 = rng.gen();
+        if v.length_squared() > 0.1 {
+            return v;
+        }
+    }
+}
+
+fn random_glam_quat<R>(rng: &mut R) -> glam::Quat
+where
+    R: Rng,
+{
+    let yaw = rng.gen();
+    let pitch = rng.gen();
+    let roll = rng.gen();
+    glam::Quat::from_rotation_ypr(yaw, pitch, roll)
+}
+
 pub fn random_invertible_mat4<R>(rng: &mut R) -> mint::ColumnMatrix4<f32>
 where
     R: Rng,
 {
     loop {
         let m = glam::Mat4::from_scale_rotation_translation(
-            random_nonzero_vec3(rng),
-            random_quat(rng),
-            random_vec3(rng),
+            random_nonzero_glam_vec3(rng),
+            random_glam_quat(rng),
+            random_glam_vec3(rng),
         );
         if approx::relative_ne!(m.determinant(), 0.0) {
             return m.into();
