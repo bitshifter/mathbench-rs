@@ -8,7 +8,6 @@ edition = "2018"
 approx = "~0.3"
 glam = "~0.5"
 mint = "~0.5"
-nalgebra-glm = "~0.3"
 rand = "~0.6"
 rand_xoshiro = "~0.1"
 

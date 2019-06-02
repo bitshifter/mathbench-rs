@@ -36,9 +36,9 @@ fn bench_euler_3d(c: &mut Criterion) {
             use cgmath::{prelude::*, Vector3};
             bench_euler!(b, ty => Vector3<f32>, zero => Vector3::zero())
         })
-        .with_function("nalgebra-glm", |b| {
-            use nalgebra_glm::{zero, Vec3};
-            bench_euler!(b, ty => Vec3, zero => zero());
+        .with_function("nalgebra", |b| {
+            use nalgebra::{zero, Vector3};
+            bench_euler!(b, ty => Vector3<f32>, zero => zero());
         }),
     );
 }
@@ -57,9 +57,9 @@ fn bench_euler_2d(c: &mut Criterion) {
             use cgmath::{prelude::*, Vector2};
             bench_euler!(b, ty => Vector2<f32>, zero => Vector2::zero())
         })
-        .with_function("nalgebra-glm", |b| {
-            use nalgebra_glm::{zero, Vec2};
-            bench_euler!(b, ty => Vec2, zero => zero());
+        .with_function("nalgebra", |b| {
+            use nalgebra::{zero, Vector2};
+            bench_euler!(b, ty => Vector2<f32>, zero => zero());
         }),
     );
 }
