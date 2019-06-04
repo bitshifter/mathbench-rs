@@ -94,74 +94,74 @@ fn mat4_mul_vec4_compare() {
 
 fn mat2_mul_mat2_compare() {
     let mut rng = Xoshiro256Plus::seed_from_u64(rand::random());
-    let mint1 = random_mat2(&mut rng);
-    let mint2 = random_mat2(&mut rng);
+    let mm1 = random_mat2(&mut rng);
+    let mm2 = random_mat2(&mut rng);
 
-    let glam1: glam::Mat2 = mint1.into();
-    let glam2: glam::Mat2 = mint2.into();
-    let glam3 = glam1 * glam2;
+    let gm1: glam::Mat2 = mm1.into();
+    let gm2: glam::Mat2 = mm2.into();
+    let gm3 = gm1 * gm2;
 
-    let nalg1: nalgebra::Matrix2<f32> = mint1.into();
-    let nalg2: nalgebra::Matrix2<f32> = mint2.into();
-    let nalg3 = nalg1 * nalg2;
+    let nm1: nalgebra::Matrix2<f32> = mm1.into();
+    let nm2: nalgebra::Matrix2<f32> = mm2.into();
+    let nm3 = nm1 * nm2;
 
-    let cgm1: cgmath::Matrix2<f32> = mint1.into();
-    let cgm2: cgmath::Matrix2<f32> = mint2.into();
-    let cgm3 = cgm1 * cgm2;
+    let cm1: cgmath::Matrix2<f32> = mm1.into();
+    let cm2: cgmath::Matrix2<f32> = mm2.into();
+    let cm3 = cm1 * cm2;
 
     // use nalgebra as assumed correct answer
-    let mint3: mint::ColumnMatrix2<f32> = nalg3.into();
+    let mm3: mint::ColumnMatrix2<f32> = nm3.into();
 
-    assert_ulps_eq!(cgm3, mint3.into());
-    assert_ulps_eq!(glam3, mint3.into());
+    assert_ulps_eq!(cm3, mm3.into());
+    assert_ulps_eq!(gm3, mm3.into());
 }
 
 fn mat3_mul_mat3_compare() {
     let mut rng = Xoshiro256Plus::seed_from_u64(rand::random());
-    let mint1 = random_mat3(&mut rng);
-    let mint2 = random_mat3(&mut rng);
+    let mm1 = random_mat3(&mut rng);
+    let mm2 = random_mat3(&mut rng);
 
-    let glam1: glam::Mat3 = mint1.into();
-    let glam2: glam::Mat3 = mint2.into();
-    let glam3 = glam1 * glam2;
+    let gm1: glam::Mat3 = mm1.into();
+    let gm2: glam::Mat3 = mm2.into();
+    let gm3 = gm1 * gm2;
 
-    let nalg1: nalgebra::Matrix3<f32> = mint1.into();
-    let nalg2: nalgebra::Matrix3<f32> = mint2.into();
-    let nalg3 = nalg1 * nalg2;
+    let nm1: nalgebra::Matrix3<f32> = mm1.into();
+    let nm2: nalgebra::Matrix3<f32> = mm2.into();
+    let nm3 = nm1 * nm2;
 
-    let cgm1: cgmath::Matrix3<f32> = mint1.into();
-    let cgm2: cgmath::Matrix3<f32> = mint2.into();
-    let cgm3 = cgm1 * cgm2;
+    let cm1: cgmath::Matrix3<f32> = mm1.into();
+    let cm2: cgmath::Matrix3<f32> = mm2.into();
+    let cm3 = cm1 * cm2;
 
     // use nalgebra as assumed correct answer
-    let mint3: mint::ColumnMatrix3<f32> = nalg3.into();
+    let mm3: mint::ColumnMatrix3<f32> = nm3.into();
 
-    assert_ulps_eq!(cgm3, mint3.into());
-    assert_ulps_eq!(glam3, mint3.into());
+    assert_ulps_eq!(cm3, mm3.into());
+    assert_ulps_eq!(gm3, mm3.into());
 }
 
 fn mat4_mul_mat4_compare() {
     let mut rng = Xoshiro256Plus::seed_from_u64(rand::random());
-    let mint1 = random_mat4(&mut rng);
-    let mint2 = random_mat4(&mut rng);
+    let mm1 = random_mat4(&mut rng);
+    let mm2 = random_mat4(&mut rng);
 
-    let glam1: glam::Mat4 = mint1.into();
-    let glam2: glam::Mat4 = mint2.into();
-    let glam3 = glam1 * glam2;
+    let gm1: glam::Mat4 = mm1.into();
+    let gm2: glam::Mat4 = mm2.into();
+    let gm3 = gm1 * gm2;
 
-    let nalg1: nalgebra::Matrix4<f32> = mint1.into();
-    let nalg2: nalgebra::Matrix4<f32> = mint2.into();
-    let nalg3 = nalg1 * nalg2;
+    let nm1: nalgebra::Matrix4<f32> = mm1.into();
+    let nm2: nalgebra::Matrix4<f32> = mm2.into();
+    let nm3 = nm1 * nm2;
 
-    let cgm1: cgmath::Matrix4<f32> = mint1.into();
-    let cgm2: cgmath::Matrix4<f32> = mint2.into();
-    let cgm3 = cgm1 * cgm2;
+    let cm1: cgmath::Matrix4<f32> = mm1.into();
+    let cm2: cgmath::Matrix4<f32> = mm2.into();
+    let cm3 = cm1 * cm2;
 
     // use nalgebra as assumed correct answer
-    let mint3: mint::ColumnMatrix4<f32> = nalg3.into();
+    let mm3: mint::ColumnMatrix4<f32> = nm3.into();
 
-    assert_ulps_eq!(cgm3, mint3.into());
-    assert_ulps_eq!(glam3, mint3.into());
+    assert_ulps_eq!(cm3, mm3.into());
+    assert_ulps_eq!(gm3, mm3.into());
 }
 
 fn mat2_det_compare() {
