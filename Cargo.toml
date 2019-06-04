@@ -5,18 +5,24 @@ authors = ["Cameron Hart <cameron.hart@gmail.com>"]
 edition = "2018"
 
 [dependencies]
-approx = "~0.3"
-glam = "~0.5"
+approx = { version = "~0.3", default-features = false }
 mint = "~0.5"
-rand = "~0.6"
+rand = { version = "~0.6", default-features = false }
 rand_xoshiro = "~0.1"
+
+[dependencies.glam]
+version = "~0.5"
+default-features = false
+features = ["approx", "mint", "rand"]
 
 [dependencies.nalgebra]
 version = "~0.18"
+default-features = false
 features = ["mint"]
 
 [dependencies.cgmath]
 version = "~0.17"
+default-features = false
 features = ["mint"]
 
 [dev-dependencies]
