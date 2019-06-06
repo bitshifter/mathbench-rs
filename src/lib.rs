@@ -160,3 +160,62 @@ where
         }
     }
 }
+
+pub fn glam_mat4_det(m: &glam::Mat4) -> f32 {
+    m.determinant()
+}
+
+pub fn glam_mat4_inv(m: &glam::Mat4) -> glam::Mat4 {
+    m.inverse()
+}
+
+pub fn glam_mat4_try_inv(m: &glam::Mat4) -> Option<glam::Mat4> {
+    // glam doesn't support this and it's really slow presumably due to alignment
+    Some(m.inverse())
+}
+
+pub fn glam_mat4_mul(lhs: &glam::Mat4, rhs: &glam::Mat4) -> glam::Mat4 {
+    lhs.mul_mat4(rhs)
+}
+
+pub fn cgmath_mat4_det(m: &cgmath::Matrix4<f32>) -> f32 {
+    use cgmath::SquareMatrix;
+    m.determinant()
+}
+
+pub fn cgmath_mat4_inv(m: &cgmath::Matrix4<f32>) -> cgmath::Matrix4<f32> {
+    use cgmath::SquareMatrix;
+    // cgmath always returns an Option
+    m.invert().unwrap_or(*m)
+}
+
+pub fn cgmath_mat4_try_inv(m: &cgmath::Matrix4<f32>) -> Option<cgmath::Matrix4<f32>> {
+    use cgmath::SquareMatrix;
+    m.invert()
+}
+
+pub fn cgmath_mat4_mul(
+    lhs: &cgmath::Matrix4<f32>,
+    rhs: &cgmath::Matrix4<f32>,
+) -> cgmath::Matrix4<f32> {
+    lhs * rhs
+}
+
+pub fn nalgebra_mat4_det(m: &nalgebra::Matrix4<f32>) -> f32 {
+    m.determinant()
+}
+
+pub fn nalgebra_mat4_inv(m: &nalgebra::Matrix4<f32>) -> nalgebra::Matrix4<f32> {
+    m.try_inverse().unwrap_or(*m)
+}
+
+pub fn nalgebra_mat4_try_inv(m: &nalgebra::Matrix4<f32>) -> Option<nalgebra::Matrix4<f32>> {
+    m.try_inverse()
+}
+
+pub fn nalgebra_mat4_mul(
+    lhs: &nalgebra::Matrix4<f32>,
+    rhs: &nalgebra::Matrix4<f32>,
+) -> nalgebra::Matrix4<f32> {
+    lhs * rhs
+}
