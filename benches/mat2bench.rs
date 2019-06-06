@@ -9,15 +9,15 @@ fn bench_mat2_transpose(c: &mut Criterion) {
         "mat2 transpose",
         Benchmark::new("glam", |b| {
             use glam::Mat2;
-            bench_unop!(b, op => transpose, ty => Mat2);
+            bench_unop!(b, op => transpose, ty => Mat2)
         })
         .with_function("cgmath", |b| {
             use cgmath::{prelude::*, Matrix2};
-            bench_unop!(b, op => transpose, ty => Matrix2<f32>);
+            bench_unop!(b, op => transpose, ty => Matrix2<f32>)
         })
         .with_function("nalgebra", |b| {
             use nalgebra::Matrix2;
-            bench_unop!(b, op => transpose, ty => Matrix2<f32>);
+            bench_unop!(b, op => transpose, ty => Matrix2<f32>)
         }),
     );
 }
@@ -28,15 +28,15 @@ fn bench_mat2_determinant(c: &mut Criterion) {
         "mat2 determinant",
         Benchmark::new("glam", |b| {
             use glam::Mat2;
-            bench_unop!(b, op => determinant, ty => Mat2);
+            bench_unop!(b, op => determinant, ty => Mat2)
         })
         .with_function("cgmath", |b| {
             use cgmath::{prelude::*, Matrix2};
-            bench_unop!(b, op => determinant, ty => Matrix2<f32>);
+            bench_unop!(b, op => determinant, ty => Matrix2<f32>)
         })
         .with_function("nalgebra", |b| {
             use nalgebra::Matrix2;
-            bench_unop!(b, op => determinant, ty => Matrix2<f32>);
+            bench_unop!(b, op => determinant, ty => Matrix2<f32>)
         }),
     );
 }
@@ -47,15 +47,15 @@ fn bench_mat2_inverse(c: &mut Criterion) {
         "mat2 inverse (*see notes)",
         Benchmark::new("glam", |b| {
             use glam::Mat2;
-            bench_unop!(b, op => inverse, ty => Mat2);
+            bench_unop!(b, op => inverse, ty => Mat2)
         })
         .with_function("cgmath", |b| {
             use cgmath::{prelude::*, Matrix2};
-            bench_unop!(b, op => invert, ty => Matrix2<f32>);
+            bench_unop!(b, op => invert, ty => Matrix2<f32>)
         })
         .with_function("nalgebra", |b| {
             use nalgebra::Matrix2;
-            bench_unop!(b, op => try_inverse, ty => Matrix2<f32>);
+            bench_unop!(b, op => try_inverse, ty => Matrix2<f32>)
         }),
     );
 }
@@ -67,15 +67,15 @@ fn bench_mat2_mul_mat2(c: &mut Criterion) {
         "mat2 mul mat2",
         Benchmark::new("glam", |b| {
             use glam::Mat2;
-            bench_binop!(b, op => mul, ty1 => Mat2, ty2 => Mat2);
+            bench_binop!(b, op => mul_mat2, ty1 => Mat2, ty2 => Mat2)
         })
         .with_function("cgmath", |b| {
             use cgmath::Matrix2;
-            bench_binop!(b, op => mul, ty1 => Matrix2<f32>, ty2 => Matrix2<f32>);
+            bench_binop!(b, op => mul, ty1 => Matrix2<f32>, ty2 => Matrix2<f32>)
         })
         .with_function("nalgebra", |b| {
             use nalgebra::Matrix2;
-            bench_binop!(b, op => mul, ty1 => Matrix2<f32>, ty2 => Matrix2<f32>);
+            bench_binop!(b, op => mul, ty1 => Matrix2<f32>, ty2 => Matrix2<f32>)
         }),
     );
 }

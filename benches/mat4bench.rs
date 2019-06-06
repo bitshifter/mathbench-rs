@@ -28,15 +28,15 @@ fn bench_mat4_determinant(c: &mut Criterion) {
         "mat4 determinant",
         Benchmark::new("glam", |b| {
             use glam::Mat4;
-            bench_unop!(b, op => determinant, ty => Mat4);
+            bench_unop!(b, op => determinant, ty => Mat4)
         })
         .with_function("cgmath", |b| {
-            use cgmath::{prelude::*, Matrix4};
-            bench_unop!(b, op => determinant, ty => Matrix4<f32>);
+            use cgmath::{Matrix4, SquareMatrix};
+            bench_unop!(b, op => determinant, ty => Matrix4<f32>)
         })
         .with_function("nalgebra", |b| {
             use nalgebra::Matrix4;
-            bench_unop!(b, op => determinant, ty => Matrix4<f32>);
+            bench_unop!(b, op => determinant, ty => Matrix4<f32>)
         }),
     );
 }
@@ -44,18 +44,18 @@ fn bench_mat4_determinant(c: &mut Criterion) {
 fn bench_mat4_inverse(c: &mut Criterion) {
     use criterion::Benchmark;
     c.bench(
-        "mat4 inverse (*note)",
+        "mat4 inverse",
         Benchmark::new("glam", |b| {
             use glam::Mat4;
-            bench_unop!(b, op => inverse, ty => Mat4);
+            bench_unop!(b, op => inverse, ty => Mat4)
         })
         .with_function("cgmath", |b| {
-            use cgmath::{prelude::*, Matrix4};
-            bench_unop!(b, op => invert, ty => Matrix4<f32>);
+            use cgmath::{Matrix4, SquareMatrix};
+            bench_unop!(b, op => invert, ty => Matrix4<f32>)
         })
         .with_function("nalgebra", |b| {
             use nalgebra::Matrix4;
-            bench_unop!(b, op => try_inverse, ty => Matrix4<f32>);
+            bench_unop!(b, op => try_inverse, ty => Matrix4<f32>)
         }),
     );
 }
@@ -67,15 +67,15 @@ fn bench_mat4_mul_mat4(c: &mut Criterion) {
         "mat4 mul mat4",
         Benchmark::new("glam", |b| {
             use glam::Mat4;
-            bench_binop!(b, op => mul, ty1 => Mat4, ty2 => Mat4);
+            bench_binop!(b, op => mul_mat4, ty1 => Mat4, ty2 => Mat4)
         })
         .with_function("cgmath", |b| {
             use cgmath::Matrix4;
-            bench_binop!(b, op => mul, ty1 => Matrix4<f32>, ty2 => Matrix4<f32>);
+            bench_binop!(b, op => mul, ty1 => Matrix4<f32>, ty2 => Matrix4<f32>)
         })
         .with_function("nalgebra", |b| {
             use nalgebra::Matrix4;
-            bench_binop!(b, op => mul, ty1 => Matrix4<f32>, ty2 => Matrix4<f32>);
+            bench_binop!(b, op => mul, ty1 => Matrix4<f32>, ty2 => Matrix4<f32>)
         }),
     );
 }

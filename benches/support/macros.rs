@@ -6,8 +6,20 @@ macro_rules! bench_func {
         let mut i = 0;
         $b.iter(|| {
             i = (i + 1) & (LEN - 1);
-            unsafe { criterion::black_box($func(elems.get_unchecked(i))) }
+            unsafe { $func(elems.get_unchecked(i)) }
         })
+    }};
+    ($b: ident, op => $func: ident, ty1 => $ty1:ty, ty2 => $ty2:ty) => {{
+        const LEN: usize = 1 << 7;
+        let elems1 = <$ty1 as mathbench::RandomVec>::random_vec(0, LEN);
+        let elems2 = <$ty2 as mathbench::RandomVec>::random_vec(1, LEN);
+        let mut i = 0;
+        for lhs in elems1.iter() {
+            $b.iter(|| {
+                i = (i + 1) & (LEN - 1);
+                unsafe { $func(lhs, elems2.get_unchecked(i)) }
+            })
+        }
     }};
 }
 
@@ -19,7 +31,7 @@ macro_rules! bench_unop {
         let mut i = 0;
         $b.iter(|| {
             i = (i + 1) & (LEN - 1);
-            unsafe { criterion::black_box(elems.get_unchecked(i).$unop()) }
+            unsafe { elems.get_unchecked(i).$unop() }
         })
     }};
 }
@@ -34,9 +46,7 @@ macro_rules! bench_binop {
         for lhs in elems1.iter() {
             $b.iter(|| {
                 i = (i + 1) & (LEN - 1);
-                unsafe {
-                    criterion::black_box(lhs.$binop(*elems2.get_unchecked(i)));
-                }
+                unsafe { lhs.$binop(elems2.get_unchecked(i)) }
             })
         }
     }};
