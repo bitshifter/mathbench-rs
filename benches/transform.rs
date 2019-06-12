@@ -30,7 +30,7 @@ fn bench_mat3_transform_vec3(c: &mut Criterion) {
         "mat3 transform vec3",
         Benchmark::new("glam", |b| {
             use glam::{Mat3, Vec3};
-            bench_binop!(b, op => transform_mat3, ty1 => Vec3, ty2 => Mat3)
+            bench_binop!(b, op => mul, ty1 => Mat3, ty2 => Vec3)
         })
         .with_function("cgmath", |b| {
             use cgmath::{Matrix3, Vector3};
@@ -50,7 +50,7 @@ fn bench_mat2_transform_vec2(c: &mut Criterion) {
         "mat2 transform vec2",
         Benchmark::new("glam", |b| {
             use glam::{Mat2, Vec2};
-            bench_binop!(b, op => transform_mat2, ty1 => Vec2, ty2 => Mat2)
+            bench_binop!(b, op => mul, ty1 => Mat2, ty2 => Vec2)
         })
         .with_function("cgmath", |b| {
             use cgmath::{Matrix2, Vector2};

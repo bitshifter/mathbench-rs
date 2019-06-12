@@ -27,7 +27,7 @@ fn mat2_mul_vec2_compare() {
 
     let gm: glam::Mat2 = mm.into();
     let gv: glam::Vec2 = mv.into();
-    let gvm = gv * gm.transpose();
+    let gmv = gm * gv;
 
     let nm: nalgebra::Matrix2<f32> = mm.into();
     let nv: nalgebra::Vector2<f32> = mv.into();
@@ -41,7 +41,7 @@ fn mat2_mul_vec2_compare() {
     let mmv: mint::Vector2<f32> = nmv.into();
 
     assert_ulps_eq!(cmv, mmv.into());
-    assert_ulps_eq!(gvm, mmv.into());
+    assert_ulps_eq!(gmv, mmv.into());
 }
 
 fn mat3_mul_vec3_compare() {
@@ -51,7 +51,7 @@ fn mat3_mul_vec3_compare() {
 
     let gm: glam::Mat3 = mm.into();
     let gv: glam::Vec3 = mv.into();
-    let gvm = gv * gm.transpose();
+    let gmv = gm * gv;
 
     let nm: nalgebra::Matrix3<f32> = mm.into();
     let nv: nalgebra::Vector3<f32> = mv.into();
@@ -65,7 +65,7 @@ fn mat3_mul_vec3_compare() {
     let mmv: mint::Vector3<f32> = nmv.into();
 
     assert_ulps_eq!(cmv, mmv.into());
-    assert_ulps_eq!(gvm, mmv.into());
+    assert_ulps_eq!(gmv, mmv.into());
 }
 
 fn mat4_mul_vec4_compare() {
@@ -75,7 +75,7 @@ fn mat4_mul_vec4_compare() {
 
     let gm: glam::Mat4 = mm.into();
     let gv: glam::Vec4 = mv.into();
-    let gvm = gv * gm.transpose();
+    let gmv = gm * gv;
 
     let nm: nalgebra::Matrix4<f32> = mm.into();
     let nv: nalgebra::Vector4<f32> = mv.into();
@@ -89,7 +89,7 @@ fn mat4_mul_vec4_compare() {
     let mmv: mint::Vector4<f32> = nmv.into();
 
     assert_ulps_eq!(cmv, mmv.into());
-    assert_ulps_eq!(gvm, mmv.into());
+    assert_ulps_eq!(gmv, mmv.into());
 }
 
 fn mat2_mul_mat2_compare() {
@@ -211,7 +211,7 @@ fn mat2_inv_compare() {
 fn mat3_inv_compare() {
     use cgmath::prelude::*;
 
-    let mut rng = Xoshiro256Plus::seed_from_u64(rand::random());
+    let mut rng = Xoshiro256Plus::seed_from_u64(0);
     let mm1 = random_invertible_mat3(&mut rng);
 
     let gm1: glam::Mat3 = mm1.into();
@@ -229,7 +229,7 @@ fn mat3_inv_compare() {
     let mmi: mint::ColumnMatrix3<f32> = nmi.unwrap().into();
 
     assert_ulps_eq!(cmi.unwrap(), mmi.into());
-    assert_ulps_eq!(gmi, mmi.into());
+    assert_ulps_eq!(gmi, mmi.into(), epsilon = 0.0001);
 }
 
 fn mat4_inv_compare() {

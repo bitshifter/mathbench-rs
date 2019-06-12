@@ -50,6 +50,13 @@ impl_random_vec!(nalgebra::Vector2<f32>);
 impl_random_vec!(nalgebra::Vector3<f32>);
 impl_random_vec!(nalgebra::Vector4<f32>);
 
+pub fn random_quat<R>(rng: &mut R) -> mint::Quaternion<f32>
+where
+    R: Rng,
+{
+    rng.gen::<glam::Quat>().into()
+}
+
 pub fn random_vec2<R>(rng: &mut R) -> mint::Vector2<f32>
 where
     R: Rng,

@@ -28,6 +28,9 @@ features = ["mint"]
 [dev-dependencies]
 criterion = "~0.2"
 
+[patch.crates-io]
+glam = { git = "https://github.com/bitshifter/glam-rs", branch = "column_vectors" }
+
 [[bench]]
 name = "eulerbench"
 harness = false
