@@ -19,7 +19,8 @@ All benchmarks are performed using [Criterion.rs].
 * `euler bench` - performs an Euler integration on arrays of 2D and 3D vectors
 * `mat benches` - performs common matrix operations such as transpose, inverse,
   determinant and multiply
-* `transform bench` - performs matrix transformations on vectors
+* `quat benches` - peform common quaternion operations
+* `transform bench` - performs transformations on vectors
 
 Note that `cgmath` and `nalgebra` matrix inverse methods return an `Option`
 whereas `glam` does not, giving glam a performance advantage. If a
