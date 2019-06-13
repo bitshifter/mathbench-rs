@@ -10,7 +10,8 @@ fn bench_mat4_transform_vec4(c: &mut Criterion) {
         "mat4 transform vec4",
         Benchmark::new("glam", |b| {
             use glam::{Mat4, Vec4};
-            bench_binop!(b, op => transform_mat4, ty1 => Vec4, ty2 => Mat4)
+            use mathbench::glam_mat4_mul_vec4;
+            bench_func!(b, op => glam_mat4_mul_vec4, ty1 => Mat4, ty2 => Vec4)
         })
         .with_function("cgmath", |b| {
             use cgmath::{Matrix4, Vector4};
@@ -63,10 +64,32 @@ fn bench_mat2_transform_vec2(c: &mut Criterion) {
     );
 }
 
+fn bench_quat_transform_vec3(c: &mut Criterion) {
+    use criterion::Benchmark;
+    use std::ops::Mul;
+    c.bench(
+        "quat transform vec3",
+        Benchmark::new("glam", |b| {
+            use glam::{Quat, Vec3};
+            use mathbench::glam_quat_mul_vec3;
+            bench_func!(b, op => glam_quat_mul_vec3, ty1 => Quat, ty2 => Vec3)
+        })
+        .with_function("cgmath", |b| {
+            use cgmath::{Quaternion, Vector3};
+            bench_binop!(b, op => mul, ty1 => Quaternion<f32>, ty2 => Vector3<f32>)
+        })
+        .with_function("nalgebra", |b| {
+            use nalgebra::{UnitQuaternion, Vector3};
+            bench_binop!(b, op => mul, ty1 => UnitQuaternion<f32>, ty2 => Vector3<f32>)
+        }),
+    );
+}
+
 criterion_group!(
     transform_benches,
     bench_mat2_transform_vec2,
     bench_mat3_transform_vec3,
     bench_mat4_transform_vec4,
+    bench_quat_transform_vec3,
 );
 criterion_main!(transform_benches);

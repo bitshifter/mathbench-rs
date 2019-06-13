@@ -33,12 +33,15 @@ macro_rules! impl_random_vec {
 impl_random_vec!(glam::Mat2, random_invertible_mat2);
 impl_random_vec!(glam::Mat3, random_invertible_mat3);
 impl_random_vec!(glam::Mat4, random_invertible_mat4);
+impl_random_vec!(glam::Quat, random_quat);
 impl_random_vec!(cgmath::Matrix2<f32>, random_invertible_mat2);
 impl_random_vec!(cgmath::Matrix3<f32>, random_invertible_mat3);
 impl_random_vec!(cgmath::Matrix4<f32>, random_invertible_mat4);
+impl_random_vec!(cgmath::Quaternion<f32>, random_quat);
 impl_random_vec!(nalgebra::Matrix2<f32>, random_invertible_mat2);
 impl_random_vec!(nalgebra::Matrix3<f32>, random_invertible_mat3);
 impl_random_vec!(nalgebra::Matrix4<f32>, random_invertible_mat4);
+impl_random_vec!(nalgebra::UnitQuaternion<f32>, random_na_quat);
 
 impl_random_vec!(glam::Vec2);
 impl_random_vec!(glam::Vec3);
@@ -55,6 +58,13 @@ where
     R: Rng,
 {
     rng.gen::<glam::Quat>().into()
+}
+
+fn random_na_quat<R>(rng: &mut R) -> nalgebra::UnitQuaternion<f32>
+where
+    R: Rng,
+{
+    nalgebra::UnitQuaternion::from_quaternion(random_quat(rng).into())
 }
 
 pub fn random_vec2<R>(rng: &mut R) -> mint::Vector2<f32>
@@ -166,6 +176,24 @@ where
             return m.into();
         }
     }
+}
+
+#[inline]
+// work around missing &Mat4 * &Vec4
+pub fn glam_mat4_mul_vec4(m: &glam::Mat4, v: &glam::Vec4) -> glam::Vec4 {
+    *m * *v
+}
+
+#[inline]
+// work around missing &Quat * &Vec3
+pub fn glam_quat_mul_vec3(q: &glam::Quat, v: &glam::Vec3) -> glam::Vec3 {
+    *q * *v
+}
+
+#[inline]
+// work around missing &Quat * &Vec3
+pub fn glam_quat_mul_quat(q1: &glam::Quat, q2: &glam::Quat) -> glam::Quat {
+    *q1 * *q2
 }
 
 pub fn glam_mat4_det(m: &glam::Mat4) -> f32 {
