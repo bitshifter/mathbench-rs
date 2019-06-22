@@ -178,24 +178,6 @@ where
     }
 }
 
-#[inline]
-// work around missing &Mat4 * &Vec4
-pub fn glam_mat4_mul_vec4(m: &glam::Mat4, v: &glam::Vec4) -> glam::Vec4 {
-    *m * *v
-}
-
-#[inline]
-// work around missing &Quat * &Vec3
-pub fn glam_quat_mul_vec3(q: &glam::Quat, v: &glam::Vec3) -> glam::Vec3 {
-    *q * *v
-}
-
-#[inline]
-// work around missing &Quat * &Vec3
-pub fn glam_quat_mul_quat(q1: &glam::Quat, q2: &glam::Quat) -> glam::Quat {
-    *q1 * *q2
-}
-
 pub fn glam_mat4_det(m: &glam::Mat4) -> f32 {
     m.determinant()
 }

@@ -1,6 +1,7 @@
 #[path = "support/macros.rs"]
 #[macro_use]
 mod macros;
+mod support;
 use criterion::{criterion_group, criterion_main, Criterion};
 
 fn bench_quat_conjugate(c: &mut Criterion) {
@@ -29,7 +30,7 @@ fn bench_quat_mul_quat(c: &mut Criterion) {
         "quat mul quat",
         Benchmark::new("glam", |b| {
             use glam::Quat;
-            use mathbench::glam_quat_mul_quat;
+            use support::glam_quat_mul_quat;
             bench_func!(b, op => glam_quat_mul_quat, ty1 => Quat, ty2 => Quat)
         })
         .with_function("cgmath", |b| {

@@ -66,10 +66,7 @@ fn test_quat_from_axis_angle() {
     assert_eq!(gx, mx.into());
     let cx = cgmath::Vector3::unit_x();
     let gq = glam::Quat::from_axis_angle(gx, glam::rad(rad));
-    let nq = nalgebra::UnitQuaternion::from_axis_angle(
-        &nx,
-        rad,
-    );
+    let nq = nalgebra::UnitQuaternion::from_axis_angle(&nx, rad);
     let cq = cgmath::Quaternion::from_axis_angle(cx, cgmath::Rad(rad));
     let mnq: mint::Quaternion<f32> = nq.into();
     let mcq: mint::Quaternion<f32> = cq.into();

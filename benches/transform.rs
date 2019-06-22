@@ -1,6 +1,7 @@
 #[path = "support/macros.rs"]
 #[macro_use]
 mod macros;
+mod support;
 use criterion::{criterion_group, criterion_main, Criterion};
 
 fn bench_mat4_transform_vec4(c: &mut Criterion) {
@@ -10,7 +11,7 @@ fn bench_mat4_transform_vec4(c: &mut Criterion) {
         "mat4 transform vec4",
         Benchmark::new("glam", |b| {
             use glam::{Mat4, Vec4};
-            use mathbench::glam_mat4_mul_vec4;
+            use support::glam_mat4_mul_vec4;
             bench_func!(b, op => glam_mat4_mul_vec4, ty1 => Mat4, ty2 => Vec4)
         })
         .with_function("cgmath", |b| {
@@ -71,7 +72,7 @@ fn bench_quat_transform_vec3(c: &mut Criterion) {
         "quat transform vec3",
         Benchmark::new("glam", |b| {
             use glam::{Quat, Vec3};
-            use mathbench::glam_quat_mul_vec3;
+            use support::glam_quat_mul_vec3;
             bench_func!(b, op => glam_quat_mul_vec3, ty1 => Quat, ty2 => Vec3)
         })
         .with_function("cgmath", |b| {
