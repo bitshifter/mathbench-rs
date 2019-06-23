@@ -2,7 +2,7 @@
 
 import json
 import os
-from prettytable import PrettyTable
+import prettytable
 
 def main():
     root_dir = os.path.normpath(os.path.join(os.path.dirname(__file__), '..'))
@@ -28,7 +28,7 @@ def main():
                 slope_point = estimates['Slope']['point_estimate']
                 benches.setdefault(bench_name, {}).setdefault(lib_name, slope_point)
    
-    pt = PrettyTable(['benchmark'] + [f'  {x:}  ' for x in libs])
+    pt = prettytable.PrettyTable(['benchmark'] + [f'  {x:}  ' for x in libs])
     for bench_name in benches:
         bench = benches[bench_name]
         values = [bench[x] for x in libs]
@@ -42,6 +42,8 @@ def main():
     pt.sortby = 'benchmark'
     pt.align = 'r'
     pt.align['benchmark'] = 'l'
+    pt.hrules = prettytable.HEADER
+    pt.junction_char = '|'
     print(pt)
         
 
