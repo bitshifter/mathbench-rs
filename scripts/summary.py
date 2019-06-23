@@ -12,18 +12,23 @@ def main():
 
     libs = ['glam', 'cgmath', 'nalgebra']
     benches = {}
-    for bench_name in os.listdir(criterion_dir):
-        if bench_name == 'report':
+    for bench_dir in os.listdir(criterion_dir):
+        if bench_dir == 'report':
             continue
-        bench_dir = os.path.join(criterion_dir, bench_name)
+        bench_path = os.path.join(criterion_dir, bench_dir)
         for lib_name in libs:
-            estimates_path = os.path.join(bench_dir, lib_name, 'new', 'estimates.json')
+            new_path = os.path.join(bench_path, lib_name, 'new')
+            benchmark_path = os.path.join(new_path, 'benchmark.json')
+            estimates_path = os.path.join(new_path, 'estimates.json')
+            with open(benchmark_path) as f:
+                benchmarks = json.load(f)
+                bench_name = benchmarks['group_id']
             with open(estimates_path) as f:
                 estimates = json.load(f)
                 slope_point = estimates['Slope']['point_estimate']
                 benches.setdefault(bench_name, {}).setdefault(lib_name, slope_point)
    
-    pt = PrettyTable(['benchmark'] + libs)
+    pt = PrettyTable(['benchmark'] + [f'  {x:}  ' for x in libs])
     for bench_name in benches:
         bench = benches[bench_name]
         values = [bench[x] for x in libs]
