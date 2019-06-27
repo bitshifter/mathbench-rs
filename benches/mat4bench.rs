@@ -1,6 +1,7 @@
 #[path = "support/macros.rs"]
 #[macro_use]
 mod macros;
+mod support;
 use criterion::{criterion_group, criterion_main, Criterion};
 
 fn bench_mat4_transpose(c: &mut Criterion) {
@@ -18,6 +19,10 @@ fn bench_mat4_transpose(c: &mut Criterion) {
         .with_function("nalgebra", |b| {
             use nalgebra::Matrix4;
             bench_unop!(b, op => transpose, ty => Matrix4<f32>);
+        })
+        .with_function("vek", |b| {
+            use vek::Mat4;
+            bench_unop!(b, op => transposed, ty => Mat4<f32>)
         }),
     );
 }
@@ -37,6 +42,10 @@ fn bench_mat4_determinant(c: &mut Criterion) {
         .with_function("nalgebra", |b| {
             use nalgebra::Matrix4;
             bench_unop!(b, op => determinant, ty => Matrix4<f32>)
+        })
+        .with_function("vek", |b| {
+            use vek::Mat4;
+            bench_unop!(b, op => determinant, ty => Mat4<f32>)
         }),
     );
 }
@@ -56,6 +65,10 @@ fn bench_mat4_inverse(c: &mut Criterion) {
         .with_function("nalgebra", |b| {
             use nalgebra::Matrix4;
             bench_unop!(b, op => try_inverse, ty => Matrix4<f32>)
+        })
+        .with_function("vek", |b| {
+            use vek::Mat4;
+            bench_unop!(b, op => inverted, ty => Mat4<f32>)
         }),
     );
 }
@@ -76,6 +89,11 @@ fn bench_mat4_mul_mat4(c: &mut Criterion) {
         .with_function("nalgebra", |b| {
             use nalgebra::Matrix4;
             bench_binop!(b, op => mul, ty1 => Matrix4<f32>, ty2 => Matrix4<f32>)
+        })
+        .with_function("mat4", |b| {
+            use vek::Mat4;
+            use support::vek_mat4_mul_mat4;
+            bench_func!(b, op => vek_mat4_mul_mat4, ty1 => Mat4<f32>, ty2 => Mat4<f32>)
         }),
     );
 }

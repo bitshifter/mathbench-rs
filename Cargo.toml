@@ -25,6 +25,9 @@ version = "~0.17"
 default-features = false
 features = ["mint"]
 
+[dependencies.vek]
+version = "~0.9"
+
 [dev-dependencies]
 criterion = "~0.2"
 

@@ -42,6 +42,7 @@ impl_random_vec!(nalgebra::Matrix2<f32>, random_invertible_mat2);
 impl_random_vec!(nalgebra::Matrix3<f32>, random_invertible_mat3);
 impl_random_vec!(nalgebra::Matrix4<f32>, random_invertible_mat4);
 impl_random_vec!(nalgebra::UnitQuaternion<f32>, random_na_quat);
+impl_random_vec!(vek::Mat4<f32>, random_vek_invertible_mat4);
 
 impl_random_vec!(glam::Vec2);
 impl_random_vec!(glam::Vec3);
@@ -52,6 +53,8 @@ impl_random_vec!(cgmath::Vector4<f32>);
 impl_random_vec!(nalgebra::Vector2<f32>);
 impl_random_vec!(nalgebra::Vector3<f32>);
 impl_random_vec!(nalgebra::Vector4<f32>);
+impl_random_vec!(vek::Vec3<f32>, random_vek_vec3);
+impl_random_vec!(vek::Vec4<f32>, random_vek_vec4);
 
 pub fn random_quat<R>(rng: &mut R) -> mint::Quaternion<f32>
 where
@@ -65,6 +68,30 @@ where
     R: Rng,
 {
     nalgebra::UnitQuaternion::from_quaternion(random_quat(rng).into())
+}
+
+fn random_vek_invertible_mat4<R>(rng: &mut R) -> vek::Mat4<f32>
+where
+    R: Rng,
+{
+    let mm = random_invertible_mat4(rng);
+    vek::Mat4::from_col_array(mm.into())
+}
+
+fn random_vek_vec3<R>(rng: &mut R) -> vek::Vec3<f32>
+where
+    R: Rng,
+{
+    let v: [f32; 3] = rng.gen::<glam::Vec3>().into();
+    v.into()
+}
+
+fn random_vek_vec4<R>(rng: &mut R) -> vek::Vec4<f32>
+where
+    R: Rng,
+{
+    let v: [f32; 4] = rng.gen::<glam::Vec4>().into();
+    v.into()
 }
 
 pub fn random_vec2<R>(rng: &mut R) -> mint::Vector2<f32>
