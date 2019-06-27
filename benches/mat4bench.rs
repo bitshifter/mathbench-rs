@@ -90,7 +90,7 @@ fn bench_mat4_mul_mat4(c: &mut Criterion) {
             use nalgebra::Matrix4;
             bench_binop!(b, op => mul, ty1 => Matrix4<f32>, ty2 => Matrix4<f32>)
         })
-        .with_function("mat4", |b| {
+        .with_function("vek", |b| {
             use vek::Mat4;
             use support::vek_mat4_mul_mat4;
             bench_func!(b, op => vek_mat4_mul_mat4, ty1 => Mat4<f32>, ty2 => Mat4<f32>)
