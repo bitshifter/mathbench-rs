@@ -35,9 +35,9 @@ def main():
         max_value = max(values)
         min_value = min(values)
         if max_value >= 1000:
-            value_strs = [f'__{x/1000:5.5} us__' if x == min_value else f'  {x/1000:5.5} us  ' for x in values]
+            value_strs = [f'__{x/1000:3.4} us__' if x == min_value else f'  {x/1000:3.4} us  ' for x in values]
         else:
-            value_strs = [f'__{x:5.5f} ns__' if x == min_value else f'  {x:5.5f} ns  ' for x in values]
+            value_strs = [f'__{x:3.4f} ns__' if x == min_value else f'  {x:3.4f} ns  ' for x in values]
         pt.add_row([bench_name] + value_strs)
     pt.sortby = 'benchmark'
     pt.align = 'r'
