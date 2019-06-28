@@ -46,7 +46,7 @@ pub fn glam_mat4_mul_vec4(m: &glam::Mat4, v: &glam::Vec4) -> glam::Vec4 {
 
 #[inline]
 // work around missing &Mat4 * &Vec4
-pub fn vek_mat4_mul_vec4(m: &vek::Mat4<f32>, v: &vek::Vec4<f32>) -> vek::Vec4<f32> {
+pub fn vek_mat4_mul_vec4(m: &vek::mat::repr_simd::column_major::Mat4<f32>, v: &vek::vec::repr_simd::Vec4<f32>) -> vek::vec::repr_simd::Vec4<f32> {
     *m * *v
 }
 
@@ -82,6 +82,6 @@ pub fn glam_mat4_mul_mat4(m1: &glam::Mat4, m2: &glam::Mat4) -> glam::Mat4 {
 
 #[inline]
 // work around missing &Mat4 * &Mat4
-pub fn vek_mat4_mul_mat4(m1: &vek::Mat4<f32>, m2: &vek::Mat4<f32>) -> vek::Mat4<f32> {
+pub fn vek_mat4_mul_mat4(m1: &vek::mat::repr_simd::column_major::Mat4<f32>, m2: &vek::mat::repr_simd::column_major::Mat4<f32>) -> vek::mat::repr_simd::column_major::Mat4<f32> {
     *m1 * *m2
 }
