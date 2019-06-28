@@ -195,6 +195,10 @@ pub fn glam_mat4_mul(lhs: &glam::Mat4, rhs: &glam::Mat4) -> glam::Mat4 {
     lhs.mul_mat4(rhs)
 }
 
+pub fn glam_mat4_mul_vec4(lhs: &glam::Mat4, rhs: &glam::Vec4) -> glam::Vec4 {
+    *lhs * *rhs
+}
+
 pub fn cgmath_mat4_det(m: &cgmath::Matrix4<f32>) -> f32 {
     use cgmath::SquareMatrix;
     m.determinant()
