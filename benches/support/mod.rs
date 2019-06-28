@@ -27,6 +27,18 @@ pub fn glam_vec3_cross(v1: &glam::Vec3, v2: &glam::Vec3) -> glam::Vec3 {
 }
 
 #[inline]
+// work around missing &Mat2 * &Vec2
+pub fn glam_mat2_mul_vec2(m: &glam::Mat2, v: &glam::Vec2) -> glam::Vec2 {
+    *m * *v
+}
+
+#[inline]
+// work around missing &Mat3 * &Vec3
+pub fn glam_mat3_mul_vec3(m: &glam::Mat3, v: &glam::Vec3) -> glam::Vec3 {
+    *m * *v
+}
+
+#[inline]
 // work around missing &Mat4 * &Vec4
 pub fn glam_mat4_mul_vec4(m: &glam::Mat4, v: &glam::Vec4) -> glam::Vec4 {
     *m * *v
@@ -73,4 +85,3 @@ pub fn glam_mat4_mul_mat4(m1: &glam::Mat4, m2: &glam::Mat4) -> glam::Mat4 {
 pub fn vek_mat4_mul_mat4(m1: &vek::Mat4<f32>, m2: &vek::Mat4<f32>) -> vek::Mat4<f32> {
     *m1 * *m2
 }
-
