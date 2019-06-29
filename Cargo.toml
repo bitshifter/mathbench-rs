@@ -58,3 +58,7 @@ harness = false
 [[bench]]
 name = "vecbench"
 harness = false
+
+[profile.bench]
+debug = true
+# lto = true
