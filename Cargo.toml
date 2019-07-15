@@ -39,6 +39,10 @@ version = "0.9.10"
 features = ["mint"]
 optional = true
 
+[dependencies.pathfinder_geometry]
+version = "0.3.0"
+optional = true
+
 [dev-dependencies]
 criterion = "0.3.0"
 

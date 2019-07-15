@@ -507,3 +507,19 @@ pub mod vek_support {
         m * v
     }
 }
+
+#[cfg(feature = "pathfinder_geometry")]
+pub mod pathfinder_support {
+    use super::RandomVec;
+    use rand::{Rng, SeedableRng};
+    use rand_xoshiro::Xoshiro256Plus;
+
+    impl_random_vec!(pathfinder_geometry::vector::Vector2F, random_pf_vec2);
+
+    pub fn random_pf_vec2<R>(rng: &mut R) -> pathfinder_geometry::vector::Vector2F
+    where
+        R: Rng,
+    {
+        pathfinder_geometry::vector::Vector2F::new(rng.gen(), rng.gen())
+    }
+}
