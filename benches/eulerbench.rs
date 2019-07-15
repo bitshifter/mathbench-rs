@@ -6,8 +6,7 @@ const NUM_OBJECTS: usize = 1 << 13;
 #[macro_export]
 macro_rules! bench_euler {
     ($b: ident, ty => $t: ty, zero => $zero: expr) => {{
-        let mut rng = Xoshiro256Plus::seed_from_u64(0);
-        let accel_data: Vec<$t> = vec![rng.gen(); NUM_OBJECTS];
+        let accel_data = <$t as mathbench::RandomVec>::random_vec(0, NUM_OBJECTS);
         let mut vel_data: Vec<$t> = vec![$zero; NUM_OBJECTS];
         let mut pos_data: Vec<$t> = vec![$zero; NUM_OBJECTS];
         $b.iter(|| {
@@ -24,8 +23,6 @@ macro_rules! bench_euler {
 
 fn bench_euler_3d(c: &mut Criterion) {
     use criterion::Benchmark;
-    use rand::{Rng, SeedableRng};
-    use rand_xoshiro::Xoshiro256Plus;
     c.bench(
         "euler 3d",
         Benchmark::new("glam", |b| {
@@ -45,8 +42,6 @@ fn bench_euler_3d(c: &mut Criterion) {
 
 fn bench_euler_2d(c: &mut Criterion) {
     use criterion::Benchmark;
-    use rand::{Rng, SeedableRng};
-    use rand_xoshiro::Xoshiro256Plus;
     c.bench(
         "euler 2d",
         Benchmark::new("glam", |b| {
