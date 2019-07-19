@@ -33,7 +33,7 @@ The benchmarks require Nightly rust, but if it is installed they can be run
 simply with:
 
 ```
-cargo +nightly bench
+cargo bench
 ```
 
 There is a script in `scripts/summary.py` to summarize the results in a nice
