@@ -27,6 +27,19 @@ whereas `glam` does not, giving glam a performance advantage. If a
 non-invertible matrix is inverted by `glam` the result will be invalid (it will
 contain NaNs).
 
+## Running the benchmarks
+
+The benchmarks require Nightly rust, but if it is installed they can be run
+simply with:
+
+```
+cargo bench
+```
+
+There is a script in `scripts/summary.py` to summarize the results in a nice
+fashion.  It requires Python 3 and the `prettytable` Python module, then can
+simply be run to generate an ASCII output.
+
 ## Future work
 
 * Validate the correctness of each benchmark
