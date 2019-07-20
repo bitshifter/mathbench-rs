@@ -95,6 +95,20 @@ The tests can be run using:
 cargo test
 ```
 
+## Adding a new library
+
+There are different steps involved for adding a unit tests and benchmarks for a
+new library.
+
+Benchmarks require an implementation of the `mathbench::RandomVec` trait for the
+types you want to benchmark. If the type implements the `rand` crate
+`distribution::Distribution` trait for `Standard` then you can simply use the
+`impl_random_vec!` macro in `src/lib.rs`. Otherwise you can provide a function
+that generates a new random value of your type pass that to `impl_random_vec!`.
+
+To add the new libary type to a benchmark, add another `.with_function` call to
+the `Criterion` `bench`.
+
 ## Future work
 
 * Calculate average error for each library against a high precision result
