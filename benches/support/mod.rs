@@ -1,7 +1,8 @@
 #![allow(dead_code)]
 
-use glam;
 use cgmath::{self, InnerSpace};
+use euclid;
+use glam;
 
 #[inline]
 // work around missing cgmath Vector3::dot(self, &Vector3)
@@ -11,9 +12,13 @@ pub fn cgmath_vec3_dot(v1: &cgmath::Vector3<f32>, v2: &cgmath::Vector3<f32>) -> 
 
 #[inline]
 // work around missing cgmath Vector3::cross(self, &Vector3)
-pub fn cgmath_vec3_cross(v1: &cgmath::Vector3<f32>, v2: &cgmath::Vector3<f32>) -> cgmath::Vector3<f32> {
+pub fn cgmath_vec3_cross(
+    v1: &cgmath::Vector3<f32>,
+    v2: &cgmath::Vector3<f32>,
+) -> cgmath::Vector3<f32> {
     v1.cross(*v2)
 }
+
 #[inline]
 // work around missing Vec3::dot(self, &Vec3)
 pub fn glam_vec3_dot(v1: &glam::Vec3, v2: &glam::Vec3) -> f32 {
@@ -23,6 +28,24 @@ pub fn glam_vec3_dot(v1: &glam::Vec3, v2: &glam::Vec3) -> f32 {
 #[inline]
 // work around missing Vec3::cross(self, &Vec3)
 pub fn glam_vec3_cross(v1: &glam::Vec3, v2: &glam::Vec3) -> glam::Vec3 {
+    v1.cross(*v2)
+}
+
+#[inline]
+// work around missing Vec3::dot(self, &Vec3)
+pub fn euclid_vec3_dot(
+    v1: &euclid::Vector3D<f32, euclid::UnknownUnit>,
+    v2: &euclid::Vector3D<f32, euclid::UnknownUnit>,
+) -> f32 {
+    v1.dot(*v2)
+}
+
+#[inline]
+// work around missing Vec3::cross(self, &Vec3)
+pub fn euclid_vec3_cross(
+    v1: &euclid::Vector3D<f32, euclid::UnknownUnit>,
+    v2: &euclid::Vector3D<f32, euclid::UnknownUnit>,
+) -> euclid::Vector3D<f32, euclid::UnknownUnit> {
     v1.cross(*v2)
 }
 

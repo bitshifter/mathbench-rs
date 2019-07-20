@@ -1,4 +1,5 @@
 use approx;
+use euclid;
 use glam;
 use mint;
 use rand::{Rng, SeedableRng};
@@ -52,6 +53,8 @@ impl_random_vec!(cgmath::Vector4<f32>);
 impl_random_vec!(nalgebra::Vector2<f32>);
 impl_random_vec!(nalgebra::Vector3<f32>);
 impl_random_vec!(nalgebra::Vector4<f32>);
+impl_random_vec!(euclid::Vector2D<f32, euclid::UnknownUnit>, random_euclid_vec2);
+impl_random_vec!(euclid::Vector3D<f32, euclid::UnknownUnit>, random_euclid_vec3);
 
 pub fn random_quat<R>(rng: &mut R) -> mint::Quaternion<f32>
 where
@@ -65,6 +68,22 @@ where
     R: Rng,
 {
     nalgebra::UnitQuaternion::from_quaternion(random_quat(rng).into())
+}
+
+fn random_euclid_vec2<R>(rng: &mut R) -> euclid::Vector2D<f32, euclid::UnknownUnit>
+where
+    R: Rng,
+{
+    let (x, y) = rng.gen::<glam::Vec2>().into();
+    euclid::vec2(x, y)
+}
+
+fn random_euclid_vec3<R>(rng: &mut R) -> euclid::Vector3D<f32, euclid::UnknownUnit>
+where
+    R: Rng,
+{
+    let (x, y, z) = rng.gen::<glam::Vec3>().into();
+    euclid::vec3(x, y, z)
 }
 
 pub fn random_vec2<R>(rng: &mut R) -> mint::Vector2<f32>

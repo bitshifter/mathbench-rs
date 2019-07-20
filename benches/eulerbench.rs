@@ -36,6 +36,10 @@ fn bench_euler_3d(c: &mut Criterion) {
         .with_function("nalgebra", |b| {
             use nalgebra::{zero, Vector3};
             bench_euler!(b, ty => Vector3<f32>, zero => zero());
+        })
+        .with_function("euclid", |b| {
+            use euclid::{UnknownUnit, Vector3D};
+            bench_euler!(b, ty => Vector3D<f32, UnknownUnit>, zero => Vector3D::zero());
         }),
     );
 }
@@ -55,6 +59,10 @@ fn bench_euler_2d(c: &mut Criterion) {
         .with_function("nalgebra", |b| {
             use nalgebra::{zero, Vector2};
             bench_euler!(b, ty => Vector2<f32>, zero => zero());
+        })
+        .with_function("euclid", |b| {
+            use euclid::{UnknownUnit, Vector2D};
+            bench_euler!(b, ty => Vector2D<f32, UnknownUnit>, zero => Vector2D::zero());
         }),
     );
 }

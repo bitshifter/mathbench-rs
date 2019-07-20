@@ -19,6 +19,10 @@ fn bench_vec3_length(c: &mut Criterion) {
         .with_function("nalgebra", |b| {
             use nalgebra::Vector3;
             bench_unop!(b, op => magnitude, ty => Vector3<f32>)
+        })
+        .with_function("euclid", |b| {
+            use euclid::{UnknownUnit, Vector3D};
+            bench_unop!(b, op => length, ty => Vector3D<f32, UnknownUnit>)
         }),
     );
 }
@@ -38,6 +42,10 @@ fn bench_vec3_normalize(c: &mut Criterion) {
         .with_function("nalgebra", |b| {
             use nalgebra::Vector3;
             bench_unop!(b, op => normalize, ty => Vector3<f32>)
+        })
+        .with_function("euclid", |b| {
+            use euclid::{UnknownUnit, Vector3D};
+            bench_unop!(b, op => normalize, ty => Vector3D<f32, UnknownUnit>)
         }),
     );
 }
@@ -59,6 +67,11 @@ fn bench_vec3_dot(c: &mut Criterion) {
         .with_function("nalgebra", |b| {
             use nalgebra::Vector3;
             bench_binop!(b, op => dot, ty1 => Vector3<f32>, ty2 => Vector3<f32>)
+        })
+        .with_function("euclid", |b| {
+            use euclid::{Vector3D, UnknownUnit};
+            use support::euclid_vec3_dot;
+            bench_func!(b, op => euclid_vec3_dot, ty1 => Vector3D<f32, UnknownUnit>, ty2 => Vector3D<f32, UnknownUnit>)
         }),
     );
 }
@@ -80,6 +93,11 @@ fn bench_vec3_cross(c: &mut Criterion) {
         .with_function("nalgebra", |b| {
             use nalgebra::Vector3;
             bench_binop!(b, op => cross, ty1 => Vector3<f32>, ty2 => Vector3<f32>)
+        })
+        .with_function("euclid", |b| {
+            use euclid::{Vector3D, UnknownUnit};
+            use support::euclid_vec3_cross;
+            bench_func!(b, op => euclid_vec3_cross, ty1 => Vector3D<f32, UnknownUnit>, ty2 => Vector3D<f32, UnknownUnit>)
         }),
     );
 }
