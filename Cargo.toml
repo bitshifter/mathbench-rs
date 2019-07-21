@@ -1,6 +1,6 @@
 [package]
 name = "mathbench"
-version = "0.1.5"
+version = "0.1.6"
 authors = ["Cameron Hart <cameron.hart@gmail.com>"]
 edition = "2018"
 
