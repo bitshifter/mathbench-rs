@@ -67,7 +67,7 @@ fn bench_mat2_mul_mat2(c: &mut Criterion) {
         "mat2 mul mat2",
         Benchmark::new("glam", |b| {
             use glam::Mat2;
-            bench_binop!(b, op => mul_mat2, ty1 => Mat2, ty2 => Mat2)
+            bench_binop!(b, op => mul, ty1 => Mat2, ty2 => Mat2)
         })
         .with_function("cgmath", |b| {
             use cgmath::Matrix2;
