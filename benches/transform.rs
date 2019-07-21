@@ -39,6 +39,11 @@ fn bench_mat3_transform_vec3(c: &mut Criterion) {
         .with_function("nalgebra", |b| {
             use nalgebra::{Matrix3, Vector3};
             bench_binop!(b, op => mul, ty1 => Matrix3<f32>, ty2 => Vector3<f32>)
+        })
+        // TODO: this isn't the same at the others
+        .with_function("euclid", |b| {
+            use euclid::{Transform3D, Vector3D, UnknownUnit};
+            bench_binop!(b, op => transform_vector3d, ty1 => Transform3D<f32, UnknownUnit, UnknownUnit>, ty2 => Vector3D<f32, UnknownUnit>)
         }),
     );
 }
@@ -59,6 +64,11 @@ fn bench_mat2_transform_vec2(c: &mut Criterion) {
         .with_function("nalgebra", |b| {
             use nalgebra::{Matrix2, Vector2};
             bench_binop!(b, op => mul, ty1 => Matrix2<f32>, ty2 => Vector2<f32>)
+        })
+        // TODO: this isn't the same at the others
+        .with_function("euclid", |b| {
+            use euclid::{Transform2D, Vector2D, UnknownUnit};
+            bench_binop!(b, op => transform_vector, ty1 => Transform2D<f32, UnknownUnit, UnknownUnit>, ty2 => Vector2D<f32, UnknownUnit>)
         }),
     );
 }
@@ -79,7 +89,13 @@ fn bench_quat_transform_vec3(c: &mut Criterion) {
         .with_function("nalgebra", |b| {
             use nalgebra::{UnitQuaternion, Vector3};
             bench_binop!(b, op => mul, ty1 => UnitQuaternion<f32>, ty2 => Vector3<f32>)
-        }),
+        })
+        .with_function("euclid", |b| {
+            use euclid::{Rotation3D, Vector3D, UnknownUnit};
+            // TODO: vector gets converted to a point by this call
+            bench_binop!(b, op => transform_vector3d, ty1 => Rotation3D<f32, UnknownUnit, UnknownUnit>, ty2 => Vector3D<f32, UnknownUnit>)
+        })
+        ,
     );
 }
 

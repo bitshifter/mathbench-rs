@@ -43,6 +43,9 @@ impl_random_vec!(nalgebra::Matrix2<f32>, random_invertible_mat2);
 impl_random_vec!(nalgebra::Matrix3<f32>, random_invertible_mat3);
 impl_random_vec!(nalgebra::Matrix4<f32>, random_invertible_mat4);
 impl_random_vec!(nalgebra::UnitQuaternion<f32>, random_na_quat);
+impl_random_vec!(euclid::Transform2D<f32, euclid::UnknownUnit, euclid::UnknownUnit>, random_euclid_mat3);
+impl_random_vec!(euclid::Transform3D<f32, euclid::UnknownUnit, euclid::UnknownUnit>, random_euclid_mat4);
+impl_random_vec!(euclid::Rotation3D<f32, euclid::UnknownUnit, euclid::UnknownUnit>, random_euclid_quat);
 
 impl_random_vec!(glam::Vec2);
 impl_random_vec!(glam::Vec3);
@@ -84,6 +87,39 @@ where
 {
     let (x, y, z) = rng.gen::<glam::Vec3>().into();
     euclid::vec3(x, y, z)
+}
+
+fn random_euclid_quat<R>(
+    rng: &mut R,
+) -> euclid::Rotation3D<f32, euclid::UnknownUnit, euclid::UnknownUnit>
+where
+    R: Rng,
+{
+    let (x, y, z, w) = rng.gen::<glam::Quat>().into();
+    euclid::Rotation3D::quaternion(x, y, z, w)
+}
+
+fn random_euclid_mat3<R>(
+    rng: &mut R,
+) -> euclid::Transform2D<f32, euclid::UnknownUnit, euclid::UnknownUnit>
+where
+    R: Rng,
+{
+    let m = random_invertible_mat3(rng);
+    euclid::Transform2D::column_major(m.x.x, m.x.y, m.x.z, m.y.x, m.y.y, m.y.z)
+}
+
+fn random_euclid_mat4<R>(
+    rng: &mut R,
+) -> euclid::Transform3D<f32, euclid::UnknownUnit, euclid::UnknownUnit>
+where
+    R: Rng,
+{
+    let m = random_invertible_mat4(rng);
+    euclid::Transform3D::column_major(
+        m.x.x, m.x.y, m.x.z, m.x.w, m.y.x, m.y.y, m.y.z, m.y.w, m.z.x, m.z.y, m.z.z, m.z.w, m.w.x,
+        m.w.y, m.w.z, m.w.w,
+    )
 }
 
 pub fn random_vec2<R>(rng: &mut R) -> mint::Vector2<f32>

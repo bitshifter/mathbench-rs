@@ -38,12 +38,16 @@ macro_rules! bench_unop {
 
 #[macro_export]
 macro_rules! by_value {
-    ($e:expr) => {*$e};
+    ($e:expr) => {
+        *$e
+    };
 }
 
 #[macro_export]
 macro_rules! by_ref {
-    ($e:expr) => {$e};
+    ($e:expr) => {
+        $e
+    };
 }
 
 #[macro_export]
@@ -63,7 +67,10 @@ macro_rules! bench_binop {
     ($b: ident, op => $binop: ident, ty1 => $ty1:ty, ty2 => $ty2:ty) => {{
         bench_binop!($b, op => $binop, ty1 => $ty1, ty2 => $ty2, param => by_value)
     }};
-    // ($b: ident, op => $binop: ident, ty => $ty:ty) => {{
-    //     bench_binop!($b, op => $binop, ty1 => $ty, ty2 => $ty)
-    // }};
+    ($b: ident, op => $binop: ident, ty => $ty:ty, param => $param:tt) => {{
+        bench_binop!($b, op => $binop, ty1 => $ty, ty2 => $ty, param => $param)
+    }};
+    ($b: ident, op => $binop: ident, ty => $ty:ty) => {{
+        bench_binop!($b, op => $binop, ty1 => $ty, ty2 => $ty)
+    }};
 }
