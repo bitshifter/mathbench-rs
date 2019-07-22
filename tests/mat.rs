@@ -212,7 +212,7 @@ fn mat3_inv_compare() {
     use cgmath::prelude::*;
 
     let mut rng = Xoshiro256Plus::seed_from_u64(0);
-    let mm1 = random_invertible_mat3(&mut rng);
+    let mm1 = random_homogeneous_mat3(&mut rng);
 
     let gm1: glam::Mat3 = mm1.into();
     let gmi = gm1.inverse();
