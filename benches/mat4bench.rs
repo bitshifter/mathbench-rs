@@ -3,6 +3,10 @@
 mod macros;
 use criterion::{criterion_group, criterion_main, Criterion};
 
+// Note that euclid doesn't have a 4x4 matrix, it has Transform3D which is a
+// stored as 4x4 matrix internally. It is included here as a 4x4 matrix is the
+// closest point of comparison.
+
 fn bench_mat4_transpose(c: &mut Criterion) {
     use criterion::Benchmark;
     c.bench(

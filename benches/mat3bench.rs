@@ -3,6 +3,11 @@
 mod macros;
 use criterion::{criterion_group, criterion_main, Criterion};
 
+// Note that euclid doesn't have 3x3 matrix, it has Transform2D which is a
+// stored as 3x2 matrix internally. It is included here as a 3x3 matrix is the
+// closest point of comparison, but euclid can shortcut some things compared to
+// a 3x3 matrix, for example it's determinant and inverse are cheaper.
+
 fn bench_mat3_transpose(c: &mut Criterion) {
     use criterion::Benchmark;
     c.bench(

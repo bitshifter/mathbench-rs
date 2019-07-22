@@ -32,7 +32,7 @@ macro_rules! impl_random_vec {
 }
 
 impl_random_vec!(glam::Mat2, random_invertible_mat2);
-impl_random_vec!(glam::Mat3, random_invertible_mat3);
+impl_random_vec!(glam::Mat3, random_homogeneous_mat3);
 impl_random_vec!(glam::Mat4, random_homogeneous_mat4);
 impl_random_vec!(glam::Quat, random_quat);
 impl_random_vec!(glam::Vec2);
@@ -44,8 +44,9 @@ impl_random_vec!(
     random_cgmath_decomposed3
 );
 impl_random_vec!(cgmath::Matrix2<f32>, random_invertible_mat2);
-impl_random_vec!(cgmath::Matrix3<f32>, random_invertible_mat3);
+impl_random_vec!(cgmath::Matrix3<f32>, random_homogeneous_mat3);
 impl_random_vec!(cgmath::Matrix4<f32>, random_homogeneous_mat4);
+impl_random_vec!(cgmath::Point2<f32>, random_cgmath_point2);
 impl_random_vec!(cgmath::Point3<f32>, random_cgmath_point3);
 impl_random_vec!(cgmath::Quaternion<f32>, random_quat);
 impl_random_vec!(cgmath::Vector2<f32>);
@@ -53,9 +54,11 @@ impl_random_vec!(cgmath::Vector3<f32>);
 impl_random_vec!(cgmath::Vector4<f32>);
 
 impl_random_vec!(nalgebra::Matrix2<f32>, random_invertible_mat2);
-impl_random_vec!(nalgebra::Matrix3<f32>, random_invertible_mat3);
+impl_random_vec!(nalgebra::Matrix3<f32>, random_homogeneous_mat3);
 impl_random_vec!(nalgebra::Matrix4<f32>, random_homogeneous_mat4);
+impl_random_vec!(nalgebra::Point2<f32>);
 impl_random_vec!(nalgebra::Point3<f32>);
+impl_random_vec!(nalgebra::Transform2<f32>, random_na_transform2);
 impl_random_vec!(nalgebra::Transform3<f32>, random_na_transform3);
 impl_random_vec!(nalgebra::UnitQuaternion<f32>, random_na_quat);
 impl_random_vec!(nalgebra::Vector2<f32>);
@@ -70,6 +73,13 @@ impl_random_vec!(euclid::Transform3D<f32, euclid::UnknownUnit, euclid::UnknownUn
 impl_random_vec!(euclid::Vector2D<f32, euclid::UnknownUnit>, random_euclid_vec2);
 impl_random_vec!(euclid::Vector3D<f32, euclid::UnknownUnit>, random_euclid_vec3);
 
+fn random_nonzero_f32<R>(rng: &mut R) -> f32
+where
+    R: Rng,
+{
+    rng.gen_range(0.1, 1.0)
+}
+
 // glam random functions ------------------------------------------------------
 fn random_glam_vec3<R>(rng: &mut R) -> glam::Vec3
 where
@@ -78,16 +88,18 @@ where
     rng.gen()
 }
 
+fn random_nonzero_glam_vec2<R>(rng: &mut R) -> glam::Vec2
+where
+    R: Rng,
+{
+    glam::Vec2::new(random_nonzero_f32(rng), random_nonzero_f32(rng))
+}
+
 fn random_nonzero_glam_vec3<R>(rng: &mut R) -> glam::Vec3
 where
     R: Rng,
 {
-    loop {
-        let v: glam::Vec3 = rng.gen();
-        if v.length_squared() > 0.1 {
-            return v;
-        }
-    }
+    glam::Vec3::new(random_nonzero_f32(rng), random_nonzero_f32(rng), random_nonzero_f32(rng))
 }
 
 fn random_glam_quat<R>(rng: &mut R) -> glam::Quat
@@ -162,12 +174,16 @@ where
     }
 }
 
-pub fn random_invertible_mat3<R>(rng: &mut R) -> mint::ColumnMatrix3<f32>
+pub fn random_homogeneous_mat3<R>(rng: &mut R) -> mint::ColumnMatrix3<f32>
 where
     R: Rng,
 {
     loop {
-        let m = rng.gen::<glam::Mat3>();
+        let m = glam::Mat3::from_scale_angle_translation(
+            random_nonzero_glam_vec2(rng),
+            rng.gen(),
+            rng.gen(),
+            );
         if approx::relative_ne!(m.determinant(), 0.0) {
             return m.into();
         }
@@ -204,6 +220,14 @@ where
     }
 }
 
+fn random_cgmath_point2<R>(rng: &mut R) -> cgmath::Point2<f32>
+where
+    R: Rng,
+{
+    let v = random_vec2(rng);
+    cgmath::Point2::new(v.x, v.y)
+}
+
 fn random_cgmath_point3<R>(rng: &mut R) -> cgmath::Point3<f32>
 where
     R: Rng,
@@ -218,6 +242,13 @@ where
     R: Rng,
 {
     nalgebra::UnitQuaternion::from_quaternion(random_quat(rng).into())
+}
+
+fn random_na_transform2<R>(rng: &mut R) -> nalgebra::Transform2<f32>
+where
+    R: Rng,
+{
+    nalgebra::Transform2::from_matrix_unchecked(random_homogeneous_mat3(rng).into())
 }
 
 fn random_na_transform3<R>(rng: &mut R) -> nalgebra::Transform3<f32>
@@ -274,7 +305,7 @@ fn random_euclid_mat3<R>(
 where
     R: Rng,
 {
-    let m = random_invertible_mat3(rng);
+    let m = random_homogeneous_mat3(rng);
     euclid::Transform2D::column_major(m.x.x, m.x.y, m.x.z, m.y.x, m.y.y, m.y.z)
 }
 
