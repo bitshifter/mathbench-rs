@@ -37,6 +37,10 @@ fn bench_mat4_determinant(c: &mut Criterion) {
         .with_function("nalgebra", |b| {
             use nalgebra::Matrix4;
             bench_unop!(b, op => determinant, ty => Matrix4<f32>)
+        })
+        .with_function("euclid", |b| {
+            use euclid::{Transform3D, UnknownUnit};
+            bench_unop!(b, op => determinant, ty => Transform3D<f32, UnknownUnit, UnknownUnit>)
         }),
     );
 }
@@ -56,6 +60,10 @@ fn bench_mat4_inverse(c: &mut Criterion) {
         .with_function("nalgebra", |b| {
             use nalgebra::Matrix4;
             bench_unop!(b, op => try_inverse, ty => Matrix4<f32>)
+        })
+        .with_function("euclid", |b| {
+            use euclid::{Transform3D, UnknownUnit};
+            bench_unop!(b, op => inverse, ty => Transform3D<f32, UnknownUnit, UnknownUnit>)
         }),
     );
 }
@@ -71,12 +79,16 @@ fn bench_mat4_mul_mat4(c: &mut Criterion) {
         })
         .with_function("cgmath", |b| {
             use cgmath::Matrix4;
-            bench_binop!(b, op => mul, ty1 => Matrix4<f32>, ty2 => Matrix4<f32>)
+            bench_binop!(b, op => mul, ty1 => Matrix4<f32>, ty2 => Matrix4<f32>, param => by_ref)
         })
         .with_function("nalgebra", |b| {
             use nalgebra::Matrix4;
-            bench_binop!(b, op => mul, ty1 => Matrix4<f32>, ty2 => Matrix4<f32>)
-        }),
+            bench_binop!(b, op => mul, ty1 => Matrix4<f32>, ty2 => Matrix4<f32>, param => by_ref)
+        })
+        .with_function("euclid", |b| {
+            use euclid::{Transform3D, UnknownUnit};
+            bench_binop!(b, op => post_transform, ty => Transform3D<f32, UnknownUnit, UnknownUnit>, param => by_ref)
+        })
     );
 }
 
