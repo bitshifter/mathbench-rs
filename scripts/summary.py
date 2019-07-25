@@ -72,6 +72,9 @@ def main():
         values = [bench[x] for x in libs if x in bench]
         max_value = max(values)
         min_value = min(values)
+        # hack so nothing is highlighted if there's only one lib to display
+        if len(libs) == 1:
+            min_value = max_value + 1
         value_strs = [fmt_bench(bench.get(x, None), max_value, min_value) for x in libs]
         pt.add_row([bench_name] + value_strs)
     pt.sortby = 'benchmark'
