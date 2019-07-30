@@ -2,13 +2,14 @@
 
 import json
 import os
+import sys
 import prettytable
 
 def main():
     root_dir = os.path.normpath(os.path.join(os.path.dirname(__file__), '..'))
     criterion_dir = os.path.join(root_dir, 'target', 'criterion')
     if not os.path.isdir(criterion_dir):
-        sys.exit("'{}' directory doesn't exist, run `cargo bench` first.")
+        sys.exit("'{}' directory doesn't exist, run `cargo bench` first.".format(criterion_dir))
 
     libs = ['glam', 'cgmath', 'nalgebra']
     benches = {}
