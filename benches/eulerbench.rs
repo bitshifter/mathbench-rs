@@ -36,6 +36,10 @@ fn bench_euler_3d(c: &mut Criterion) {
         .with_function("nalgebra", |b| {
             use nalgebra::{zero, Vector3};
             bench_euler!(b, ty => Vector3<f32>, zero => zero());
+        })
+        .with_function("hektor", |b| {
+            use hektor::*;
+            bench_euler!(b, ty => Vec3, zero => Vec3::default());
         }),
     );
 }
@@ -55,6 +59,10 @@ fn bench_euler_2d(c: &mut Criterion) {
         .with_function("nalgebra", |b| {
             use nalgebra::{zero, Vector2};
             bench_euler!(b, ty => Vector2<f32>, zero => zero());
+        })
+        .with_function("hektor", |b| {
+            use hektor::*;
+            bench_euler!(b, ty => Vec2, zero => Vec2::default());
         }),
     );
 }

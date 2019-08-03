@@ -240,3 +240,13 @@ pub fn nalgebra_mat4_mul(
 ) -> nalgebra::Matrix4<f32> {
     lhs * rhs
 }
+
+pub fn random_hektor_vec2(g: &mut impl Rng) -> hektor::Vec2 {
+  hektor::Vec2::new(g.gen(), g.gen())
+}
+impl_random_vec!(hektor::Vec2, random_hektor_vec2);
+
+pub fn random_hektor_vec3(g: &mut impl Rng) -> hektor::Vec3 {
+  hektor::Vec3::new(g.gen(), g.gen(), g.gen())
+}
+impl_random_vec!(hektor::Vec3, random_hektor_vec3);

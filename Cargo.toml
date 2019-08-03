@@ -25,6 +25,10 @@ version = "~0.17"
 default-features = false
 features = ["mint"]
 
+[dependencies.hektor]
+version = "0.2"
+features = ["mint"]
+
 [dev-dependencies]
 criterion = "~0.2"
 
