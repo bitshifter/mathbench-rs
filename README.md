@@ -12,6 +12,7 @@ games and graphics development, including:
 
 * [`cgmath`][cgmath]
 * [`nalgebra`][nalgebra]
+* [hektor](https://docs.rs/hektor)
 
 ## The benchmarks
 
