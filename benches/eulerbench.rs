@@ -40,6 +40,9 @@ fn bench_euler_3d(c: &mut Criterion) {
         .with_function("hektor", |b| {
             use hektor::*;
             bench_euler!(b, ty => Vec3, zero => Vec3::default());
+        .with_function("euclid", |b| {
+            use euclid::{UnknownUnit, Vector3D};
+            bench_euler!(b, ty => Vector3D<f32, UnknownUnit>, zero => Vector3D::zero());
         }),
     );
 }
@@ -63,6 +66,9 @@ fn bench_euler_2d(c: &mut Criterion) {
         .with_function("hektor", |b| {
             use hektor::*;
             bench_euler!(b, ty => Vec2, zero => Vec2::default());
+        .with_function("euclid", |b| {
+            use euclid::{UnknownUnit, Vector2D};
+            bench_euler!(b, ty => Vector2D<f32, UnknownUnit>, zero => Vector2D::zero());
         }),
     );
 }

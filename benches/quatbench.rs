@@ -22,6 +22,10 @@ fn bench_quat_conjugate(c: &mut Criterion) {
         .with_function("hektor", |b| {
             use hektor::Quat;
             bench_unop!(b, op => conjugate, ty => Quat)
+        .with_function("euclid", |b| {
+            use euclid::{Rotation3D, UnknownUnit};
+            // inverse assume normalized quaternion, so it's just a conjugate
+            bench_unop!(b, op => inverse, ty => Rotation3D<f32, UnknownUnit, UnknownUnit>)
         }),
     );
 }
@@ -46,6 +50,9 @@ fn bench_quat_mul_quat(c: &mut Criterion) {
         .with_function("hektor", |b| {
             use hektor::Quat;
             bench_binop!(b, op => mul, ty1 => Quat, ty2 => Quat)
+        .with_function("euclid", |b| {
+            use euclid::{Rotation3D, UnknownUnit};
+            bench_binop!(b, op => pre_rotate, ty => Rotation3D<f32, UnknownUnit, UnknownUnit>, param => by_ref)
         }),
     );
 }

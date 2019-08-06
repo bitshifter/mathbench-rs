@@ -6,6 +6,7 @@ edition = "2018"
 
 [dependencies]
 approx = { version = "~0.3", default-features = false }
+euclid = "~0.20"
 mint = "~0.5"
 rand = { version = "~0.6", default-features = false }
 rand_xoshiro = "~0.1"
