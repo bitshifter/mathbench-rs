@@ -18,6 +18,10 @@ fn bench_mat2_transpose(c: &mut Criterion) {
         .with_function("nalgebra", |b| {
             use nalgebra::Matrix2;
             bench_unop!(b, op => transpose, ty => Matrix2<f32>)
+        })
+        .with_function("hektor", |b| {
+            use hektor::Mat2;
+            bench_unop!(b, op => transpose, ty => Mat2)
         }),
     );
 }
@@ -37,6 +41,10 @@ fn bench_mat2_determinant(c: &mut Criterion) {
         .with_function("nalgebra", |b| {
             use nalgebra::Matrix2;
             bench_unop!(b, op => determinant, ty => Matrix2<f32>)
+        })
+        .with_function("hektor", |b| {
+            use hektor::Mat2;
+            bench_unop!(b, op => determinant, ty => Mat2)
         }),
     );
 }
@@ -56,6 +64,10 @@ fn bench_mat2_inverse(c: &mut Criterion) {
         .with_function("nalgebra", |b| {
             use nalgebra::Matrix2;
             bench_unop!(b, op => try_inverse, ty => Matrix2<f32>)
+        })
+        .with_function("hektor", |b| {
+            use hektor::Mat2;
+            bench_unop!(b, op => inverse, ty => Mat2)
         }),
     );
 }
@@ -76,6 +88,10 @@ fn bench_mat2_mul_mat2(c: &mut Criterion) {
         .with_function("nalgebra", |b| {
             use nalgebra::Matrix2;
             bench_binop!(b, op => mul, ty1 => Matrix2<f32>, ty2 => Matrix2<f32>)
+        })
+        .with_function("hektor", |b| {
+            use hektor::Mat2;
+            bench_binop!(b, op => mul, ty1 => Mat2, ty2 => Mat2)
         }),
     );
 }

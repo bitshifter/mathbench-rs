@@ -241,6 +241,10 @@ pub fn nalgebra_mat4_mul(
     lhs * rhs
 }
 
+//
+// HEKTOR TYPES (move to a module or something if you like)
+//
+
 pub fn random_hektor_vec2(g: &mut impl Rng) -> hektor::Vec2 {
   hektor::Vec2::new(g.gen(), g.gen())
 }
@@ -250,3 +254,37 @@ pub fn random_hektor_vec3(g: &mut impl Rng) -> hektor::Vec3 {
   hektor::Vec3::new(g.gen(), g.gen(), g.gen())
 }
 impl_random_vec!(hektor::Vec3, random_hektor_vec3);
+
+pub fn random_hektor_vec4(g: &mut impl Rng) -> hektor::Vec4 {
+  hektor::Vec4::new(g.gen(), g.gen(), g.gen(), g.gen())
+}
+impl_random_vec!(hektor::Vec4, random_hektor_vec4);
+
+pub fn random_hektor_mat2(g: &mut impl Rng) -> hektor::Mat2 {
+  let x_axis = random_hektor_vec2(g);
+  let y_axis = random_hektor_vec2(g);
+  hektor::Mat2::new(x_axis, y_axis)
+}
+impl_random_vec!(hektor::Mat2, random_hektor_mat2);
+
+pub fn random_hektor_mat3(g: &mut impl Rng) -> hektor::Mat3 {
+  let x_axis = random_hektor_vec3(g);
+  let y_axis = random_hektor_vec3(g);
+  let z_axis = random_hektor_vec3(g);
+  hektor::Mat3::new(x_axis, y_axis, z_axis)
+}
+impl_random_vec!(hektor::Mat3, random_hektor_mat3);
+
+pub fn random_hektor_mat4(g: &mut impl Rng) -> hektor::Mat4 {
+  let x_axis = random_hektor_vec4(g);
+  let y_axis = random_hektor_vec4(g);
+  let z_axis = random_hektor_vec4(g);
+  let w_axis = random_hektor_vec4(g);
+  hektor::Mat4::new(x_axis, y_axis, z_axis, w_axis)
+}
+impl_random_vec!(hektor::Mat4, random_hektor_mat4);
+
+pub fn random_hektor_quat(g: &mut impl Rng) -> hektor::Quat {
+  hektor::Quat::new(g.gen(), g.gen(), g.gen(), g.gen())
+}
+impl_random_vec!(hektor::Quat, random_hektor_quat);

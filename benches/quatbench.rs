@@ -18,6 +18,10 @@ fn bench_quat_conjugate(c: &mut Criterion) {
         .with_function("nalgebra", |b| {
             use nalgebra::UnitQuaternion;
             bench_unop!(b, op => conjugate, ty => UnitQuaternion<f32>)
+        })
+        .with_function("hektor", |b| {
+            use hektor::Quat;
+            bench_unop!(b, op => conjugate, ty => Quat)
         }),
     );
 }
@@ -38,6 +42,10 @@ fn bench_quat_mul_quat(c: &mut Criterion) {
         .with_function("nalgebra", |b| {
             use nalgebra::UnitQuaternion;
             bench_binop!(b, op => mul, ty1 => UnitQuaternion<f32>, ty2 => UnitQuaternion<f32>)
+        })
+        .with_function("hektor", |b| {
+            use hektor::Quat;
+            bench_binop!(b, op => mul, ty1 => Quat, ty2 => Quat)
         }),
     );
 }

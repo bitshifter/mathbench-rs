@@ -19,6 +19,10 @@ fn bench_mat4_transform_vec4(c: &mut Criterion) {
         .with_function("nalgebra", |b| {
             use nalgebra::{Matrix4, Vector4};
             bench_binop!(b, op => mul, ty1 => Matrix4<f32>, ty2 => Vector4<f32>)
+        })
+        .with_function("hektor", |b| {
+            use hektor::{Mat4, Vec4};
+            bench_binop!(b, op => mul, ty1 => Mat4, ty2 => Vec4)
         }),
     );
 }
@@ -39,6 +43,10 @@ fn bench_mat3_transform_vec3(c: &mut Criterion) {
         .with_function("nalgebra", |b| {
             use nalgebra::{Matrix3, Vector3};
             bench_binop!(b, op => mul, ty1 => Matrix3<f32>, ty2 => Vector3<f32>)
+        })
+        .with_function("hektor", |b| {
+            use hektor::{Mat3, Vec3};
+            bench_binop!(b, op => mul, ty1 => Mat3, ty2 => Vec3)
         }),
     );
 }
@@ -59,6 +67,10 @@ fn bench_mat2_transform_vec2(c: &mut Criterion) {
         .with_function("nalgebra", |b| {
             use nalgebra::{Matrix2, Vector2};
             bench_binop!(b, op => mul, ty1 => Matrix2<f32>, ty2 => Vector2<f32>)
+        })
+        .with_function("hektor", |b| {
+            use hektor::{Mat2, Vec2};
+            bench_binop!(b, op => mul, ty1 => Mat2, ty2 => Vec2)
         }),
     );
 }
