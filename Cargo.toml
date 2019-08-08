@@ -18,7 +18,7 @@ features = ["approx", "mint", "rand"]
 [dependencies.nalgebra]
 version = "~0.18"
 default-features = false
-features = ["mint"]
+features = ["std", "mint"]
 
 [dependencies.cgmath]
 version = "~0.17"
