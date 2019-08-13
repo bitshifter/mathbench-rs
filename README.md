@@ -36,30 +36,30 @@ performance to `cgmath` and `nalgebra` on `f32` data.
 
 | benchmark           |         glam   |       cgmath   |     nalgebra   |
 |:--------------------|---------------:|---------------:|---------------:|
-| euler 2d            |     9.063 us   |   __8.977 us__ |     27.94 us   |
-| euler 3d            |   __15.78 us__ |     29.52 us   |     195.4 us   |
-| mat2 determinant    |    1.3140 ns   |  __1.0528 ns__ |    1.0825 ns   |
-| mat2 inverse        |  __2.0524 ns__ |    2.6565 ns   |    2.7056 ns   |
-| mat2 mul mat2       |  __2.1091 ns__ |    3.0495 ns   |    3.6305 ns   |
-| mat2 transform vec2 |  __2.1865 ns__ |    2.4035 ns   |    6.8877 ns   |
-| mat2 transpose      |  __0.7117 ns__ |    1.3231 ns   |    1.8297 ns   |
-| mat3 determinant    |  __2.2130 ns__ |    2.5348 ns   |    2.5766 ns   |
-| mat3 inverse        |  __7.7296 ns__ |    7.9519 ns   |    9.3100 ns   |
-| mat3 mul mat3       |  __4.9371 ns__ |    9.4619 ns   |    8.3076 ns   |
-| mat3 transform vec3 |  __2.2893 ns__ |    4.0822 ns   |    8.0838 ns   |
-| mat3 transpose      |  __2.0035 ns__ |    3.5175 ns   |    8.9548 ns   |
-| mat4 determinant    |  __7.9524 ns__ |   12.2581 ns   |   54.2954 ns   |
-| mat4 inverse        | __21.0455 ns__ |   43.6983 ns   |   55.8788 ns   |
-| mat4 mul mat4       |  __6.7517 ns__ |    9.2621 ns   |   16.2498 ns   |
-| mat4 transform vec4 |  __2.5298 ns__ |    3.5734 ns   |    4.1222 ns   |
-| mat4 transpose      |  __2.7026 ns__ |    8.0926 ns   |   11.5411 ns   |
-| quat conjugate      |  __0.8866 ns__ |    1.8263 ns   |    1.7650 ns   |
-| quat mul quat       |  __2.8647 ns__ |    5.6678 ns   |    5.4807 ns   |
-| quat transform vec3 |  __4.2107 ns__ |    6.5798 ns   |    7.0398 ns   |
-| vec3 cross          |  __2.0677 ns__ |    2.8890 ns   |    2.8725 ns   |
-| vec3 dot            |  __1.3789 ns__ |    1.6669 ns   |    1.6666 ns   |
-| vec3 length         |  __2.0412 ns__ |    2.0508 ns   |   88.1277 ns   |
-| vec3 normalize      |  __4.0433 ns__ |    4.1260 ns   |   87.2455 ns   |
+| euler 2d            |   __9.045 us__ |     11.22 us   |     27.98 us   |
+| euler 3d            |   __15.66 us__ |     29.54 us   |     195.2 us   |
+| mat2 determinant    |    1.3129 ns   |  __1.0533 ns__ |    1.0838 ns   |
+| mat2 inverse        |  __2.0472 ns__ |    2.6900 ns   |    2.6850 ns   |
+| mat2 mul mat2       |  __2.1437 ns__ |    3.0665 ns   |    4.1104 ns   |
+| mat2 transform vec2 |  __2.1776 ns__ |    2.3907 ns   |    6.9174 ns   |
+| mat2 transpose      |  __0.7422 ns__ |    1.3226 ns   |    1.8211 ns   |
+| mat3 determinant    |  __2.2018 ns__ |    2.5317 ns   |    2.5732 ns   |
+| mat3 inverse        |  __7.7098 ns__ |    7.9422 ns   |    9.2800 ns   |
+| mat3 mul mat3       |  __4.8232 ns__ |    9.4786 ns   |    9.4087 ns   |
+| mat3 transform vec3 |  __2.4629 ns__ |    4.0456 ns   |    7.7514 ns   |
+| mat3 transpose      |  __1.9799 ns__ |    3.5518 ns   |    8.9686 ns   |
+| mat4 determinant    |  __7.6707 ns__ |   11.1863 ns   |   49.6599 ns   |
+| mat4 inverse        | __22.1710 ns__ |   47.7588 ns   |   55.5281 ns   |
+| mat4 mul mat4       |  __6.8146 ns__ |    9.7314 ns   |   19.0294 ns   |
+| mat4 transform vec4 |  __2.5205 ns__ |    3.6180 ns   |    5.0138 ns   |
+| mat4 transpose      |  __2.7045 ns__ |    7.9254 ns   |   10.7011 ns   |
+| quat conjugate      |  __0.8886 ns__ |    1.7810 ns   |    1.7754 ns   |
+| quat mul quat       |  __2.6494 ns__ |    5.3704 ns   |    5.2748 ns   |
+| quat transform vec3 |  __4.1672 ns__ |    6.5700 ns   |    6.9521 ns   |
+| vec3 cross          |  __2.0821 ns__ |    2.8592 ns   |    2.8456 ns   |
+| vec3 dot            |  __1.3839 ns__ |    1.6771 ns   |    1.6275 ns   |
+| vec3 length         |    2.0189 ns   |  __2.0176 ns__ |    2.1048 ns   |
+| vec3 normalize      |  __4.0366 ns__ |    4.1326 ns   |    8.1539 ns   |
 
 These benchmarks were performed on an [Intel i7-4710HQ] CPU on Linux. They were
 compiled with the stable 1.36 Rust compiler. Lower (better) numbers are
