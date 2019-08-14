@@ -159,11 +159,6 @@ fn bench_mat2_transform_vector2(c: &mut Criterion) {
         .with_function("nalgebra", |b| {
             use nalgebra::{Matrix2, Vector2};
             bench_binop!(b, op => mul, ty1 => Matrix2<f32>, ty2 => Vector2<f32>)
-        })
-        // TODO: this isn't the same at the others
-        .with_function("euclid", |b| {
-            use euclid::{Transform2D, Vector2D, UnknownUnit};
-            bench_binop!(b, op => transform_vector, ty1 => Transform2D<f32, UnknownUnit, UnknownUnit>, ty2 => Vector2D<f32, UnknownUnit>)
         }),
     );
 }
