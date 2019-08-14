@@ -186,4 +186,4 @@ If you are interested in contributing or have a request or suggestion
 [Criterion.rs]: https://bheisler.github.io/criterion.rs/book/index.html
 [Code of Conduct]: https://www.rust-lang.org/en-US/conduct.html
 [create an issue]: https://github.com/bitshifter/mathbench-rs/issues
-[mathbench report]: https://bitshifter.github.io/mathbench/criterion/report/index.html
+[mathbench report]: https://bitshifter.github.io/mathbench/0.1.8/report/index.html
