@@ -145,6 +145,8 @@ that generates a new random value of your type pass that to `impl_random_vec!`.
 To add the new libary type to a benchmark, add another `.with_function` call to
 the `Criterion` `bench`.
 
+Increment the patch version number of `mathbench` in the `Cargo.toml`.
+
 ## Future work
 
 * Calculate average error for each library against a high precision result
