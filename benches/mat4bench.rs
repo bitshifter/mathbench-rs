@@ -1,8 +1,11 @@
 #[path = "support/macros.rs"]
 #[macro_use]
 mod macros;
-mod support;
 use criterion::{criterion_group, criterion_main, Criterion};
+
+// Note that euclid doesn't have a 4x4 matrix, it has Transform3D which is a
+// stored as 4x4 matrix internally. It is included here as a 4x4 matrix is the
+// closest point of comparison.
 
 fn bench_mat4_transpose(c: &mut Criterion) {
     use criterion::Benchmark;
@@ -43,6 +46,9 @@ fn bench_mat4_determinant(c: &mut Criterion) {
             use nalgebra::Matrix4;
             bench_unop!(b, op => determinant, ty => Matrix4<f32>)
         })
+        .with_function("euclid", |b| {
+            use euclid::{Transform3D, UnknownUnit};
+            bench_unop!(b, op => determinant, ty => Transform3D<f32, UnknownUnit, UnknownUnit>)
         .with_function("vek", |b| {
             use vek::mat::repr_simd::column_major::Mat4;
             bench_unop!(b, op => determinant, ty => Mat4<f32>)
@@ -66,6 +72,9 @@ fn bench_mat4_inverse(c: &mut Criterion) {
             use nalgebra::Matrix4;
             bench_unop!(b, op => try_inverse, ty => Matrix4<f32>)
         })
+        .with_function("euclid", |b| {
+            use euclid::{Transform3D, UnknownUnit};
+            bench_unop!(b, op => inverse, ty => Transform3D<f32, UnknownUnit, UnknownUnit>)
         .with_function("vek", |b| {
             use vek::mat::repr_simd::column_major::Mat4;
             bench_unop!(b, op => inverted, ty => Mat4<f32>)
@@ -80,21 +89,24 @@ fn bench_mat4_mul_mat4(c: &mut Criterion) {
         "mat4 mul mat4",
         Benchmark::new("glam", |b| {
             use glam::Mat4;
-            bench_binop!(b, op => mul_mat4, ty1 => Mat4, ty2 => Mat4)
+            bench_binop!(b, op => mul, ty1 => Mat4, ty2 => Mat4)
         })
         .with_function("cgmath", |b| {
             use cgmath::Matrix4;
-            bench_binop!(b, op => mul, ty1 => Matrix4<f32>, ty2 => Matrix4<f32>)
+            bench_binop!(b, op => mul, ty1 => Matrix4<f32>, ty2 => Matrix4<f32>, param => by_ref)
         })
         .with_function("nalgebra", |b| {
             use nalgebra::Matrix4;
-            bench_binop!(b, op => mul, ty1 => Matrix4<f32>, ty2 => Matrix4<f32>)
+            bench_binop!(b, op => mul, ty1 => Matrix4<f32>, ty2 => Matrix4<f32>, param => by_ref)
         })
+        .with_function("euclid", |b| {
+            use euclid::{Transform3D, UnknownUnit};
+            bench_binop!(b, op => post_transform, ty => Transform3D<f32, UnknownUnit, UnknownUnit>, param => by_ref)
+        }),
         .with_function("vek", |b| {
             use vek::mat::repr_simd::column_major::Mat4;
-            use support::vek_mat4_mul_mat4;
-            bench_func!(b, op => vek_mat4_mul_mat4, ty1 => Mat4<f32>, ty2 => Mat4<f32>)
-        }),
+            bench_func!(b, op => mul, ty1 => Mat4<f32>, ty2 => Mat4<f32>)
+        })
     );
 }
 

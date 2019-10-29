@@ -44,7 +44,7 @@ fn bench_mat2_determinant(c: &mut Criterion) {
 fn bench_mat2_inverse(c: &mut Criterion) {
     use criterion::Benchmark;
     c.bench(
-        "mat2 inverse (*see notes)",
+        "mat2 inverse",
         Benchmark::new("glam", |b| {
             use glam::Mat2;
             bench_unop!(b, op => inverse, ty => Mat2)
@@ -67,7 +67,7 @@ fn bench_mat2_mul_mat2(c: &mut Criterion) {
         "mat2 mul mat2",
         Benchmark::new("glam", |b| {
             use glam::Mat2;
-            bench_binop!(b, op => mul_mat2, ty1 => Mat2, ty2 => Mat2)
+            bench_binop!(b, op => mul, ty1 => Mat2, ty2 => Mat2)
         })
         .with_function("cgmath", |b| {
             use cgmath::Matrix2;

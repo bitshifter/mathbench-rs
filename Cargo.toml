@@ -1,6 +1,6 @@
 [package]
 name = "mathbench"
-version = "0.1.4"
+version = "0.1.8"
 authors = ["Cameron Hart <cameron.hart@gmail.com>"]
 edition = "2018"
 
@@ -11,22 +11,26 @@ rand = { version = "~0.6", default-features = false }
 rand_xoshiro = "~0.1"
 
 [dependencies.glam]
-version = "~0.7"
+version = "0.7.1"
 default-features = false
 features = ["approx", "mint", "rand"]
 
 [dependencies.nalgebra]
-version = "~0.18"
+version = "0.18.0"
 default-features = false
-features = ["mint"]
+features = ["std", "mint"]
 
 [dependencies.cgmath]
-version = "~0.17"
+version = "0.17.0"
 default-features = false
 features = ["mint"]
 
 [dependencies.vek]
-version = "~0.9"
+version = "0.9.9"
+
+[dependencies.euclid]
+version = "0.20.1"
+features = ["mint"]
 
 [dev-dependencies]
 criterion = "~0.2"
@@ -61,3 +65,7 @@ harness = false
 [[bench]]
 name = "vecbench"
 harness = false
+
+[profile.bench]
+debug = true
+# lto = true

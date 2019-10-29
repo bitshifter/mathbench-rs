@@ -1,16 +1,52 @@
 #!/usr/bin/env python3
 
+import argparse
 import json
 import os
+import sys
 import prettytable
 
+
+CHOICES = ['glam', 'cgmath', 'nalgebra', 'euclid']
+
+class DefaultListAction(argparse.Action):
+    def __call__(self, parser, namespace, values, option_string=None):
+        if values:
+            for value in values:
+                if value not in CHOICES:
+                    message = ("invalid choice: {0!r} (choose from {1})"
+                               .format(value,
+                                       ', '.join([repr(action)
+                                                  for action in CHOICES])))
+
+                    raise argparse.ArgumentError(self, message)
+            setattr(namespace, self.dest, values)
+
+
+def fmt_bench(x, max_value, min_value):
+    if x is not None:
+        if max_value >= 1000:
+            return f'__{x/1000:3.4} us__' if x == min_value else f'  {x/1000:3.4} us  '
+        else:
+            return f'__{x:3.4f} ns__' if x == min_value else f'  {x:3.4f} ns  '
+    return '   N/A      '
+
+
 def main():
+    default_libs = CHOICES
+    parser = argparse.ArgumentParser()
+    parser.add_argument('libs', nargs='*', action=DefaultListAction,
+                        default=default_libs,
+                        help='choose from {0}'.format(CHOICES))
+    args = parser.parse_args()
+
+    libs = list(dict.fromkeys(args.libs))
+
     root_dir = os.path.normpath(os.path.join(os.path.dirname(__file__), '..'))
     criterion_dir = os.path.join(root_dir, 'target', 'criterion')
     if not os.path.isdir(criterion_dir):
-        sys.exit("'{}' directory doesn't exist, run `cargo bench` first.")
+        sys.exit("'{}' directory doesn't exist, run `cargo bench` first.".format(criterion_dir))
 
-    libs = ['glam', 'cgmath', 'nalgebra']
     benches = {}
     for bench_dir in os.listdir(criterion_dir):
         if bench_dir == 'report':
@@ -20,24 +56,27 @@ def main():
             new_path = os.path.join(bench_path, lib_name, 'new')
             benchmark_path = os.path.join(new_path, 'benchmark.json')
             estimates_path = os.path.join(new_path, 'estimates.json')
-            with open(benchmark_path) as f:
-                benchmarks = json.load(f)
-                bench_name = benchmarks['group_id']
-            with open(estimates_path) as f:
-                estimates = json.load(f)
-                slope_point = estimates['Slope']['point_estimate']
-                benches.setdefault(bench_name, {}).setdefault(lib_name, slope_point)
-   
+            try:
+                with open(benchmark_path) as f:
+                    benchmarks = json.load(f)
+                    bench_name = benchmarks['group_id']
+                with open(estimates_path) as f:
+                    estimates = json.load(f)
+                    slope_point = estimates['Slope']['point_estimate']
+                    benches.setdefault(bench_name, {}).setdefault(lib_name, slope_point)
+            except FileNotFoundError:
+                pass
+
     pt = prettytable.PrettyTable(['benchmark'] + [f'  {x:}  ' for x in libs])
     for bench_name in benches:
         bench = benches[bench_name]
-        values = [bench[x] for x in libs]
+        values = [bench[x] for x in libs if x in bench]
         max_value = max(values)
         min_value = min(values)
-        if max_value >= 1000:
-            value_strs = [f'__{x/1000:3.4} us__' if x == min_value else f'  {x/1000:3.4} us  ' for x in values]
-        else:
-            value_strs = [f'__{x:3.4f} ns__' if x == min_value else f'  {x:3.4f} ns  ' for x in values]
+        # hack so nothing is highlighted if there's only one lib to display
+        if len(libs) == 1:
+            min_value = max_value + 1
+        value_strs = [fmt_bench(bench.get(x, None), max_value, min_value) for x in libs]
         pt.add_row([bench_name] + value_strs)
     pt.sortby = 'benchmark'
     pt.align = 'r'
@@ -45,7 +84,7 @@ def main():
     pt.hrules = prettytable.HEADER
     pt.junction_char = '|'
     print(pt)
-        
+
 
 if __name__ == '__main__':
     main()

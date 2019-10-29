@@ -1,18 +1,65 @@
 #[path = "support/macros.rs"]
 #[macro_use]
 mod macros;
-mod support;
 use criterion::{criterion_group, criterion_main, Criterion};
 
-fn bench_mat4_transform_vec4(c: &mut Criterion) {
+/// Homogeneous 4x4 matrix transform of a 3D vector
+fn bench_mat4_transform_vector3(c: &mut Criterion) {
+    use criterion::Benchmark;
+    c.bench(
+        "mat4 transform vector3",
+        Benchmark::new("glam", |b| {
+            use glam::{Mat4, Vec3};
+            bench_binop!(b, op => transform_vector3, ty1 => Mat4, ty2 => Vec3)
+        })
+        .with_function("cgmath", |b| {
+            use cgmath::{Matrix4, Transform, Vector3};
+            bench_binop!(b, op => transform_vector, ty1 => Matrix4<f32>, ty2 => Vector3<f32>)
+        })
+        .with_function("nalgebra", |b| {
+            use nalgebra::{Transform3, Vector3};
+            bench_binop!(b, op => transform_vector, ty1 => Transform3<f32>, ty2 => Vector3<f32>, param => by_ref)
+        })
+        .with_function("euclid", |b| {
+            use euclid::{Transform3D, Vector3D, UnknownUnit};
+            bench_binop!(b, op => transform_vector3d, ty1 => Transform3D<f32, UnknownUnit, UnknownUnit>, ty2 => Vector3D<f32, UnknownUnit>)
+        }),
+    );
+}
+
+/// Homogeneous 4x4 matrix transform of a 3D point
+fn bench_mat4_transform_point3(c: &mut Criterion) {
+    use criterion::Benchmark;
+    c.bench(
+        "mat4 transform point3",
+        Benchmark::new("glam", |b| {
+            use glam::{Mat4, Vec3};
+            bench_binop!(b, op => transform_point3, ty1 => Mat4, ty2 => Vec3)
+        })
+        .with_function("cgmath", |b| {
+            use cgmath::{Matrix4, Point3, Transform};
+            bench_binop!(b, op => transform_point, ty1 => Matrix4<f32>, ty2 => Point3<f32>)
+        })
+        .with_function("nalgebra", |b| {
+            use nalgebra::{Transform3, Point3};
+            bench_binop!(b, op => transform_point, ty1 => Transform3<f32>, ty2 => Point3<f32>, param => by_ref)
+        })
+        .with_function("euclid", |b| {
+            use euclid::{Transform3D, Point3D, UnknownUnit};
+            bench_binop!(b, op => transform_point3d, ty1 => Transform3D<f32, UnknownUnit, UnknownUnit>, ty2 => Point3D<f32, UnknownUnit>)
+        }),
+    );
+}
+
+/// 4x3 matrix multiply of a 4D vector
+fn bench_mat4_transform_vector4(c: &mut Criterion) {
     use criterion::Benchmark;
     use std::ops::Mul;
     c.bench(
-        "mat4 transform vec4",
+        "mat4 transform vector4",
         Benchmark::new("glam", |b| {
             use glam::{Mat4, Vec4};
-            use support::glam_mat4_mul_vec4;
-            bench_func!(b, op => glam_mat4_mul_vec4, ty1 => Mat4, ty2 => Vec4)
+            bench_binop!(b, op => mul, ty1 => Mat4, ty2 => Vec4)
         })
         .with_function("cgmath", |b| {
             use cgmath::{Matrix4, Vector4};
@@ -31,15 +78,64 @@ fn bench_mat4_transform_vec4(c: &mut Criterion) {
     );
 }
 
-fn bench_mat3_transform_vec3(c: &mut Criterion) {
+/// Homogeneous 3x3 matrix transform of a 2D point
+fn bench_mat3_transform_point2(c: &mut Criterion) {
+    use criterion::Benchmark;
+    c.bench(
+        "mat3 transform point2",
+        Benchmark::new("glam", |b| {
+            use glam::{Mat3, Vec2};
+            bench_binop!(b, op => transform_point2, ty1 => Mat3, ty2 => Vec2)
+        })
+        // TODO: doesn't compile but might need a macro change to set return type
+        .with_function("cgmath", |b| {
+            use cgmath::{Matrix3, Transform, Point2};
+            bench_binop!(b, op => transform_point, ty1 => Matrix3<f32>, ty2 => Point2<f32>)
+        })
+        .with_function("nalgebra", |b| {
+            use nalgebra::{Transform2, Point2};
+            bench_binop!(b, op => transform_point, ty1 => Transform2<f32>, ty2 => Point2<f32>, param => by_ref)
+        })
+        .with_function("euclid", |b| {
+            use euclid::{Transform2D, Point2D, UnknownUnit};
+            bench_binop!(b, op => transform_point, ty1 => Transform2D<f32, UnknownUnit, UnknownUnit>, ty2 => Point2D<f32, UnknownUnit>)
+        }),
+    );
+}
+/// Homogeneous 3x3 matrix transform of a 2D vector
+fn bench_mat3_transform_vector2(c: &mut Criterion) {
+    use criterion::Benchmark;
+    c.bench(
+        "mat3 transform vector2",
+        Benchmark::new("glam", |b| {
+            use glam::{Mat3, Vec2};
+            bench_binop!(b, op => transform_vector2, ty1 => Mat3, ty2 => Vec2)
+        })
+        // TODO: doesn't compile but might need a macro change to set return type
+        // .with_function("cgmath", |b| {
+        //     use cgmath::{Matrix3, Transform, Vector2};
+        //     bench_binop!(b, op => transform_vector, ty1 => Matrix3<f32>, ty2 => Vector2<f32>)
+        // })
+        .with_function("nalgebra", |b| {
+            use nalgebra::{Transform2, Vector2};
+            bench_binop!(b, op => transform_vector, ty1 => Transform2<f32>, ty2 => Vector2<f32>, param => by_ref)
+        })
+        .with_function("euclid", |b| {
+            use euclid::{Transform2D, Vector2D, UnknownUnit};
+            bench_binop!(b, op => transform_vector, ty1 => Transform2D<f32, UnknownUnit, UnknownUnit>, ty2 => Vector2D<f32, UnknownUnit>)
+        }),
+    );
+}
+
+/// 3x3 matrix multiply of a 3D vector
+fn bench_mat3_transform_vector3(c: &mut Criterion) {
     use criterion::Benchmark;
     use std::ops::Mul;
     c.bench(
-        "mat3 transform vec3",
+        "mat3 transform vector3",
         Benchmark::new("glam", |b| {
             use glam::{Mat3, Vec3};
-            use support::glam_mat3_mul_vec3;
-            bench_func!(b, op => glam_mat3_mul_vec3, ty1 => Mat3, ty2 => Vec3)
+            bench_binop!(b, op => mul, ty1 => Mat3, ty2 => Vec3)
         })
         .with_function("cgmath", |b| {
             use cgmath::{Matrix3, Vector3};
@@ -52,15 +148,15 @@ fn bench_mat3_transform_vec3(c: &mut Criterion) {
     );
 }
 
-fn bench_mat2_transform_vec2(c: &mut Criterion) {
+/// 2x2 matrix multiply of a 2D vector
+fn bench_mat2_transform_vector2(c: &mut Criterion) {
     use criterion::Benchmark;
     use std::ops::Mul;
     c.bench(
-        "mat2 transform vec2",
+        "mat2 transform vector2",
         Benchmark::new("glam", |b| {
             use glam::{Mat2, Vec2};
-            use support::glam_mat2_mul_vec2;
-            bench_func!(b, op => glam_mat2_mul_vec2, ty1 => Mat2, ty2 => Vec2)
+            bench_binop!(b, op => mul, ty1 => Mat2, ty2 => Vec2)
         })
         .with_function("cgmath", |b| {
             use cgmath::{Matrix2, Vector2};
@@ -73,15 +169,15 @@ fn bench_mat2_transform_vec2(c: &mut Criterion) {
     );
 }
 
-fn bench_quat_transform_vec3(c: &mut Criterion) {
+/// Quaternion rotation of a 3D vector
+fn bench_quat_transform_vector3(c: &mut Criterion) {
     use criterion::Benchmark;
     use std::ops::Mul;
     c.bench(
-        "quat transform vec3",
+        "quat transform vector3",
         Benchmark::new("glam", |b| {
             use glam::{Quat, Vec3};
-            use support::glam_quat_mul_vec3;
-            bench_func!(b, op => glam_quat_mul_vec3, ty1 => Quat, ty2 => Vec3)
+            bench_binop!(b, op => mul, ty1 => Quat, ty2 => Vec3)
         })
         .with_function("cgmath", |b| {
             use cgmath::{Quaternion, Vector3};
@@ -90,15 +186,24 @@ fn bench_quat_transform_vec3(c: &mut Criterion) {
         .with_function("nalgebra", |b| {
             use nalgebra::{UnitQuaternion, Vector3};
             bench_binop!(b, op => mul, ty1 => UnitQuaternion<f32>, ty2 => Vector3<f32>)
-        }),
+        })
+        .with_function("euclid", |b| {
+            use euclid::{Rotation3D, Point3D, UnknownUnit};
+            bench_binop!(b, op => transform_point3d, ty1 => Rotation3D<f32, UnknownUnit, UnknownUnit>, ty2 => Point3D<f32, UnknownUnit>)
+        })
+        ,
     );
 }
 
 criterion_group!(
     transform_benches,
-    bench_mat2_transform_vec2,
-    bench_mat3_transform_vec3,
-    bench_mat4_transform_vec4,
-    bench_quat_transform_vec3,
+    bench_mat2_transform_vector2,
+    bench_mat3_transform_point2,
+    bench_mat3_transform_vector2,
+    bench_mat3_transform_vector3,
+    bench_mat4_transform_point3,
+    bench_mat4_transform_vector3,
+    bench_mat4_transform_vector4,
+    bench_quat_transform_vector3,
 );
 criterion_main!(transform_benches);

@@ -94,6 +94,48 @@ fn vec3_normalize_compare() {
     assert_ulps_eq!(gvn, mvn.into(), epsilon = 1e-6);
 }
 
+fn vec4_dot_compare() {
+    let mut rng = Xoshiro256Plus::seed_from_u64(rand::random());
+    let mv1 = random_vec4(&mut rng);
+    let mv2 = random_vec4(&mut rng);
+
+    let gv1: glam::Vec4 = mv1.into();
+    let gv2: glam::Vec4 = mv2.into();
+    let gd = gv1.dot(gv2);
+
+    let nv1: nalgebra::Vector4<f32> = mv1.into();
+    let nv2: nalgebra::Vector4<f32> = mv2.into();
+    let nd = nv1.dot(&nv2);
+
+    let cv1: cgmath::Vector4<f32> = mv1.into();
+    let cv2: cgmath::Vector4<f32> = mv2.into();
+    let cd = cv1.dot(cv2);
+
+    // use nalgebra as assumed correct answer
+    assert_ulps_eq!(cd, nd, epsilon = 1e-6);
+    assert_ulps_eq!(gd, nd, epsilon = 1e-6);
+}
+
+fn vec4_normalize_compare() {
+    let mut rng = Xoshiro256Plus::seed_from_u64(rand::random());
+    let mv = random_vec4(&mut rng);
+
+    let gv: glam::Vec4 = mv.into();
+    let gvn = gv.normalize();
+
+    let nv: nalgebra::Vector4<f32> = mv.into();
+    let nvn = nv.normalize();
+
+    let cv: cgmath::Vector4<f32> = mv.into();
+    let cvn = cv.normalize();
+
+    // use nalgebra as assumed correct answer
+    let mvn: mint::Vector4<f32> = nvn.into();
+
+    assert_ulps_eq!(cvn, mvn.into(), epsilon = 1e-6);
+    assert_ulps_eq!(gvn, mvn.into(), epsilon = 1e-6);
+}
+
 #[test]
 fn test_vec2_normalize() {
     for _ in 0..NUM_ITERS {
@@ -119,5 +161,19 @@ fn test_vec3_cross() {
 fn test_vec3_normalize() {
     for _ in 0..NUM_ITERS {
         vec3_normalize_compare();
+    }
+}
+
+#[test]
+fn test_vec4_dot() {
+    for _ in 0..NUM_ITERS {
+        vec4_dot_compare();
+    }
+}
+
+#[test]
+fn test_vec4_normalize() {
+    for _ in 0..NUM_ITERS {
+        vec4_normalize_compare();
     }
 }
