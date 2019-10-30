@@ -1,4 +1,4 @@
-use approx::assert_ulps_eq;
+mod support;
 use cgmath;
 use glam;
 use mathbench::*;
@@ -10,8 +10,8 @@ const NUM_ITERS: usize = 1024;
 
 fn quat_mul_vec3_compare() {
     let mut rng = Xoshiro256Plus::seed_from_u64(rand::random());
-    let mq = random_quat(&mut rng);
-    let mv = random_vec3(&mut rng);
+    let mq = random_mint_quat(&mut rng);
+    let mv = random_mint_vec3(&mut rng);
 
     let gq: glam::Quat = mq.into();
     let gv: glam::Vec3 = mv.into();
@@ -34,8 +34,8 @@ fn quat_mul_vec3_compare() {
 
 fn quat_mul_quat_compare() {
     let mut rng = Xoshiro256Plus::seed_from_u64(rand::random());
-    let mq1 = random_quat(&mut rng);
-    let mq2 = random_quat(&mut rng);
+    let mq1 = random_mint_quat(&mut rng);
+    let mq2 = random_mint_quat(&mut rng);
 
     let gq1: glam::Quat = mq1.into();
     let gq2: glam::Quat = mq2.into();
@@ -65,7 +65,7 @@ fn test_quat_from_axis_angle() {
     let mx: mint::Vector3<f32> = nx.into_inner().into();
     assert_eq!(gx, mx.into());
     let cx = cgmath::Vector3::unit_x();
-    let gq = glam::Quat::from_axis_angle(gx, glam::rad(rad));
+    let gq = glam::Quat::from_axis_angle(gx, rad);
     let nq = nalgebra::UnitQuaternion::from_axis_angle(&nx, rad);
     let cq = cgmath::Quaternion::from_axis_angle(cx, cgmath::Rad(rad));
     let mnq: mint::Quaternion<f32> = nq.into();

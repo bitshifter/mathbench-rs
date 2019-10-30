@@ -23,7 +23,7 @@ fn bench_mat3_transpose(c: &mut Criterion) {
         .with_function("nalgebra", |b| {
             use nalgebra::Matrix3;
             bench_unop!(b, op => transpose, ty => Matrix3<f32>)
-        })
+        }),
     );
 }
 
@@ -46,7 +46,7 @@ fn bench_mat3_determinant(c: &mut Criterion) {
         .with_function("euclid", |b| {
             use euclid::{Transform2D, UnknownUnit};
             bench_unop!(b, op => determinant, ty => Transform2D<f32, UnknownUnit, UnknownUnit>)
-        })
+        }),
     );
 }
 
@@ -69,7 +69,7 @@ fn bench_mat3_inverse(c: &mut Criterion) {
         .with_function("euclid", |b| {
             use euclid::{Transform2D, UnknownUnit};
             bench_unop!(b, op => inverse, ty => Transform2D<f32, UnknownUnit, UnknownUnit>)
-        })
+        }),
     );
 }
 

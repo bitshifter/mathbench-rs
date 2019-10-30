@@ -1,4 +1,3 @@
-use approx;
 use euclid;
 use glam;
 use mint;
@@ -11,15 +10,6 @@ pub trait RandomVec {
 }
 
 macro_rules! impl_random_vec {
-    ($t:ty) => {
-        impl RandomVec for $t {
-            type Value = Self;
-            fn random_vec(seed: u64, len: usize) -> Vec<Self::Value> {
-                let mut rng = Xoshiro256Plus::seed_from_u64(seed);
-                (0..len).map(|_| rng.gen::<Self::Value>().into()).collect()
-            }
-        }
-    };
     ($t:ty, $f:expr) => {
         impl RandomVec for $t {
             type Value = Self;
@@ -31,39 +21,39 @@ macro_rules! impl_random_vec {
     };
 }
 
-impl_random_vec!(glam::Mat2, random_invertible_mat2);
-impl_random_vec!(glam::Mat3, random_homogeneous_mat3);
-impl_random_vec!(glam::Mat4, random_homogeneous_mat4);
-impl_random_vec!(glam::Quat, random_quat);
-impl_random_vec!(glam::Vec2);
-impl_random_vec!(glam::Vec3);
-impl_random_vec!(glam::Vec4);
+impl_random_vec!(glam::Mat2, random_mint_invertible_mat2);
+impl_random_vec!(glam::Mat3, random_mint_homogeneous_mat3);
+impl_random_vec!(glam::Mat4, random_mint_homogeneous_mat4);
+impl_random_vec!(glam::Quat, random_mint_quat);
+impl_random_vec!(glam::Vec2, random_mint_vec2);
+impl_random_vec!(glam::Vec3, random_mint_vec3);
+impl_random_vec!(glam::Vec4, random_mint_vec4);
 
 impl_random_vec!(
     cgmath::Decomposed<cgmath::Vector3<f32>, cgmath::Quaternion<f32>>,
     random_cgmath_decomposed3
 );
-impl_random_vec!(cgmath::Matrix2<f32>, random_invertible_mat2);
-impl_random_vec!(cgmath::Matrix3<f32>, random_homogeneous_mat3);
-impl_random_vec!(cgmath::Matrix4<f32>, random_homogeneous_mat4);
+impl_random_vec!(cgmath::Matrix2<f32>, random_mint_invertible_mat2);
+impl_random_vec!(cgmath::Matrix3<f32>, random_mint_homogeneous_mat3);
+impl_random_vec!(cgmath::Matrix4<f32>, random_mint_homogeneous_mat4);
 impl_random_vec!(cgmath::Point2<f32>, random_cgmath_point2);
 impl_random_vec!(cgmath::Point3<f32>, random_cgmath_point3);
-impl_random_vec!(cgmath::Quaternion<f32>, random_quat);
-impl_random_vec!(cgmath::Vector2<f32>);
-impl_random_vec!(cgmath::Vector3<f32>);
-impl_random_vec!(cgmath::Vector4<f32>);
+impl_random_vec!(cgmath::Quaternion<f32>, random_mint_quat);
+impl_random_vec!(cgmath::Vector2<f32>, random_mint_vec2);
+impl_random_vec!(cgmath::Vector3<f32>, random_mint_vec3);
+impl_random_vec!(cgmath::Vector4<f32>, random_mint_vec4);
 
-impl_random_vec!(nalgebra::Matrix2<f32>, random_invertible_mat2);
-impl_random_vec!(nalgebra::Matrix3<f32>, random_homogeneous_mat3);
-impl_random_vec!(nalgebra::Matrix4<f32>, random_homogeneous_mat4);
-impl_random_vec!(nalgebra::Point2<f32>);
-impl_random_vec!(nalgebra::Point3<f32>);
+impl_random_vec!(nalgebra::Matrix2<f32>, random_mint_invertible_mat2);
+impl_random_vec!(nalgebra::Matrix3<f32>, random_mint_homogeneous_mat3);
+impl_random_vec!(nalgebra::Matrix4<f32>, random_mint_homogeneous_mat4);
+impl_random_vec!(nalgebra::Point2<f32>, random_na_point2);
+impl_random_vec!(nalgebra::Point3<f32>, random_na_point3);
 impl_random_vec!(nalgebra::Transform2<f32>, random_na_transform2);
 impl_random_vec!(nalgebra::Transform3<f32>, random_na_transform3);
 impl_random_vec!(nalgebra::UnitQuaternion<f32>, random_na_quat);
-impl_random_vec!(nalgebra::Vector2<f32>);
-impl_random_vec!(nalgebra::Vector3<f32>);
-impl_random_vec!(nalgebra::Vector4<f32>);
+impl_random_vec!(nalgebra::Vector2<f32>, random_na_vec2);
+impl_random_vec!(nalgebra::Vector3<f32>, random_na_vec3);
+impl_random_vec!(nalgebra::Vector4<f32>, random_na_vec4);
 
 impl_random_vec!(euclid::Point2D<f32, euclid::UnknownUnit>, random_euclid_point2);
 impl_random_vec!(euclid::Point3D<f32, euclid::UnknownUnit>, random_euclid_point3);
@@ -73,19 +63,19 @@ impl_random_vec!(euclid::Transform3D<f32, euclid::UnknownUnit, euclid::UnknownUn
 impl_random_vec!(euclid::Vector2D<f32, euclid::UnknownUnit>, random_euclid_vec2);
 impl_random_vec!(euclid::Vector3D<f32, euclid::UnknownUnit>, random_euclid_vec3);
 
-fn random_nonzero_f32<R>(rng: &mut R) -> f32
+// glam random functions ------------------------------------------------------
+fn random_glam_vec2<R>(rng: &mut R) -> glam::Vec2
 where
     R: Rng,
 {
-    rng.gen_range(0.1, 1.0)
+    rng.gen::<[f32; 2]>().into()
 }
 
-// glam random functions ------------------------------------------------------
 fn random_glam_vec3<R>(rng: &mut R) -> glam::Vec3
 where
     R: Rng,
 {
-    rng.gen()
+    rng.gen::<[f32; 3]>().into()
 }
 
 fn random_nonzero_glam_vec2<R>(rng: &mut R) -> glam::Vec2
@@ -95,112 +85,131 @@ where
     glam::Vec2::new(random_nonzero_f32(rng), random_nonzero_f32(rng))
 }
 
-fn random_nonzero_glam_vec3<R>(rng: &mut R) -> glam::Vec3
+fn random_glam_nonzero_vec3<R>(rng: &mut R) -> glam::Vec3
 where
     R: Rng,
 {
-    glam::Vec3::new(random_nonzero_f32(rng), random_nonzero_f32(rng), random_nonzero_f32(rng))
+    glam::Vec3::new(
+        random_nonzero_f32(rng),
+        random_nonzero_f32(rng),
+        random_nonzero_f32(rng),
+    )
 }
 
 fn random_glam_quat<R>(rng: &mut R) -> glam::Quat
 where
     R: Rng,
 {
-    let yaw = rng.gen();
-    let pitch = rng.gen();
-    let roll = rng.gen();
+    let yaw = random_angle_radians(rng);
+    let pitch = random_angle_radians(rng);
+    let roll = random_angle_radians(rng);
     glam::Quat::from_rotation_ypr(yaw, pitch, roll)
 }
 
+// f32 random functions  ------------------------------------------------------
+fn random_nonzero_f32<R>(rng: &mut R) -> f32
+where
+    R: Rng,
+{
+    rng.gen_range(0.1, 1.0)
+}
+
+fn random_angle_radians<R>(rng: &mut R) -> f32
+where
+    R: Rng,
+{
+    rng.gen_range(-std::f32::consts::PI, std::f32::consts::PI)
+}
+
 // mint random functions  -----------------------------------------------------
-pub fn random_quat<R>(rng: &mut R) -> mint::Quaternion<f32>
+pub fn random_mint_quat<R>(rng: &mut R) -> mint::Quaternion<f32>
 where
     R: Rng,
 {
-    rng.gen::<glam::Quat>().into()
+    random_glam_quat(rng).into()
 }
 
-pub fn random_vec2<R>(rng: &mut R) -> mint::Vector2<f32>
+pub fn random_mint_vec2<R>(rng: &mut R) -> mint::Vector2<f32>
 where
     R: Rng,
 {
-    rng.gen::<glam::Vec2>().into()
+    rng.gen::<[f32; 2]>().into()
 }
 
-pub fn random_vec3<R>(rng: &mut R) -> mint::Vector3<f32>
+pub fn random_mint_vec3<R>(rng: &mut R) -> mint::Vector3<f32>
 where
     R: Rng,
 {
-    rng.gen::<glam::Vec3>().into()
+    rng.gen::<[f32; 3]>().into()
 }
 
-pub fn random_vec4<R>(rng: &mut R) -> mint::Vector4<f32>
+pub fn random_mint_vec4<R>(rng: &mut R) -> mint::Vector4<f32>
 where
     R: Rng,
 {
-    rng.gen::<glam::Vec4>().into()
+    rng.gen::<[f32; 4]>().into()
 }
 
-pub fn random_mat2<R>(rng: &mut R) -> mint::ColumnMatrix2<f32>
+pub fn random_mint_mat2<R>(rng: &mut R) -> mint::ColumnMatrix2<f32>
 where
     R: Rng,
 {
-    rng.gen::<glam::Mat2>().into()
+    rng.gen::<[f32; 4]>().into()
 }
 
-pub fn random_mat3<R>(rng: &mut R) -> mint::ColumnMatrix3<f32>
+pub fn random_mint_mat3<R>(rng: &mut R) -> mint::ColumnMatrix3<f32>
 where
     R: Rng,
 {
-    rng.gen::<glam::Mat3>().into()
+    rng.gen::<[f32; 9]>().into()
 }
 
-pub fn random_mat4<R>(rng: &mut R) -> mint::ColumnMatrix4<f32>
+pub fn random_mint_mat4<R>(rng: &mut R) -> mint::ColumnMatrix4<f32>
 where
     R: Rng,
 {
-    rng.gen::<glam::Mat4>().into()
+    rng.gen::<[f32; 16]>().into()
 }
 
-pub fn random_invertible_mat2<R>(rng: &mut R) -> mint::ColumnMatrix2<f32>
+pub fn random_mint_invertible_mat2<R>(rng: &mut R) -> mint::ColumnMatrix2<f32>
 where
     R: Rng,
 {
     loop {
-        let m = rng.gen::<glam::Mat2>();
-        if approx::relative_ne!(m.determinant(), 0.0) {
+        let m = glam::Mat2::from_cols_array(&rng.gen::<[f32; 4]>());
+        if m.determinant().abs() > std::f32::EPSILON {
             return m.into();
         }
     }
 }
 
-pub fn random_homogeneous_mat3<R>(rng: &mut R) -> mint::ColumnMatrix3<f32>
+pub fn random_mint_homogeneous_mat3<R>(rng: &mut R) -> mint::ColumnMatrix3<f32>
 where
     R: Rng,
 {
     loop {
         let m = glam::Mat3::from_scale_angle_translation(
             random_nonzero_glam_vec2(rng),
-            rng.gen(),
-            rng.gen(),
-            );
-        if approx::relative_ne!(m.determinant(), 0.0) {
+            random_angle_radians(rng),
+            random_glam_vec2(rng),
+        );
+        if m.determinant().abs() > std::f32::EPSILON {
             return m.into();
         }
     }
 }
 
-pub fn random_homogeneous_mat4<R>(rng: &mut R) -> mint::ColumnMatrix4<f32>
+pub fn random_mint_homogeneous_mat4<R>(rng: &mut R) -> mint::ColumnMatrix4<f32>
 where
     R: Rng,
 {
     loop {
         let m = glam::Mat4::from_scale_rotation_translation(
-            random_nonzero_glam_vec3(rng),
+            random_glam_nonzero_vec3(rng),
             random_glam_quat(rng),
             random_glam_vec3(rng),
         );
-        if approx::relative_ne!(m.determinant(), 0.0) {
+        if m.determinant().abs() > std::f32::EPSILON {
             return m.into();
         }
     }
@@ -215,8 +224,8 @@ where
 {
     cgmath::Decomposed {
         scale: rng.gen_range(0.1, 1.0),
-        rot: random_quat(rng).into(),
-        disp: random_vec3(rng).into(),
+        rot: random_mint_quat(rng).into(),
+        disp: random_mint_vec3(rng).into(),
     }
 }
 
@@ -224,7 +233,7 @@ fn random_cgmath_point2<R>(rng: &mut R) -> cgmath::Point2<f32>
 where
     R: Rng,
 {
-    let v = random_vec2(rng);
+    let v = random_mint_vec2(rng);
     cgmath::Point2::new(v.x, v.y)
 }
 
@@ -232,7 +241,7 @@ fn random_cgmath_point3<R>(rng: &mut R) -> cgmath::Point3<f32>
 where
     R: Rng,
 {
-    let v = random_vec3(rng);
+    let v = random_mint_vec3(rng);
     cgmath::Point3::new(v.x, v.y, v.z)
 }
 
@@ -241,21 +250,56 @@ fn random_na_quat<R>(rng: &mut R) -> nalgebra::UnitQuaternion<f32>
 where
     R: Rng,
 {
-    nalgebra::UnitQuaternion::from_quaternion(random_quat(rng).into())
+    nalgebra::UnitQuaternion::from_quaternion(random_mint_quat(rng).into())
 }
 
 fn random_na_transform2<R>(rng: &mut R) -> nalgebra::Transform2<f32>
 where
     R: Rng,
 {
-    nalgebra::Transform2::from_matrix_unchecked(random_homogeneous_mat3(rng).into())
+    nalgebra::Transform2::from_matrix_unchecked(random_mint_homogeneous_mat3(rng).into())
 }
 
 fn random_na_transform3<R>(rng: &mut R) -> nalgebra::Transform3<f32>
 where
     R: Rng,
 {
-    nalgebra::Transform3::from_matrix_unchecked(random_homogeneous_mat4(rng).into())
+    nalgebra::Transform3::from_matrix_unchecked(random_mint_homogeneous_mat4(rng).into())
+}
+
+fn random_na_point2<R>(rng: &mut R) -> nalgebra::Point2<f32>
+where
+    R: Rng,
+{
+    rng.gen::<[f32; 2]>().into()
+}
+
+fn random_na_point3<R>(rng: &mut R) -> nalgebra::Point3<f32>
+where
+    R: Rng,
+{
+    rng.gen::<[f32; 3]>().into()
+}
+
+fn random_na_vec2<R>(rng: &mut R) -> nalgebra::Vector2<f32>
+where
+    R: Rng,
+{
+    rng.gen::<[f32; 2]>().into()
+}
+
+fn random_na_vec3<R>(rng: &mut R) -> nalgebra::Vector3<f32>
+where
+    R: Rng,
+{
+    rng.gen::<[f32; 3]>().into()
+}
+
+fn random_na_vec4<R>(rng: &mut R) -> nalgebra::Vector4<f32>
+where
+    R: Rng,
+{
+    rng.gen::<[f32; 4]>().into()
 }
 
 // euclid random functions ----------------------------------------------------
@@ -263,7 +307,7 @@ fn random_euclid_vec2<R>(rng: &mut R) -> euclid::Vector2D<f32, euclid::UnknownUn
 where
     R: Rng,
 {
-    let (x, y) = rng.gen::<glam::Vec2>().into();
+    let (x, y) = rng.gen::<(f32, f32)>().into();
     euclid::vec2(x, y)
 }
 
@@ -278,7 +322,7 @@ fn random_euclid_vec3<R>(rng: &mut R) -> euclid::Vector3D<f32, euclid::UnknownUn
 where
     R: Rng,
 {
-    let (x, y, z) = rng.gen::<glam::Vec3>().into();
+    let (x, y, z) = rng.gen::<(f32, f32, f32)>().into();
     euclid::vec3(x, y, z)
 }
 
@@ -295,8 +339,8 @@ fn random_euclid_quat<R>(
 where
     R: Rng,
 {
-    let (x, y, z, w) = rng.gen::<glam::Quat>().into();
-    euclid::Rotation3D::quaternion(x, y, z, w)
+    let mq = random_mint_quat(rng);
+    euclid::Rotation3D::quaternion(mq.v.x, mq.v.y, mq.v.z, mq.s)
 }
 
 fn random_euclid_mat3<R>(
@@ -305,7 +349,7 @@ fn random_euclid_mat3<R>(
 where
     R: Rng,
 {
-    let m = random_homogeneous_mat3(rng);
+    let m = random_mint_homogeneous_mat3(rng);
     euclid::Transform2D::column_major(m.x.x, m.x.y, m.x.z, m.y.x, m.y.y, m.y.z)
 }
 
@@ -315,7 +359,7 @@ fn random_euclid_mat4<R>(
 where
     R: Rng,
 {
-    let m = random_homogeneous_mat4(rng);
+    let m = random_mint_homogeneous_mat4(rng);
     euclid::Transform3D::column_major(
         m.x.x, m.x.y, m.x.z, m.x.w, m.y.x, m.y.y, m.y.z, m.y.w, m.z.x, m.z.y, m.z.z, m.z.w, m.w.x,
         m.w.y, m.w.z, m.w.w,
