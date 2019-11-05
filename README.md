@@ -142,10 +142,12 @@ types you want to benchmark. If the type implements the `rand` crate
 `impl_random_vec!` macro in `src/lib.rs`. Otherwise you can provide a function
 that generates a new random value of your type pass that to `impl_random_vec!`.
 
-To add the new libary type to a benchmark, add another `.with_function` call to
-the `Criterion` `bench`.
+To add the new libary type to a benchmark, add another `bench_function` call to
+the `Criterion` `BenchmarkGroup`.
 
 Increment the patch version number of `mathbench` in the `Cargo.toml`.
+
+Update `CHANGELOG.md`.
 
 ## Future work
 
