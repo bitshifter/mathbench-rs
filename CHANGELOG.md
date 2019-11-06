@@ -9,7 +9,7 @@ The format is based on [Keep a Changelog].
 * Added this `CHANGELOG.md` file!
 
 ### Changed
-* Updated `glam` to `0.8.1`
+* Updated `glam` to `0.8.2`
 * Updated `nalgebra` to `0.19.0`
 * Updated `euclid` to `0.20.3`
 * Updated `criterion` to `0.3.0`
