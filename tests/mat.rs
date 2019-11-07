@@ -1,7 +1,7 @@
 mod support;
 use cgmath;
 use glam;
-use mathbench::*;
+use mathbench::mint_support::*;
 use nalgebra;
 use rand::SeedableRng;
 use rand_xoshiro::Xoshiro256Plus;

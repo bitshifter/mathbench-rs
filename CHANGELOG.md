@@ -9,6 +9,8 @@ The format is based on [Keep a Changelog].
 * Added this `CHANGELOG.md` file!
 
 ### Changed
+* `cgmath`, `euclid` and `nalgebra` are now all optional features. They can be
+  excluded from benchmarks using `cargo bench --no-default-features`.
 * Updated `glam` to `0.8.2`
 * Updated `nalgebra` to `0.19.0`
 * Updated `euclid` to `0.20.3`

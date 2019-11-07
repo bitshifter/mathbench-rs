@@ -9,15 +9,15 @@ use criterion::{criterion_group, criterion_main, Criterion};
 
 fn bench_mat4_transpose(c: &mut Criterion) {
     let mut group = c.benchmark_group("mat4 transpose");
-    group.bench_function("glam", |b| {
+    bench_glam!(group, |b| {
         use glam::Mat4;
         bench_unop!(b, op => transpose, ty => Mat4);
     });
-    group.bench_function("cgmath", |b| {
+    bench_cgmath!(group, |b| {
         use cgmath::{prelude::*, Matrix4};
         bench_unop!(b, op => transpose, ty => Matrix4<f32>);
     });
-    group.bench_function("nalgebra", |b| {
+    bench_nalgebra!(group, |b| {
         use nalgebra::Matrix4;
         bench_unop!(b, op => transpose, ty => Matrix4<f32>);
     });
@@ -26,19 +26,19 @@ fn bench_mat4_transpose(c: &mut Criterion) {
 
 fn bench_mat4_determinant(c: &mut Criterion) {
     let mut group = c.benchmark_group("mat4 determinant");
-    group.bench_function("glam", |b| {
+    bench_glam!(group, |b| {
         use glam::Mat4;
         bench_unop!(b, op => determinant, ty => Mat4)
     });
-    group.bench_function("cgmath", |b| {
+    bench_cgmath!(group, |b| {
         use cgmath::{Matrix4, SquareMatrix};
         bench_unop!(b, op => determinant, ty => Matrix4<f32>)
     });
-    group.bench_function("nalgebra", |b| {
+    bench_nalgebra!(group, |b| {
         use nalgebra::Matrix4;
         bench_unop!(b, op => determinant, ty => Matrix4<f32>)
     });
-    group.bench_function("euclid", |b| {
+    bench_euclid!(group, |b| {
         use euclid::{Transform3D, UnknownUnit};
         bench_unop!(b, op => determinant, ty => Transform3D<f32, UnknownUnit, UnknownUnit>)
     });
@@ -47,19 +47,19 @@ fn bench_mat4_determinant(c: &mut Criterion) {
 
 fn bench_mat4_inverse(c: &mut Criterion) {
     let mut group = c.benchmark_group("mat4 inverse");
-    group.bench_function("glam", |b| {
+    bench_glam!(group, |b| {
         use glam::Mat4;
         bench_unop!(b, op => inverse, ty => Mat4)
     });
-    group.bench_function("cgmath", |b| {
+    bench_cgmath!(group, |b| {
         use cgmath::{Matrix4, SquareMatrix};
         bench_unop!(b, op => invert, ty => Matrix4<f32>)
     });
-    group.bench_function("nalgebra", |b| {
+    bench_nalgebra!(group, |b| {
         use nalgebra::Matrix4;
         bench_unop!(b, op => try_inverse, ty => Matrix4<f32>)
     });
-    group.bench_function("euclid", |b| {
+    bench_euclid!(group, |b| {
         use euclid::{Transform3D, UnknownUnit};
         bench_unop!(b, op => inverse, ty => Transform3D<f32, UnknownUnit, UnknownUnit>)
     });
@@ -69,19 +69,19 @@ fn bench_mat4_inverse(c: &mut Criterion) {
 fn bench_mat4_mul_mat4(c: &mut Criterion) {
     use std::ops::Mul;
     let mut group = c.benchmark_group("mat4 mul mat4");
-    group.bench_function("glam", |b| {
+    bench_glam!(group, |b| {
         use glam::Mat4;
         bench_binop!(b, op => mul, ty1 => Mat4, ty2 => Mat4)
     });
-    group.bench_function("cgmath", |b| {
+    bench_cgmath!(group, |b| {
         use cgmath::Matrix4;
         bench_binop!(b, op => mul, ty1 => Matrix4<f32>, ty2 => Matrix4<f32>, param => by_ref)
     });
-    group.bench_function("nalgebra", |b| {
+    bench_nalgebra!(group, |b| {
         use nalgebra::Matrix4;
         bench_binop!(b, op => mul, ty1 => Matrix4<f32>, ty2 => Matrix4<f32>, param => by_ref)
     });
-    group.bench_function("euclid", |b| {
+    bench_euclid!(group, |b| {
         use euclid::{Transform3D, UnknownUnit};
         bench_binop!(b, op => post_transform, ty => Transform3D<f32, UnknownUnit, UnknownUnit>, param => by_ref)
     });

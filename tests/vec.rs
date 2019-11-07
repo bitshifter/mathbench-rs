@@ -2,7 +2,7 @@ mod support;
 
 use cgmath::{self, InnerSpace};
 use glam;
-use mathbench::*;
+use mathbench::mint_support::{random_mint_vec2, random_mint_vec3, random_mint_vec4};
 use nalgebra;
 use rand::SeedableRng;
 use rand_xoshiro::Xoshiro256Plus;

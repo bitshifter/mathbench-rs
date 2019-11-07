@@ -123,6 +123,28 @@ There is a script in `scripts/summary.py` to summarize the results in a nice
 fashion. It requires Python 3 and the `prettytable` Python module, then can
 be run to generate an ASCII output.
 
+## Default and optional features
+
+All libraries except for `glam` are optional for running benchmarks. The default
+features include `cgmath`, `euclid` and `nalgebra`. These can be disabled with:
+
+```
+cargo bench --no-default-features
+```
+
+To selectively enable a specific default feature again use:
+
+```
+cargo bench --no-default-features --features nalgebra
+```
+
+Note that you can run individual benchmarks without needing to diable them at
+compile time. For example to only run the "vec3 length" benchmark for `glam` use:
+
+```
+cargo bench "vec3 length/glam"
+```
+
 ## Running the tests
 
 The tests can be run using:

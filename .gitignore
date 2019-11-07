@@ -1,4 +1,6 @@
 **/*.rs.bk
 **/*.swp
+.cargo
+.vim
 /target
 Session.vim
