@@ -99,7 +99,7 @@ fn bench_mat4_mul_mat4(c: &mut Criterion) {
     });
     bench_vek!(group, |b| {
         use vek::mat::repr_simd::column_major::Mat4;
-        bench_func!(b, op => mul, ty1 => Mat4<f32>, ty2 => Mat4<f32>)
+        bench_binop!(b, op => mul, ty1 => Mat4<f32>, ty2 => Mat4<f32>)
     });
     group.finish();
 }
