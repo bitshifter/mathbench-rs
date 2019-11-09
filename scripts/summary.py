@@ -7,7 +7,9 @@ import sys
 import prettytable
 
 
-CHOICES = ['glam', 'cgmath', 'nalgebra', 'euclid']
+DEFAULT = ['glam', 'cgmath', 'nalgebra', 'euclid']
+OPTIONAL = ['vek']
+CHOICES = DEFAULT + OPTIONAL
 
 class DefaultListAction(argparse.Action):
     def __call__(self, parser, namespace, values, option_string=None):
@@ -33,7 +35,7 @@ def fmt_bench(x, max_value, min_value):
 
 
 def main():
-    default_libs = CHOICES
+    default_libs = DEFAULT
     parser = argparse.ArgumentParser()
     parser.add_argument('libs', nargs='*', action=DefaultListAction,
                         default=default_libs,
