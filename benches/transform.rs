@@ -64,8 +64,8 @@ fn bench_mat4_transform_vector4(c: &mut Criterion) {
         bench_binop!(b, op => mul, ty1 => Matrix4<f32>, ty2 => Vector4<f32>)
     });
     bench_vek!(group, |b| {
-        use vek::mat::repr_simd::column_major::Mat4;
-        use vek::vec::repr_simd::Vec4;
+        use vek::Mat4;
+        use vek::Vec4;
         bench_binop!(b, op => mul, ty1 => Mat4<f32>, ty2 => Vec4<f32>)
     });
     group.finish();

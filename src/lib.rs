@@ -468,11 +468,12 @@ pub mod vek_support {
     use rand_xoshiro::Xoshiro256Plus;
     use vek;
     impl_random_vec!(
-        vek::mat::repr_simd::column_major::Mat4<f32>,
+        vek::Mat4<f32>,
         random_mint_homogeneous_mat4
     );
-    impl_random_vec!(vek::vec::repr_simd::Vec3<f32>, random_mint_vec3);
-    impl_random_vec!(vek::vec::repr_simd::Vec4<f32>, random_mint_vec4);
+    impl_random_vec!(vek::Vec2<f32>, random_mint_vec2);
+    impl_random_vec!(vek::Vec3<f32>, random_mint_vec3);
+    impl_random_vec!(vek::Vec4<f32>, random_mint_vec4);
 
     // fn random_vek_invertible_mat4<R>(rng: &mut R) -> vek::mat::repr_simd::column_major::Mat4<f32>
     // where
@@ -499,16 +500,16 @@ pub mod vek_support {
     // }
 
     pub fn vek_mat4_mul_mat4(
-        m1: &vek::mat::repr_simd::column_major::Mat4<f32>,
-        m2: &vek::mat::repr_simd::column_major::Mat4<f32>,
-    ) -> vek::mat::repr_simd::column_major::Mat4<f32> {
-        *m1 * *m2
+        m1: vek::Mat4<f32>,
+        m2: vek::Mat4<f32>,
+    ) -> vek::Mat4<f32> {
+        m1 * m2
     }
 
     pub fn vek_mat4_mul_vec4(
-        m: &vek::mat::repr_simd::column_major::Mat4<f32>,
-        v: &vek::vec::repr_simd::Vec4<f32>,
-    ) -> vek::vec::repr_simd::Vec4<f32> {
-        *m * *v
+        m: vek::Mat4<f32>,
+        v: vek::Vec4<f32>,
+    ) -> vek::Vec4<f32> {
+        m * v
     }
 }

@@ -22,7 +22,7 @@ fn bench_mat4_transpose(c: &mut Criterion) {
         bench_unop!(b, op => transpose, ty => Matrix4<f32>);
     });
     bench_vek!(group, |b| {
-        use vek::mat::repr_simd::column_major::Mat4;
+        use vek::Mat4;
         bench_unop!(b, op => transposed, ty => Mat4<f32>)
     });
     group.finish();
@@ -47,7 +47,7 @@ fn bench_mat4_determinant(c: &mut Criterion) {
         bench_unop!(b, op => determinant, ty => Transform3D<f32, UnknownUnit, UnknownUnit>)
     });
     bench_vek!(group, |b| {
-        use vek::mat::repr_simd::column_major::Mat4;
+        use vek::Mat4;
         bench_unop!(b, op => determinant, ty => Mat4<f32>)
     });
     group.finish();
@@ -72,7 +72,7 @@ fn bench_mat4_inverse(c: &mut Criterion) {
         bench_unop!(b, op => inverse, ty => Transform3D<f32, UnknownUnit, UnknownUnit>)
     });
     bench_vek!(group, |b| {
-        use vek::mat::repr_simd::column_major::Mat4;
+        use vek::Mat4;
         bench_unop!(b, op => inverted, ty => Mat4<f32>)
     });
     group.finish();
@@ -98,7 +98,7 @@ fn bench_mat4_mul_mat4(c: &mut Criterion) {
         bench_binop!(b, op => post_transform, ty => Transform3D<f32, UnknownUnit, UnknownUnit>, param => by_ref)
     });
     bench_vek!(group, |b| {
-        use vek::mat::repr_simd::column_major::Mat4;
+        use vek::Mat4;
         bench_binop!(b, op => mul, ty1 => Mat4<f32>, ty2 => Mat4<f32>)
     });
     group.finish();

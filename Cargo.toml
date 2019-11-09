@@ -37,7 +37,6 @@ version = "0.20.3"
 features = ["mint"]
 optional = true
 
-# NOTE: vek currently requires nightly
 [dependencies.vek]
 version = "0.9.10"
 features = ["mint"]
