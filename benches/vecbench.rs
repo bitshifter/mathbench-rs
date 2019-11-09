@@ -4,95 +4,87 @@ mod macros;
 use criterion::{criterion_group, criterion_main, Criterion};
 
 fn bench_vec3_length(c: &mut Criterion) {
-    use criterion::Benchmark;
-    c.bench(
-        "vec3 length",
-        Benchmark::new("glam", |b| {
-            use glam::Vec3;
-            bench_unop!(b, op => length, ty => Vec3)
-        })
-        .with_function("cgmath", |b| {
-            use cgmath::{InnerSpace, Vector3};
-            bench_unop!(b, op => magnitude, ty => Vector3<f32>)
-        })
-        .with_function("nalgebra", |b| {
-            use nalgebra::Vector3;
-            bench_unop!(b, op => magnitude, ty => Vector3<f32>)
-        })
-        .with_function("euclid", |b| {
-            use euclid::{UnknownUnit, Vector3D};
-            bench_unop!(b, op => length, ty => Vector3D<f32, UnknownUnit>)
-        }),
-    );
+    let mut group = c.benchmark_group("vec3 length");
+    bench_glam!(group, |b| {
+        use glam::Vec3;
+        bench_unop!(b, op => length, ty => Vec3)
+    });
+    bench_cgmath!(group, |b| {
+        use cgmath::{InnerSpace, Vector3};
+        bench_unop!(b, op => magnitude, ty => Vector3<f32>)
+    });
+    bench_nalgebra!(group, |b| {
+        use nalgebra::Vector3;
+        bench_unop!(b, op => magnitude, ty => Vector3<f32>)
+    });
+    bench_euclid!(group, |b| {
+        use euclid::{UnknownUnit, Vector3D};
+        bench_unop!(b, op => length, ty => Vector3D<f32, UnknownUnit>)
+    });
+    group.finish();
 }
 
 fn bench_vec3_normalize(c: &mut Criterion) {
-    use criterion::Benchmark;
-    c.bench(
-        "vec3 normalize",
-        Benchmark::new("glam", |b| {
-            use glam::Vec3;
-            bench_unop!(b, op => normalize, ty => Vec3)
-        })
-        .with_function("cgmath", |b| {
-            use cgmath::{InnerSpace, Vector3};
-            bench_unop!(b, op => normalize, ty => Vector3<f32>)
-        })
-        .with_function("nalgebra", |b| {
-            use nalgebra::Vector3;
-            bench_unop!(b, op => normalize, ty => Vector3<f32>)
-        })
-        .with_function("euclid", |b| {
-            use euclid::{UnknownUnit, Vector3D};
-            bench_unop!(b, op => normalize, ty => Vector3D<f32, UnknownUnit>)
-        }),
-    );
+    let mut group = c.benchmark_group("vec3 normalize");
+    bench_glam!(group, |b| {
+        use glam::Vec3;
+        bench_unop!(b, op => normalize, ty => Vec3)
+    });
+    bench_cgmath!(group, |b| {
+        use cgmath::{InnerSpace, Vector3};
+        bench_unop!(b, op => normalize, ty => Vector3<f32>)
+    });
+    bench_nalgebra!(group, |b| {
+        use nalgebra::Vector3;
+        bench_unop!(b, op => normalize, ty => Vector3<f32>)
+    });
+    bench_euclid!(group, |b| {
+        use euclid::{UnknownUnit, Vector3D};
+        bench_unop!(b, op => normalize, ty => Vector3D<f32, UnknownUnit>)
+    });
+    group.finish();
 }
 
 fn bench_vec3_dot(c: &mut Criterion) {
-    use criterion::Benchmark;
-    c.bench(
-        "vec3 dot",
-        Benchmark::new("glam", |b| {
-            use glam::Vec3;
-            bench_binop!(b, op => dot, ty1 => Vec3, ty2 => Vec3)
-        })
-        .with_function("cgmath", |b| {
-            use cgmath::{InnerSpace, Vector3};
-            bench_binop!(b, op => dot, ty1 => Vector3<f32>, ty2 => Vector3<f32>)
-        })
-        .with_function("nalgebra", |b| {
-            use nalgebra::Vector3;
-            bench_binop!(b, op => dot, ty1 => Vector3<f32>, ty2 => Vector3<f32>, param => by_ref)
-        })
-        .with_function("euclid", |b| {
-            use euclid::{Vector3D, UnknownUnit};
-            bench_binop!(b, op => dot, ty1 => Vector3D<f32, UnknownUnit>, ty2 => Vector3D<f32, UnknownUnit>)
-        }),
-    );
+    let mut group = c.benchmark_group("vec3 dot");
+    bench_glam!(group, |b| {
+        use glam::Vec3;
+        bench_binop!(b, op => dot, ty1 => Vec3, ty2 => Vec3)
+    });
+    bench_cgmath!(group, |b| {
+        use cgmath::{InnerSpace, Vector3};
+        bench_binop!(b, op => dot, ty1 => Vector3<f32>, ty2 => Vector3<f32>)
+    });
+    bench_nalgebra!(group, |b| {
+        use nalgebra::Vector3;
+        bench_binop!(b, op => dot, ty1 => Vector3<f32>, ty2 => Vector3<f32>, param => by_ref)
+    });
+    bench_euclid!(group, |b| {
+        use euclid::{UnknownUnit, Vector3D};
+        bench_binop!(b, op => dot, ty1 => Vector3D<f32, UnknownUnit>, ty2 => Vector3D<f32, UnknownUnit>)
+    });
+    group.finish();
 }
 
 fn bench_vec3_cross(c: &mut Criterion) {
-    use criterion::Benchmark;
-    c.bench(
-        "vec3 cross",
-        Benchmark::new("glam", |b| {
-            use glam::Vec3;
-            bench_binop!(b, op => cross, ty1 => Vec3, ty2 => Vec3)
-        })
-        .with_function("cgmath", |b| {
-            use cgmath::Vector3;
-            bench_binop!(b, op => cross, ty1 => Vector3<f32>, ty2 => Vector3<f32>)
-        })
-        .with_function("nalgebra", |b| {
-            use nalgebra::Vector3;
-            bench_binop!(b, op => cross, ty1 => Vector3<f32>, ty2 => Vector3<f32>, param => by_ref)
-        })
-        .with_function("euclid", |b| {
-            use euclid::{Vector3D, UnknownUnit};
-            bench_binop!(b, op => cross, ty1 => Vector3D<f32, UnknownUnit>, ty2 => Vector3D<f32, UnknownUnit>)
-        }),
-    );
+    let mut group = c.benchmark_group("vec3 cross");
+    bench_glam!(group, |b| {
+        use glam::Vec3;
+        bench_binop!(b, op => cross, ty1 => Vec3, ty2 => Vec3)
+    });
+    bench_cgmath!(group, |b| {
+        use cgmath::Vector3;
+        bench_binop!(b, op => cross, ty1 => Vector3<f32>, ty2 => Vector3<f32>)
+    });
+    bench_nalgebra!(group, |b| {
+        use nalgebra::Vector3;
+        bench_binop!(b, op => cross, ty1 => Vector3<f32>, ty2 => Vector3<f32>, param => by_ref)
+    });
+    bench_euclid!(group, |b| {
+        use euclid::{UnknownUnit, Vector3D};
+        bench_binop!(b, op => cross, ty1 => Vector3D<f32, UnknownUnit>, ty2 => Vector3D<f32, UnknownUnit>)
+    });
+    group.finish();
 }
 
 criterion_group!(

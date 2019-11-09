@@ -1,39 +1,50 @@
 [package]
 name = "mathbench"
-version = "0.1.8"
+version = "0.1.9"
 authors = ["Cameron Hart <cameron.hart@gmail.com>"]
 edition = "2018"
 
+[features]
+# defaults can be disabled for benchmarks but are required for tests
+default = ["cgmath", "euclid", "nalgebra"]
+
 [dependencies]
-approx = { version = "~0.3", default-features = false }
-mint = "~0.5"
-rand = { version = "~0.6", default-features = false }
-rand_xoshiro = "~0.1"
+mint = "0.5.1"
+rand = { version = "~0.7", default-features = false }
+rand_xoshiro = "~0.4"
 
 [dependencies.glam]
-version = "0.7.1"
+version = "0.8.2"
 default-features = false
-features = ["approx", "mint", "rand"]
+features = ["mint", "rand", "debug-glam-assert"]
+# a lot of random data generation uses glam, so can't be optional yet
+# optional = true
 
 [dependencies.nalgebra]
-version = "0.18.0"
+version = "0.19.0"
 default-features = false
 features = ["std", "mint"]
+optional = true
 
 [dependencies.cgmath]
 version = "0.17.0"
 default-features = false
 features = ["mint"]
-
-[dependencies.vek]
-version = "0.9.9"
+optional = true
 
 [dependencies.euclid]
-version = "0.20.1"
+version = "0.20.3"
 features = ["mint"]
+optional = true
+
+# NOTE: vek currently requires nightly
+[dependencies.vek]
+version = "0.9.10"
+features = ["mint"]
+optional = true
 
 [dev-dependencies]
-criterion = "~0.2"
+criterion = "0.3.0"
 
 # [patch.crates-io]
 # glam = { path = "../glam-rs" }

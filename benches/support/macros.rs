@@ -1,4 +1,44 @@
 #[macro_export]
+macro_rules! bench_glam {
+    ($group:ident, $closure:expr) => {
+        // #[cfg(feature = "glam")]
+        $group.bench_function("glam", $closure)
+    };
+}
+
+#[macro_export]
+macro_rules! bench_cgmath {
+    ($group:ident, $closure:expr) => {
+        #[cfg(feature = "cgmath")]
+        $group.bench_function("cgmath", $closure)
+    };
+}
+
+#[macro_export]
+macro_rules! bench_euclid {
+    ($group:ident, $closure:expr) => {
+        #[cfg(feature = "euclid")]
+        $group.bench_function("euclid", $closure)
+    };
+}
+
+#[macro_export]
+macro_rules! bench_nalgebra {
+    ($group:ident, $closure:expr) => {
+        #[cfg(feature = "nalgebra")]
+        $group.bench_function("nalgebra", $closure)
+    };
+}
+
+#[macro_export]
+macro_rules! bench_vek {
+    ($group:ident, $closure:expr) => {
+        #[cfg(feature = "vek")]
+        $group.bench_function("vek", $closure)
+    };
+}
+
+#[macro_export]
 macro_rules! bench_func {
     ($b: ident, op => $func: ident, ty => $t: ty) => {{
         const LEN: usize = 1 << 13;

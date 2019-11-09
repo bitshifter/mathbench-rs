@@ -8,106 +8,100 @@ use criterion::{criterion_group, criterion_main, Criterion};
 // closest point of comparison.
 
 fn bench_mat4_transpose(c: &mut Criterion) {
-    use criterion::Benchmark;
-    c.bench(
-        "mat4 transpose",
-        Benchmark::new("glam", |b| {
-            use glam::Mat4;
-            bench_unop!(b, op => transpose, ty => Mat4);
-        })
-        .with_function("cgmath", |b| {
-            use cgmath::{prelude::*, Matrix4};
-            bench_unop!(b, op => transpose, ty => Matrix4<f32>);
-        })
-        .with_function("nalgebra", |b| {
-            use nalgebra::Matrix4;
-            bench_unop!(b, op => transpose, ty => Matrix4<f32>);
-        })
-        .with_function("vek", |b| {
-            use vek::mat::repr_simd::column_major::Mat4;
-            bench_unop!(b, op => transposed, ty => Mat4<f32>)
-        }),
-    );
+    let mut group = c.benchmark_group("mat4 transpose");
+    bench_glam!(group, |b| {
+        use glam::Mat4;
+        bench_unop!(b, op => transpose, ty => Mat4);
+    });
+    bench_cgmath!(group, |b| {
+        use cgmath::{prelude::*, Matrix4};
+        bench_unop!(b, op => transpose, ty => Matrix4<f32>);
+    });
+    bench_nalgebra!(group, |b| {
+        use nalgebra::Matrix4;
+        bench_unop!(b, op => transpose, ty => Matrix4<f32>);
+    });
+    bench_vek!(group, |b| {
+        use vek::mat::repr_simd::column_major::Mat4;
+        bench_unop!(b, op => transposed, ty => Mat4<f32>)
+    });
+    group.finish();
 }
 
 fn bench_mat4_determinant(c: &mut Criterion) {
-    use criterion::Benchmark;
-    c.bench(
-        "mat4 determinant",
-        Benchmark::new("glam", |b| {
-            use glam::Mat4;
-            bench_unop!(b, op => determinant, ty => Mat4)
-        })
-        .with_function("cgmath", |b| {
-            use cgmath::{Matrix4, SquareMatrix};
-            bench_unop!(b, op => determinant, ty => Matrix4<f32>)
-        })
-        .with_function("nalgebra", |b| {
-            use nalgebra::Matrix4;
-            bench_unop!(b, op => determinant, ty => Matrix4<f32>)
-        })
-        .with_function("euclid", |b| {
-            use euclid::{Transform3D, UnknownUnit};
-            bench_unop!(b, op => determinant, ty => Transform3D<f32, UnknownUnit, UnknownUnit>)
-        .with_function("vek", |b| {
-            use vek::mat::repr_simd::column_major::Mat4;
-            bench_unop!(b, op => determinant, ty => Mat4<f32>)
-        }),
-    );
+    let mut group = c.benchmark_group("mat4 determinant");
+    bench_glam!(group, |b| {
+        use glam::Mat4;
+        bench_unop!(b, op => determinant, ty => Mat4)
+    });
+    bench_cgmath!(group, |b| {
+        use cgmath::{Matrix4, SquareMatrix};
+        bench_unop!(b, op => determinant, ty => Matrix4<f32>)
+    });
+    bench_nalgebra!(group, |b| {
+        use nalgebra::Matrix4;
+        bench_unop!(b, op => determinant, ty => Matrix4<f32>)
+    });
+    bench_euclid!(group, |b| {
+        use euclid::{Transform3D, UnknownUnit};
+        bench_unop!(b, op => determinant, ty => Transform3D<f32, UnknownUnit, UnknownUnit>)
+    });
+    bench_vek!(group, |b| {
+        use vek::mat::repr_simd::column_major::Mat4;
+        bench_unop!(b, op => determinant, ty => Mat4<f32>)
+    });
+    group.finish();
 }
 
 fn bench_mat4_inverse(c: &mut Criterion) {
-    use criterion::Benchmark;
-    c.bench(
-        "mat4 inverse",
-        Benchmark::new("glam", |b| {
-            use glam::Mat4;
-            bench_unop!(b, op => inverse, ty => Mat4)
-        })
-        .with_function("cgmath", |b| {
-            use cgmath::{Matrix4, SquareMatrix};
-            bench_unop!(b, op => invert, ty => Matrix4<f32>)
-        })
-        .with_function("nalgebra", |b| {
-            use nalgebra::Matrix4;
-            bench_unop!(b, op => try_inverse, ty => Matrix4<f32>)
-        })
-        .with_function("euclid", |b| {
-            use euclid::{Transform3D, UnknownUnit};
-            bench_unop!(b, op => inverse, ty => Transform3D<f32, UnknownUnit, UnknownUnit>)
-        .with_function("vek", |b| {
-            use vek::mat::repr_simd::column_major::Mat4;
-            bench_unop!(b, op => inverted, ty => Mat4<f32>)
-        }),
-    );
+    let mut group = c.benchmark_group("mat4 inverse");
+    bench_glam!(group, |b| {
+        use glam::Mat4;
+        bench_unop!(b, op => inverse, ty => Mat4)
+    });
+    bench_cgmath!(group, |b| {
+        use cgmath::{Matrix4, SquareMatrix};
+        bench_unop!(b, op => invert, ty => Matrix4<f32>)
+    });
+    bench_nalgebra!(group, |b| {
+        use nalgebra::Matrix4;
+        bench_unop!(b, op => try_inverse, ty => Matrix4<f32>)
+    });
+    bench_euclid!(group, |b| {
+        use euclid::{Transform3D, UnknownUnit};
+        bench_unop!(b, op => inverse, ty => Transform3D<f32, UnknownUnit, UnknownUnit>)
+    });
+    bench_vek!(group, |b| {
+        use vek::mat::repr_simd::column_major::Mat4;
+        bench_unop!(b, op => inverted, ty => Mat4<f32>)
+    });
+    group.finish();
 }
 
 fn bench_mat4_mul_mat4(c: &mut Criterion) {
-    use criterion::Benchmark;
     use std::ops::Mul;
-    c.bench(
-        "mat4 mul mat4",
-        Benchmark::new("glam", |b| {
-            use glam::Mat4;
-            bench_binop!(b, op => mul, ty1 => Mat4, ty2 => Mat4)
-        })
-        .with_function("cgmath", |b| {
-            use cgmath::Matrix4;
-            bench_binop!(b, op => mul, ty1 => Matrix4<f32>, ty2 => Matrix4<f32>, param => by_ref)
-        })
-        .with_function("nalgebra", |b| {
-            use nalgebra::Matrix4;
-            bench_binop!(b, op => mul, ty1 => Matrix4<f32>, ty2 => Matrix4<f32>, param => by_ref)
-        })
-        .with_function("euclid", |b| {
-            use euclid::{Transform3D, UnknownUnit};
-            bench_binop!(b, op => post_transform, ty => Transform3D<f32, UnknownUnit, UnknownUnit>, param => by_ref)
-        }),
-        .with_function("vek", |b| {
-            use vek::mat::repr_simd::column_major::Mat4;
-            bench_func!(b, op => mul, ty1 => Mat4<f32>, ty2 => Mat4<f32>)
-        })
-    );
+    let mut group = c.benchmark_group("mat4 mul mat4");
+    bench_glam!(group, |b| {
+        use glam::Mat4;
+        bench_binop!(b, op => mul, ty1 => Mat4, ty2 => Mat4)
+    });
+    bench_cgmath!(group, |b| {
+        use cgmath::Matrix4;
+        bench_binop!(b, op => mul, ty1 => Matrix4<f32>, ty2 => Matrix4<f32>, param => by_ref)
+    });
+    bench_nalgebra!(group, |b| {
+        use nalgebra::Matrix4;
+        bench_binop!(b, op => mul, ty1 => Matrix4<f32>, ty2 => Matrix4<f32>, param => by_ref)
+    });
+    bench_euclid!(group, |b| {
+        use euclid::{Transform3D, UnknownUnit};
+        bench_binop!(b, op => post_transform, ty => Transform3D<f32, UnknownUnit, UnknownUnit>, param => by_ref)
+    });
+    bench_vek!(group, |b| {
+        use vek::mat::repr_simd::column_major::Mat4;
+        bench_func!(b, op => mul, ty1 => Mat4<f32>, ty2 => Mat4<f32>)
+    });
+    group.finish();
 }
 
 criterion_group!(

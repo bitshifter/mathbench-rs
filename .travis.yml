@@ -15,5 +15,13 @@ matrix:
 git:
   depth: 10
 
+script:
+  - cargo clean
+  - cargo check
+  - cargo check --no-default-features
+  - cargo test
+  - cargo bench --no-run
+  - cargo bench --no-default-features --no-run
+
 after_success:
   - ./after-success.sh
