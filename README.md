@@ -67,43 +67,43 @@ performance to `cgmath`, `nalgebra` and `euclid` on `f32` data.
 
 | benchmark              |         glam   |       cgmath   |     nalgebra   |       euclid   |
 |:-----------------------|---------------:|---------------:|---------------:|---------------:|
-| euler 2d               |     9.073 us   |   __8.934 us__ |     26.43 us   |      13.0 us   |
-| euler 3d               |   __15.24 us__ |     29.62 us   |     195.5 us   |     29.23 us   |
-| mat2 determinant       |    1.3163 ns   |    1.0556 ns   |  __1.0545 ns__ |      N/A       |
-| mat2 inverse           |  __2.0394 ns__ |    2.6781 ns   |    3.1784 ns   |      N/A       |
-| mat2 mul mat2          |  __2.1452 ns__ |    3.0677 ns   |    4.1388 ns   |      N/A       |
-| mat2 transform vector2 |  __2.1925 ns__ |    2.4002 ns   |    6.8965 ns   |      N/A       |
-| mat2 transpose         |  __0.7142 ns__ |    1.3398 ns   |    1.8191 ns   |      N/A       |
-| mat3 determinant       |    2.2111 ns   |    2.5348 ns   |    2.5907 ns   |  __1.1650 ns__ |
-| mat3 inverse           |    7.8504 ns   |    7.9842 ns   |    9.2977 ns   |  __4.2679 ns__ |
-| mat3 mul mat3          |    4.8757 ns   |    9.8963 ns   |    8.1304 ns   |  __4.6535 ns__ |
-| mat3 transform point2  |  __2.5054 ns__ |    2.6898 ns   |    7.7799 ns   |    2.7398 ns   |
-| mat3 transform vector2 |    2.5236 ns   |      N/A       |    3.0775 ns   |  __2.4915 ns__ |
-| mat3 transform vector3 |  __2.2815 ns__ |    4.0497 ns   |    7.7459 ns   |      N/A       |
-| mat3 transpose         |  __2.0142 ns__ |    3.5186 ns   |    8.9544 ns   |      N/A       |
-| mat4 determinant       |  __7.8211 ns__ |   11.1859 ns   |   49.8123 ns   |   16.8770 ns   |
-| mat4 inverse           | __20.9937 ns__ |   43.4030 ns   |   55.5264 ns   |   73.7835 ns   |
-| mat4 mul mat4          |  __6.5843 ns__ |    9.2085 ns   |   15.9321 ns   |    9.8230 ns   |
-| mat4 transform point3  |  __2.4372 ns__ |    6.0644 ns   |    9.1896 ns   |    6.8941 ns   |
-| mat4 transform vector3 |  __2.2815 ns__ |    4.5304 ns   |    4.7440 ns   |    4.0788 ns   |
-| mat4 transform vector4 |  __2.4980 ns__ |    3.6186 ns   |    4.7024 ns   |      N/A       |
-| mat4 transpose         |  __2.7029 ns__ |    7.9501 ns   |   10.7095 ns   |      N/A       |
-| quat conjugate         |  __0.8891 ns__ |    1.7593 ns   |    1.7678 ns   |    1.7626 ns   |
-| quat mul quat          |  __2.5916 ns__ |    5.3766 ns   |    5.3322 ns   |    5.6205 ns   |
-| quat transform vector3 |  __4.1817 ns__ |    6.5586 ns   |   26.4081 ns   |    6.7978 ns   |
-| vec3 cross             |  __2.0762 ns__ |    2.8369 ns   |    2.8357 ns   |    2.8369 ns   |
-| vec3 dot               |  __1.3473 ns__ |    1.6750 ns   |    1.6442 ns   |    1.7038 ns   |
-| vec3 length            |    2.0183 ns   |    2.0183 ns   |  __2.0123 ns__ |    2.0228 ns   |
-| vec3 normalize         |  __4.0360 ns__ |    4.1565 ns   |    8.1527 ns   |    8.0602 ns   |
+| euler 2d               |     8.465 us   |   __8.395 us__ |     20.84 us   |     13.35 us   |
+| euler 3d               |   __13.78 us__ |     30.72 us   |     196.2 us   |     30.34 us   |
+| mat2 determinant       |    1.3827 ns   |    1.0591 ns   |  __1.0557 ns__ |      N/A       |
+| mat2 inverse           |  __2.0473 ns__ |    2.7092 ns   |    2.6357 ns   |      N/A       |
+| mat2 mul mat2          |  __2.1362 ns__ |    3.0953 ns   |    4.1610 ns   |      N/A       |
+| mat2 transform vector2 |    3.1926 ns   |  __2.3974 ns__ |    6.8836 ns   |      N/A       |
+| mat2 transpose         |  __0.7124 ns__ |    1.3370 ns   |    1.8164 ns   |      N/A       |
+| mat3 determinant       |    2.2119 ns   |    2.5514 ns   |    2.6440 ns   |  __1.1939 ns__ |
+| mat3 inverse           |    9.3552 ns   |    7.9584 ns   |    9.8131 ns   |  __4.2979 ns__ |
+| mat3 mul mat3          |    4.8614 ns   |    9.5457 ns   |    8.5263 ns   |  __4.6640 ns__ |
+| mat3 transform point2  |  __2.6169 ns__ |    2.7039 ns   |    7.7552 ns   |    2.7560 ns   |
+| mat3 transform vector2 |    2.5250 ns   |      N/A       |    3.3505 ns   |  __2.4924 ns__ |
+| mat3 transform vector3 |  __2.3030 ns__ |    4.0836 ns   |    7.7676 ns   |      N/A       |
+| mat3 transpose         |  __1.9804 ns__ |    3.5219 ns   |    7.4764 ns   |      N/A       |
+| mat4 determinant       |  __7.8634 ns__ |   11.2128 ns   |   50.3752 ns   |   16.6337 ns   |
+| mat4 inverse           | __20.8923 ns__ |   43.4538 ns   |   47.5601 ns   |   53.8143 ns   |
+| mat4 mul mat4          |  __6.6313 ns__ |    9.3879 ns   |   15.7381 ns   |    9.1823 ns   |
+| mat4 transform point3  |  __2.4195 ns__ |    5.8730 ns   |    9.1768 ns   |    6.2335 ns   |
+| mat4 transform vector3 |  __2.2820 ns__ |    4.5448 ns   |    4.8356 ns   |    4.0491 ns   |
+| mat4 transform vector4 |  __2.5198 ns__ |    3.5723 ns   |    4.7060 ns   |      N/A       |
+| mat4 transpose         |  __2.7021 ns__ |    7.8229 ns   |   11.0251 ns   |      N/A       |
+| quat conjugate         |  __0.8947 ns__ |    1.7631 ns   |    1.7695 ns   |    1.7840 ns   |
+| quat mul quat          |  __2.6549 ns__ |    3.7420 ns   |    4.0232 ns   |    7.9351 ns   |
+| quat transform vector3 |  __4.1744 ns__ |    6.4873 ns   |   25.4556 ns   |    6.7573 ns   |
+| vec3 cross             |  __2.0804 ns__ |    2.8876 ns   |    2.8487 ns   |    2.8373 ns   |
+| vec3 dot               |  __1.4839 ns__ |    1.8252 ns   |    1.6298 ns   |    1.6791 ns   |
+| vec3 length            |    2.0967 ns   |  __2.0193 ns__ |    2.0208 ns   |    2.4133 ns   |
+| vec3 normalize         |  __4.0307 ns__ |    4.3551 ns   |    8.1171 ns   |    8.0631 ns   |
 
 These benchmarks were performed on an [Intel i7-4710HQ] CPU on Linux. They were
-compiled with the stable 1.36 Rust compiler. Lower (better) numbers are
+compiled with the stable 1.38 Rust compiler. Lower (better) numbers are
 highlighted. The versions of the libraries tested were:
 
-* `glam` - 0.7.1
+* `glam` - 0.8.2
 * `cgmath` - 0.17.0
-* `nalgebra` - 0.18.0
-* `euclid` - 0.20.1
+* `nalgebra` - 0.19.0
+* `euclid` - 0.20.3
 
 See the full [mathbench report] for more detailed results.
 
@@ -212,4 +212,4 @@ If you are interested in contributing or have a request or suggestion
 [Criterion.rs]: https://bheisler.github.io/criterion.rs/book/index.html
 [Code of Conduct]: https://www.rust-lang.org/en-US/conduct.html
 [create an issue]: https://github.com/bitshifter/mathbench-rs/issues
-[mathbench report]: https://bitshifter.github.io/mathbench/0.1.8/report/index.html
+[mathbench report]: https://bitshifter.github.io/mathbench/0.1.9/report/index.html
