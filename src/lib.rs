@@ -467,10 +467,7 @@ pub mod vek_support {
     use rand::SeedableRng;
     use rand_xoshiro::Xoshiro256Plus;
     use vek;
-    impl_random_vec!(
-        vek::Mat4<f32>,
-        random_mint_homogeneous_mat4
-    );
+    impl_random_vec!(vek::Mat4<f32>, random_mint_homogeneous_mat4);
     impl_random_vec!(vek::Vec2<f32>, random_mint_vec2);
     impl_random_vec!(vek::Vec3<f32>, random_mint_vec3);
     impl_random_vec!(vek::Vec4<f32>, random_mint_vec4);
@@ -499,17 +496,11 @@ pub mod vek_support {
     //     v.into()
     // }
 
-    pub fn vek_mat4_mul_mat4(
-        m1: vek::Mat4<f32>,
-        m2: vek::Mat4<f32>,
-    ) -> vek::Mat4<f32> {
+    pub fn vek_mat4_mul_mat4(m1: vek::Mat4<f32>, m2: vek::Mat4<f32>) -> vek::Mat4<f32> {
         m1 * m2
     }
 
-    pub fn vek_mat4_mul_vec4(
-        m: vek::Mat4<f32>,
-        v: vek::Vec4<f32>,
-    ) -> vek::Vec4<f32> {
+    pub fn vek_mat4_mul_vec4(m: vek::Mat4<f32>, v: vek::Vec4<f32>) -> vek::Vec4<f32> {
         m * v
     }
 }
