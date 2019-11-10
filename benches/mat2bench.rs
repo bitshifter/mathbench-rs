@@ -17,6 +17,10 @@ fn bench_mat2_transpose(c: &mut Criterion) {
         use nalgebra::Matrix2;
         bench_unop!(b, op => transpose, ty => Matrix2<f32>)
     });
+    bench_vek!(group, |b| {
+        use vek::Mat2;
+        bench_unop!(b, op => transposed, ty => Mat2<f32>)
+    });
     group.finish();
 }
 
@@ -33,6 +37,10 @@ fn bench_mat2_determinant(c: &mut Criterion) {
     bench_nalgebra!(group, |b| {
         use nalgebra::Matrix2;
         bench_unop!(b, op => determinant, ty => Matrix2<f32>)
+    });
+    bench_vek!(group, |b| {
+        use vek::Mat2;
+        bench_unop!(b, op => determinant, ty => Mat2<f32>)
     });
     group.finish();
 }
@@ -68,6 +76,10 @@ fn bench_mat2_mul_mat2(c: &mut Criterion) {
     bench_nalgebra!(group, |b| {
         use nalgebra::Matrix2;
         bench_binop!(b, op => mul, ty1 => Matrix2<f32>, ty2 => Matrix2<f32>)
+    });
+    bench_vek!(group, |b| {
+        use vek::Mat2;
+        bench_binop!(b, op => mul, ty1 => Mat2<f32>, ty2 => Mat2<f32>)
     });
     group.finish();
 }

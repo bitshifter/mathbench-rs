@@ -19,8 +19,12 @@ fn bench_quat_conjugate(c: &mut Criterion) {
     });
     bench_euclid!(group, |b| {
         use euclid::{Rotation3D, UnknownUnit};
-        // inverse assume normalized quaternion, so it's just a conjugate
+        // euclid inverse assumes normalized quaternion, so it's just a conjugate
         bench_unop!(b, op => inverse, ty => Rotation3D<f32, UnknownUnit, UnknownUnit>)
+    });
+    bench_vek!(group, |b| {
+        use vek::Quaternion;
+        bench_unop!(b, op => conjugate, ty => Quaternion<f32>)
     });
     group.finish();
 }
@@ -43,6 +47,10 @@ fn bench_quat_mul_quat(c: &mut Criterion) {
     bench_euclid!(group, |b| {
         use euclid::{Rotation3D, UnknownUnit};
         bench_binop!(b, op => pre_rotate, ty => Rotation3D<f32, UnknownUnit, UnknownUnit>, param => by_ref)
+    });
+    bench_vek!(group, |b| {
+        use vek::Quaternion;
+        bench_binop!(b, op => mul, ty1 => Quaternion<f32>, ty2 => Quaternion<f32>);
     });
     group.finish();
 }

@@ -22,6 +22,10 @@ fn bench_mat4_transform_vector3(c: &mut Criterion) {
         use euclid::{Transform3D, UnknownUnit, Vector3D};
         bench_binop!(b, op => transform_vector3d, ty1 => Transform3D<f32, UnknownUnit, UnknownUnit>, ty2 => Vector3D<f32, UnknownUnit>)
     });
+    bench_vek!(group, |b| {
+        use vek::{Mat4, Vec3};
+        bench_binop!(b, op => mul_direction, ty1 => Mat4<f32>, ty2 => Vec3<f32>)
+    });
     group.finish();
 }
 
@@ -43,6 +47,10 @@ fn bench_mat4_transform_point3(c: &mut Criterion) {
     bench_euclid!(group, |b| {
         use euclid::{Point3D, Transform3D, UnknownUnit};
         bench_binop!(b, op => transform_point3d, ty1 => Transform3D<f32, UnknownUnit, UnknownUnit>, ty2 => Point3D<f32, UnknownUnit>)
+    });
+    bench_vek!(group, |b| {
+        use vek::{Mat4, Vec3};
+        bench_binop!(b, op => mul_point, ty1 => Mat4<f32>, ty2 => Vec3<f32>)
     });
     group.finish();
 }
@@ -68,6 +76,10 @@ fn bench_mat4_transform_vector4(c: &mut Criterion) {
         use vek::Vec4;
         bench_binop!(b, op => mul, ty1 => Mat4<f32>, ty2 => Vec4<f32>)
     });
+    bench_vek!(group, |b| {
+        use vek::{Mat4, Vec4};
+        bench_binop!(b, op => mul, ty1 => Mat4<f32>, ty2 => Vec4<f32>)
+    });
     group.finish();
 }
 
@@ -90,6 +102,10 @@ fn bench_mat3_transform_point2(c: &mut Criterion) {
         use euclid::{Point2D, Transform2D, UnknownUnit};
         bench_binop!(b, op => transform_point, ty1 => Transform2D<f32, UnknownUnit, UnknownUnit>, ty2 => Point2D<f32, UnknownUnit>)
     });
+    bench_vek!(group, |b| {
+        use vek::{Mat3, Vec2};
+        bench_binop!(b, op => mul_point_2d, ty1 => Mat3<f32>, ty2 => Vec2<f32>)
+    });
     group.finish();
 }
 
@@ -101,10 +117,10 @@ fn bench_mat3_transform_vector2(c: &mut Criterion) {
         bench_binop!(b, op => transform_vector2, ty1 => Mat3, ty2 => Vec2)
     });
     // TODO: doesn't compile but might need a macro change to set return type
-    // .with_function("cgmath", |b| {
+    // bench_cgmath!(group, |b| {
     //     use cgmath::{Matrix3, Transform, Vector2};
     //     bench_binop!(b, op => transform_vector, ty1 => Matrix3<f32>, ty2 => Vector2<f32>)
-    // })
+    // });
     bench_nalgebra!(group, |b| {
         use nalgebra::{Transform2, Vector2};
         bench_binop!(b, op => transform_vector, ty1 => Transform2<f32>, ty2 => Vector2<f32>, param => by_ref)
@@ -112,6 +128,10 @@ fn bench_mat3_transform_vector2(c: &mut Criterion) {
     bench_euclid!(group, |b| {
         use euclid::{Transform2D, UnknownUnit, Vector2D};
         bench_binop!(b, op => transform_vector, ty1 => Transform2D<f32, UnknownUnit, UnknownUnit>, ty2 => Vector2D<f32, UnknownUnit>)
+    });
+    bench_vek!(group, |b| {
+        use vek::{Mat3, Vec2};
+        bench_binop!(b, op => mul_direction_2d, ty1 => Mat3<f32>, ty2 => Vec2<f32>)
     });
     group.finish();
 }
@@ -132,6 +152,10 @@ fn bench_mat3_transform_vector3(c: &mut Criterion) {
         use nalgebra::{Matrix3, Vector3};
         bench_binop!(b, op => mul, ty1 => Matrix3<f32>, ty2 => Vector3<f32>)
     });
+    bench_vek!(group, |b| {
+        use vek::{Mat3, Vec3};
+        bench_binop!(b, op => mul, ty1 => Mat3<f32>, ty2 => Vec3<f32>)
+    });
     group.finish();
 }
 
@@ -150,6 +174,10 @@ fn bench_mat2_transform_vector2(c: &mut Criterion) {
     bench_nalgebra!(group, |b| {
         use nalgebra::{Matrix2, Vector2};
         bench_binop!(b, op => mul, ty1 => Matrix2<f32>, ty2 => Vector2<f32>)
+    });
+    bench_vek!(group, |b| {
+        use vek::{Mat2, Vec2};
+        bench_binop!(b, op => mul, ty1 => Mat2<f32>, ty2 => Vec2<f32>)
     });
     group.finish();
 }
@@ -173,6 +201,10 @@ fn bench_quat_transform_vector3(c: &mut Criterion) {
     bench_euclid!(group, |b| {
         use euclid::{Point3D, Rotation3D, UnknownUnit};
         bench_binop!(b, op => transform_point3d, ty1 => Rotation3D<f32, UnknownUnit, UnknownUnit>, ty2 => Point3D<f32, UnknownUnit>)
+    });
+    bench_vek!(group, |b| {
+        use vek::{Quaternion, Vec3};
+        bench_binop!(b, op => mul, ty1 => Quaternion<f32>, ty2 => Vec3<f32>)
     });
     group.finish();
 }

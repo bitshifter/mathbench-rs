@@ -22,6 +22,10 @@ fn bench_mat3_transpose(c: &mut Criterion) {
         use nalgebra::Matrix3;
         bench_unop!(b, op => transpose, ty => Matrix3<f32>)
     });
+    bench_vek!(group, |b| {
+        use vek::Mat3;
+        bench_unop!(b, op => transposed, ty => Mat3<f32>)
+    });
     group.finish();
 }
 
@@ -42,6 +46,10 @@ fn bench_mat3_determinant(c: &mut Criterion) {
     bench_euclid!(group, |b| {
         use euclid::{Transform2D, UnknownUnit};
         bench_unop!(b, op => determinant, ty => Transform2D<f32, UnknownUnit, UnknownUnit>)
+    });
+    bench_vek!(group, |b| {
+        use vek::Mat3;
+        bench_unop!(b, op => determinant, ty => Mat3<f32>)
     });
     group.finish();
 }
@@ -85,6 +93,10 @@ fn bench_mat3_mul_mat3(c: &mut Criterion) {
     bench_euclid!(group, |b| {
         use euclid::{Transform2D, UnknownUnit};
         bench_binop!(b, op => post_transform, ty => Transform2D<f32, UnknownUnit, UnknownUnit>, param => by_ref)
+    });
+    bench_vek!(group, |b| {
+        use vek::Mat3;
+        bench_binop!(b, op => mul, ty1 => Mat3<f32>, ty2 => Mat3<f32>)
     });
     group.finish();
 }

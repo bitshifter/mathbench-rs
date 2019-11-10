@@ -467,7 +467,10 @@ pub mod vek_support {
     use rand::SeedableRng;
     use rand_xoshiro::Xoshiro256Plus;
     use vek;
+    impl_random_vec!(vek::Mat2<f32>, random_mint_invertible_mat2);
+    impl_random_vec!(vek::Mat3<f32>, random_mint_homogeneous_mat3);
     impl_random_vec!(vek::Mat4<f32>, random_mint_homogeneous_mat4);
+    impl_random_vec!(vek::Quaternion<f32>, random_mint_quat);
     impl_random_vec!(vek::Vec2<f32>, random_mint_vec2);
     impl_random_vec!(vek::Vec3<f32>, random_mint_vec3);
     impl_random_vec!(vek::Vec4<f32>, random_mint_vec4);
