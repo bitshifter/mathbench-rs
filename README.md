@@ -13,6 +13,7 @@ games and graphics development, including:
 * [`cgmath`][cgmath]
 * [`nalgebra`][nalgebra]
 * [`euclid`][euclid]
+* [`vek`][vek]
 
 ## The benchmarks
 
@@ -63,7 +64,7 @@ contain NaNs).
 ## Benchmark results
 
 The following is a table of benchmarks produced by `mathbench` comparing `glam`
-performance to `cgmath`, `nalgebra` and `euclid` on `f32` data.
+performance to `cgmath`, `nalgebra`, `euclid` and `vek` on `f32` data.
 
 | benchmark              |         glam   |       cgmath   |     nalgebra   |       euclid   |
 |:-----------------------|---------------:|---------------:|---------------:|---------------:|
@@ -104,6 +105,7 @@ highlighted. The versions of the libraries tested were:
 * `cgmath` - 0.17.0
 * `nalgebra` - 0.19.0
 * `euclid` - 0.20.3
+* `vek` - 0.9.10 (`repr_c` types)
 
 See the full [mathbench report] for more detailed results.
 
@@ -209,6 +211,7 @@ If you are interested in contributing or have a request or suggestion
 [cgmath]: https://github.com/rustgd/cgmath
 [nalgebra]: https://github.com/rustsim/nalgebra
 [euclid]: https://github.com/servo/euclid
+[vek]: https://github.com/yoanlcq/vek
 [Criterion.rs]: https://bheisler.github.io/criterion.rs/book/index.html
 [Code of Conduct]: https://www.rust-lang.org/en-US/conduct.html
 [create an issue]: https://github.com/bitshifter/mathbench-rs/issues

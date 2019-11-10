@@ -6,7 +6,7 @@ edition = "2018"
 
 [features]
 # defaults can be disabled for benchmarks but are required for tests
-default = ["cgmath", "euclid", "nalgebra"]
+default = ["cgmath", "euclid", "nalgebra", "vek"]
 
 [dependencies]
 mint = "0.5.1"
@@ -15,20 +15,17 @@ rand_xoshiro = "~0.4"
 
 [dependencies.glam]
 version = "0.8.2"
-default-features = false
 features = ["mint", "rand", "debug-glam-assert"]
 # a lot of random data generation uses glam, so can't be optional yet
 # optional = true
 
 [dependencies.nalgebra]
 version = "0.19.0"
-default-features = false
 features = ["std", "mint"]
 optional = true
 
 [dependencies.cgmath]
 version = "0.17.0"
-default-features = false
 features = ["mint"]
 optional = true
 

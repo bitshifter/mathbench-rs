@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog].
 
 ### Added
 * Added this `CHANGELOG.md` file!
+* Added benchmarks for `vek` `0.9.10`
 
 ### Changed
 * `cgmath`, `euclid` and `nalgebra` are now all optional features. They can be
