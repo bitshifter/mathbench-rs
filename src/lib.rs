@@ -510,16 +510,25 @@ pub mod vek_support {
 
 #[cfg(feature = "pathfinder_geometry")]
 pub mod pathfinder_support {
+    use super::mint_support::*;
     use super::RandomVec;
     use rand::{Rng, SeedableRng};
     use rand_xoshiro::Xoshiro256Plus;
 
     impl_random_vec!(pathfinder_geometry::vector::Vector2F, random_pf_vec2);
+    impl_random_vec!(pathfinder_geometry::transform2d::Matrix2x2F, random_pf_mat2);
 
     pub fn random_pf_vec2<R>(rng: &mut R) -> pathfinder_geometry::vector::Vector2F
     where
         R: Rng,
     {
         pathfinder_geometry::vector::Vector2F::new(rng.gen(), rng.gen())
+    }
+    pub fn random_pf_mat2<R>(rng: &mut R) -> pathfinder_geometry::transform2d::Matrix2x2F
+    where
+        R: Rng,
+    {
+        let mat = random_mint_invertible_mat2(rng);
+        pathfinder_geometry::transform2d::Matrix2x2F::row_major(mat.x.x, mat.y.x, mat.x.y, mat.y.y)
     }
 }

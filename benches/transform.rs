@@ -174,6 +174,10 @@ fn bench_mat2_transform_vector2(c: &mut Criterion) {
         use vek::{Mat2, Vec2};
         bench_binop!(b, op => mul, ty1 => Mat2<f32>, ty2 => Vec2<f32>)
     });
+    bench_pathfinder!(group, |b| {
+        use pathfinder_geometry::{transform2d::Matrix2x2F, vector::Vector2F};
+        bench_binop!(b, op => mul, ty1 => Matrix2x2F, ty2 => Vector2F)
+    });
     group.finish();
 }
 

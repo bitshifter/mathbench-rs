@@ -42,6 +42,10 @@ fn bench_mat2_determinant(c: &mut Criterion) {
         use vek::Mat2;
         bench_unop!(b, op => determinant, ty => Mat2<f32>)
     });
+    bench_pathfinder!(group, |b| {
+        use pathfinder_geometry::transform2d::Matrix2x2F;
+        bench_unop!(b, op => det, ty => Matrix2x2F)
+    });
     group.finish();
 }
 
@@ -58,6 +62,10 @@ fn bench_mat2_inverse(c: &mut Criterion) {
     bench_nalgebra!(group, |b| {
         use nalgebra::Matrix2;
         bench_unop!(b, op => try_inverse, ty => Matrix2<f32>)
+    });
+    bench_pathfinder!(group, |b| {
+        use pathfinder_geometry::transform2d::Matrix2x2F;
+        bench_unop!(b, op => inverse, ty => Matrix2x2F)
     });
     group.finish();
 }
@@ -80,6 +88,10 @@ fn bench_mat2_mul_mat2(c: &mut Criterion) {
     bench_vek!(group, |b| {
         use vek::Mat2;
         bench_binop!(b, op => mul, ty1 => Mat2<f32>, ty2 => Mat2<f32>)
+    });
+    bench_pathfinder!(group, |b| {
+        use pathfinder_geometry::transform2d::Matrix2x2F;
+        bench_binop!(b, op => mul, ty1 => Matrix2x2F, ty2 => Matrix2x2F)
     });
     group.finish();
 }

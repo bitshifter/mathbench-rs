@@ -39,6 +39,14 @@ macro_rules! bench_vek {
 }
 
 #[macro_export]
+macro_rules! bench_pathfinder {
+    ($group:ident, $closure:expr) => {
+        #[cfg(feature = "pathfinder_geometry")]
+        $group.bench_function("pathfinder", $closure)
+    };
+}
+
+#[macro_export]
 macro_rules! bench_func {
     ($b: ident, op => $func: ident, ty => $t: ty) => {{
         const LEN: usize = 1 << 13;

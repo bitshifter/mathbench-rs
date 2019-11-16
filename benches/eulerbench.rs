@@ -11,8 +11,8 @@ macro_rules! bench_euler {
         let accel_data = <$t as mathbench::RandomVec>::random_vec(0, NUM_OBJECTS);
         let mut vel_data: Vec<$t> = vec![$zero; NUM_OBJECTS];
         let mut pos_data: Vec<$t> = vec![$zero; NUM_OBJECTS];
+        let dt = UPDATE_RATE;
         $b.iter(|| {
-            let dt = UPDATE_RATE;
             for ((position, acceleration), velocity) in
                 pos_data.iter_mut().zip(&accel_data).zip(&mut vel_data)
             {
@@ -70,6 +70,11 @@ fn bench_euler_2d(c: &mut Criterion) {
         use vek::Vec2;
         bench_euler!(b, ty => Vec2<f32>, zero => Vec2::zero())
     });
+    // No Vector2F * f32 and no MulAssign
+    // bench_pathfinder!(group, |b| {
+    //     use pathfinder_geometry::vector::Vector2F;
+    //     bench_euler!(b, ty => Vector2F, zero => Vector2F::splat(0.0))
+    // });
     group.finish();
 }
 
