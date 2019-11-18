@@ -17,10 +17,10 @@ git:
 
 script:
   - cargo clean
-  - cargo check
+  - cargo check --features pathfinder_geometry
   - cargo check --no-default-features
   - cargo test
-  - cargo bench --no-run
+  - cargo bench --no-run --features pathfinder_geometry
   - cargo bench --no-default-features --no-run
 
 after_success:
