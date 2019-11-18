@@ -516,7 +516,12 @@ pub mod pathfinder_support {
     use rand_xoshiro::Xoshiro256Plus;
 
     impl_random_vec!(pathfinder_geometry::vector::Vector2F, random_pf_vec2);
+    impl_random_vec!(pathfinder_geometry::vector::Vector4F, random_pf_vec4);
     impl_random_vec!(pathfinder_geometry::transform2d::Matrix2x2F, random_pf_mat2);
+    impl_random_vec!(
+        pathfinder_geometry::transform3d::Transform4F,
+        random_pf_mat4
+    );
 
     pub fn random_pf_vec2<R>(rng: &mut R) -> pathfinder_geometry::vector::Vector2F
     where
@@ -524,11 +529,30 @@ pub mod pathfinder_support {
     {
         pathfinder_geometry::vector::Vector2F::new(rng.gen(), rng.gen())
     }
+
+    pub fn random_pf_vec4<R>(rng: &mut R) -> pathfinder_geometry::vector::Vector4F
+    where
+        R: Rng,
+    {
+        pathfinder_geometry::vector::Vector4F::new(rng.gen(), rng.gen(), rng.gen(), rng.gen())
+    }
+
     pub fn random_pf_mat2<R>(rng: &mut R) -> pathfinder_geometry::transform2d::Matrix2x2F
     where
         R: Rng,
     {
         let mat = random_mint_invertible_mat2(rng);
         pathfinder_geometry::transform2d::Matrix2x2F::row_major(mat.x.x, mat.y.x, mat.x.y, mat.y.y)
+    }
+
+    pub fn random_pf_mat4<R>(rng: &mut R) -> pathfinder_geometry::transform3d::Transform4F
+    where
+        R: Rng,
+    {
+        let mat = random_mint_homogeneous_mat4(rng);
+        pathfinder_geometry::transform3d::Transform4F::row_major(
+            mat.x.x, mat.y.x, mat.z.x, mat.w.x, mat.x.y, mat.y.y, mat.z.y, mat.w.y, mat.x.z,
+            mat.y.z, mat.z.z, mat.w.z, mat.x.w, mat.y.w, mat.z.w, mat.w.w,
+        )
     }
 }

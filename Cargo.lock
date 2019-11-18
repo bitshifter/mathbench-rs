@@ -215,7 +215,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [[package]]
 name = "euclid"
-version = "0.20.3"
+version = "0.20.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
  "mint 0.5.3 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -300,11 +300,11 @@ dependencies = [
 
 [[package]]
 name = "mathbench"
-version = "0.1.9"
+version = "0.1.10"
 dependencies = [
  "cgmath 0.17.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "criterion 0.3.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "euclid 0.20.3 (registry+https://github.com/rust-lang/crates.io-index)",
+ "euclid 0.20.4 (registry+https://github.com/rust-lang/crates.io-index)",
  "glam 0.8.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "mint 0.5.3 (registry+https://github.com/rust-lang/crates.io-index)",
  "nalgebra 0.19.0 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -852,7 +852,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 "checksum csv 1.1.1 (registry+https://github.com/rust-lang/crates.io-index)" = "37519ccdfd73a75821cac9319d4fce15a81b9fcf75f951df5b9988aa3a0af87d"
 "checksum csv-core 0.1.6 (registry+https://github.com/rust-lang/crates.io-index)" = "9b5cadb6b25c77aeff80ba701712494213f4a8418fcda2ee11b6560c3ad0bf4c"
 "checksum either 1.5.3 (registry+https://github.com/rust-lang/crates.io-index)" = "bb1f6b1ce1c140482ea30ddd3335fc0024ac7ee112895426e0a629a6c20adfe3"
-"checksum euclid 0.20.3 (registry+https://github.com/rust-lang/crates.io-index)" = "f46a3516f04c5e05870f71ae6242a97e8f72ee12cfc2f7f5deb16111a98b0670"
+"checksum euclid 0.20.4 (registry+https://github.com/rust-lang/crates.io-index)" = "4eeaa189ab5e5b393b765ff1ca754d88f3180d16260f1a5b39156c7b16159cce"
 "checksum fuchsia-cprng 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)" = "a06f77d526c1a601b7c4cdd98f54b5eaabffc14d5f2f0296febdc7f357c6d3ba"
 "checksum generic-array 0.13.2 (registry+https://github.com/rust-lang/crates.io-index)" = "0ed1e761351b56f54eb9dcd0cfaca9fd0daecf93918e1cfc01c8a3d26ee7adcd"
 "checksum getrandom 0.1.13 (registry+https://github.com/rust-lang/crates.io-index)" = "e7db7ca94ed4cd01190ceee0d8a8052f08a247aa1b469a7f68c6a3b71afcf407"

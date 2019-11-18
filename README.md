@@ -14,6 +14,7 @@ games and graphics development, including:
 * [`nalgebra`][nalgebra]
 * [`euclid`][euclid]
 * [`vek`][vek]
+* [`pathfinder_geometry`][pathfinder_geometry]
 
 ## The benchmarks
 
@@ -101,11 +102,11 @@ These benchmarks were performed on an [Intel i7-4710HQ] CPU on Linux. They were
 compiled with the stable 1.39 Rust compiler. Lower (better) numbers are
 highlighted. The versions of the libraries tested were:
 
-* `glam` - 0.8.2
-* `cgmath` - 0.17.0
-* `nalgebra` - 0.19.0
-* `euclid` - 0.20.3
-* `vek` - 0.9.10 (`repr_c` types)
+* `glam` - `0.8.2`
+* `cgmath` - `0.17.0`
+* `nalgebra` - `0.19.0`
+* `euclid` - `0.20.3`
+* `vek` - `0.9.10` (`repr_c` types)
 
 See the full [mathbench report] for more detailed results.
 
@@ -212,6 +213,7 @@ If you are interested in contributing or have a request or suggestion
 [nalgebra]: https://github.com/rustsim/nalgebra
 [euclid]: https://github.com/servo/euclid
 [vek]: https://github.com/yoanlcq/vek
+[pathfinder_geometry]: https://crates.io/crates/pathfinder_geometry
 [Criterion.rs]: https://bheisler.github.io/criterion.rs/book/index.html
 [Code of Conduct]: https://www.rust-lang.org/en-US/conduct.html
 [create an issue]: https://github.com/bitshifter/mathbench-rs/issues

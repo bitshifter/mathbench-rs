@@ -55,7 +55,7 @@ fn bench_mat4_transform_point3(c: &mut Criterion) {
     group.finish();
 }
 
-/// 4x3 matrix multiply of a 4D vector
+/// 4x4 matrix multiply of a 4D vector
 fn bench_mat4_transform_vector4(c: &mut Criterion) {
     use std::ops::Mul;
     let mut group = c.benchmark_group("mat4 transform vector4");
@@ -74,6 +74,10 @@ fn bench_mat4_transform_vector4(c: &mut Criterion) {
     bench_vek!(group, |b| {
         use vek::{Mat4, Vec4};
         bench_binop!(b, op => mul, ty1 => Mat4<f32>, ty2 => Vec4<f32>)
+    });
+    bench_pathfinder!(group, |b| {
+        use pathfinder_geometry::{transform3d::Transform4F, vector::Vector4F};
+        bench_binop!(b, op => mul, ty1 => Transform4F, ty2 => Vector4F)
     });
     group.finish();
 }

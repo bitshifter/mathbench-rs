@@ -75,6 +75,10 @@ fn bench_mat4_inverse(c: &mut Criterion) {
         use vek::Mat4;
         bench_unop!(b, op => inverted, ty => Mat4<f32>)
     });
+    bench_pathfinder!(group, |b| {
+        use pathfinder_geometry::transform3d::Transform4F;
+        bench_unop!(b, op => inverse, ty => Transform4F)
+    });
     group.finish();
 }
 
@@ -100,6 +104,10 @@ fn bench_mat4_mul_mat4(c: &mut Criterion) {
     bench_vek!(group, |b| {
         use vek::Mat4;
         bench_binop!(b, op => mul, ty1 => Mat4<f32>, ty2 => Mat4<f32>)
+    });
+    bench_pathfinder!(group, |b| {
+        use pathfinder_geometry::transform3d::Transform4F;
+        bench_binop!(b, op => mul, ty1 => Transform4F, ty2 => Transform4F)
     });
     group.finish();
 }

@@ -1,6 +1,6 @@
 [package]
 name = "mathbench"
-version = "0.1.9"
+version = "0.1.10"
 authors = ["Cameron Hart <cameron.hart@gmail.com>"]
 edition = "2018"
 
@@ -30,7 +30,7 @@ features = ["mint"]
 optional = true
 
 [dependencies.euclid]
-version = "0.20.3"
+version = "0.20.4"
 features = ["mint"]
 optional = true
 
