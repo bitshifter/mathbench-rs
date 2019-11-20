@@ -8,7 +8,7 @@ import prettytable
 
 
 DEFAULT = ['glam', 'cgmath', 'nalgebra', 'euclid', 'vek']
-OPTIONAL = []
+OPTIONAL = ['pathfinder']
 CHOICES = DEFAULT + OPTIONAL
 
 class DefaultListAction(argparse.Action):

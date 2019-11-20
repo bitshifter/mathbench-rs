@@ -1,15 +1,16 @@
-pub trait RandomVec {
-    type Value;
-    fn random_vec(seed: u64, len: usize) -> Vec<Self::Value>;
+use rand::Rng;
+
+pub trait RandomValue {
+    type Type;
+    fn random_value<R: Rng>(rng: &mut R) -> Self::Type;
 }
 
-macro_rules! impl_random_vec {
+macro_rules! impl_random_value {
     ($t:ty, $f:expr) => {
-        impl RandomVec for $t {
-            type Value = Self;
-            fn random_vec(seed: u64, len: usize) -> Vec<Self::Value> {
-                let mut rng = Xoshiro256Plus::seed_from_u64(seed);
-                (0..len).map(|_| $f(&mut rng).into()).collect()
+        impl RandomValue for $t {
+            type Type = Self;
+            fn random_value<R: rand::Rng>(rng: &mut R) -> Self::Type {
+                $f(rng).into()
             }
         }
     };
@@ -117,17 +118,16 @@ pub mod mint_support {
 
 pub mod glam_support {
     use super::mint_support::*;
-    use super::RandomVec;
+    use super::RandomValue;
     use glam;
-    use rand::{Rng, SeedableRng};
-    use rand_xoshiro::Xoshiro256Plus;
-    impl_random_vec!(glam::Mat2, random_mint_invertible_mat2);
-    impl_random_vec!(glam::Mat3, random_mint_homogeneous_mat3);
-    impl_random_vec!(glam::Mat4, random_mint_homogeneous_mat4);
-    impl_random_vec!(glam::Quat, random_mint_quat);
-    impl_random_vec!(glam::Vec2, random_mint_vec2);
-    impl_random_vec!(glam::Vec3, random_mint_vec3);
-    impl_random_vec!(glam::Vec4, random_mint_vec4);
+    use rand::Rng;
+    impl_random_value!(glam::Mat2, random_mint_invertible_mat2);
+    impl_random_value!(glam::Mat3, random_mint_homogeneous_mat3);
+    impl_random_value!(glam::Mat4, random_mint_homogeneous_mat4);
+    impl_random_value!(glam::Quat, random_mint_quat);
+    impl_random_value!(glam::Vec2, random_mint_vec2);
+    impl_random_value!(glam::Vec3, random_mint_vec3);
+    impl_random_value!(glam::Vec4, random_mint_vec4);
 
     // f32 random functions  ------------------------------------------------------
     fn random_nonzero_f32<R>(rng: &mut R) -> f32
@@ -213,22 +213,21 @@ pub mod glam_support {
 #[cfg(feature = "cgmath")]
 pub mod cgmath_support {
     use super::mint_support::*;
-    use super::RandomVec;
-    use rand::{Rng, SeedableRng};
-    use rand_xoshiro::Xoshiro256Plus;
-    impl_random_vec!(
+    use super::RandomValue;
+    use rand::Rng;
+    impl_random_value!(
         cgmath::Decomposed<cgmath::Vector3<f32>, cgmath::Quaternion<f32>>,
         random_cgmath_decomposed3
     );
-    impl_random_vec!(cgmath::Matrix2<f32>, random_mint_invertible_mat2);
-    impl_random_vec!(cgmath::Matrix3<f32>, random_mint_homogeneous_mat3);
-    impl_random_vec!(cgmath::Matrix4<f32>, random_mint_homogeneous_mat4);
-    impl_random_vec!(cgmath::Point2<f32>, random_cgmath_point2);
-    impl_random_vec!(cgmath::Point3<f32>, random_cgmath_point3);
-    impl_random_vec!(cgmath::Quaternion<f32>, random_mint_quat);
-    impl_random_vec!(cgmath::Vector2<f32>, random_mint_vec2);
-    impl_random_vec!(cgmath::Vector3<f32>, random_mint_vec3);
-    impl_random_vec!(cgmath::Vector4<f32>, random_mint_vec4);
+    impl_random_value!(cgmath::Matrix2<f32>, random_mint_invertible_mat2);
+    impl_random_value!(cgmath::Matrix3<f32>, random_mint_homogeneous_mat3);
+    impl_random_value!(cgmath::Matrix4<f32>, random_mint_homogeneous_mat4);
+    impl_random_value!(cgmath::Point2<f32>, random_cgmath_point2);
+    impl_random_value!(cgmath::Point3<f32>, random_cgmath_point3);
+    impl_random_value!(cgmath::Quaternion<f32>, random_mint_quat);
+    impl_random_value!(cgmath::Vector2<f32>, random_mint_vec2);
+    impl_random_value!(cgmath::Vector3<f32>, random_mint_vec3);
+    impl_random_value!(cgmath::Vector4<f32>, random_mint_vec4);
 
     // cgmath random functions ----------------------------------------------------
     fn random_cgmath_decomposed3<R>(
@@ -287,20 +286,19 @@ pub mod cgmath_support {
 #[cfg(feature = "nalgebra")]
 pub mod nalgebra_support {
     use super::mint_support::*;
-    use super::RandomVec;
-    use rand::{Rng, SeedableRng};
-    use rand_xoshiro::Xoshiro256Plus;
-    impl_random_vec!(nalgebra::Matrix2<f32>, random_mint_invertible_mat2);
-    impl_random_vec!(nalgebra::Matrix3<f32>, random_mint_homogeneous_mat3);
-    impl_random_vec!(nalgebra::Matrix4<f32>, random_mint_homogeneous_mat4);
-    impl_random_vec!(nalgebra::Point2<f32>, random_na_point2);
-    impl_random_vec!(nalgebra::Point3<f32>, random_na_point3);
-    impl_random_vec!(nalgebra::Transform2<f32>, random_na_transform2);
-    impl_random_vec!(nalgebra::Transform3<f32>, random_na_transform3);
-    impl_random_vec!(nalgebra::UnitQuaternion<f32>, random_na_quat);
-    impl_random_vec!(nalgebra::Vector2<f32>, random_na_vec2);
-    impl_random_vec!(nalgebra::Vector3<f32>, random_na_vec3);
-    impl_random_vec!(nalgebra::Vector4<f32>, random_na_vec4);
+    use super::RandomValue;
+    use rand::Rng;
+    impl_random_value!(nalgebra::Matrix2<f32>, random_mint_invertible_mat2);
+    impl_random_value!(nalgebra::Matrix3<f32>, random_mint_homogeneous_mat3);
+    impl_random_value!(nalgebra::Matrix4<f32>, random_mint_homogeneous_mat4);
+    impl_random_value!(nalgebra::Point2<f32>, random_na_point2);
+    impl_random_value!(nalgebra::Point3<f32>, random_na_point3);
+    impl_random_value!(nalgebra::Transform2<f32>, random_na_transform2);
+    impl_random_value!(nalgebra::Transform3<f32>, random_na_transform3);
+    impl_random_value!(nalgebra::UnitQuaternion<f32>, random_na_quat);
+    impl_random_value!(nalgebra::Vector2<f32>, random_na_vec2);
+    impl_random_value!(nalgebra::Vector3<f32>, random_na_vec3);
+    impl_random_value!(nalgebra::Vector4<f32>, random_na_vec4);
 
     // nalgebra random functions --------------------------------------------------
     fn random_na_quat<R>(rng: &mut R) -> nalgebra::UnitQuaternion<f32>
@@ -382,18 +380,16 @@ pub mod nalgebra_support {
 #[cfg(feature = "euclid")]
 pub mod euclid_support {
     use super::mint_support::*;
-    use super::RandomVec;
-    use euclid;
-    use rand::{Rng, SeedableRng};
-    use rand_xoshiro::Xoshiro256Plus;
+    use super::RandomValue;
+    use rand::Rng;
 
-    impl_random_vec!(euclid::Point2D<f32, euclid::UnknownUnit>, random_euclid_point2);
-    impl_random_vec!(euclid::Point3D<f32, euclid::UnknownUnit>, random_euclid_point3);
-    impl_random_vec!(euclid::Rotation3D<f32, euclid::UnknownUnit, euclid::UnknownUnit>, random_euclid_quat);
-    impl_random_vec!(euclid::Transform2D<f32, euclid::UnknownUnit, euclid::UnknownUnit>, random_euclid_mat3);
-    impl_random_vec!(euclid::Transform3D<f32, euclid::UnknownUnit, euclid::UnknownUnit>, random_euclid_mat4);
-    impl_random_vec!(euclid::Vector2D<f32, euclid::UnknownUnit>, random_euclid_vec2);
-    impl_random_vec!(euclid::Vector3D<f32, euclid::UnknownUnit>, random_euclid_vec3);
+    impl_random_value!(euclid::Point2D<f32, euclid::UnknownUnit>, random_euclid_point2);
+    impl_random_value!(euclid::Point3D<f32, euclid::UnknownUnit>, random_euclid_point3);
+    impl_random_value!(euclid::Rotation3D<f32, euclid::UnknownUnit, euclid::UnknownUnit>, random_euclid_quat);
+    impl_random_value!(euclid::Transform2D<f32, euclid::UnknownUnit, euclid::UnknownUnit>, random_euclid_mat3);
+    impl_random_value!(euclid::Transform3D<f32, euclid::UnknownUnit, euclid::UnknownUnit>, random_euclid_mat4);
+    impl_random_value!(euclid::Vector2D<f32, euclid::UnknownUnit>, random_euclid_vec2);
+    impl_random_value!(euclid::Vector3D<f32, euclid::UnknownUnit>, random_euclid_vec3);
 
     // euclid random functions ----------------------------------------------------
     fn random_euclid_vec2<R>(rng: &mut R) -> euclid::Vector2D<f32, euclid::UnknownUnit>
@@ -463,17 +459,15 @@ pub mod euclid_support {
 #[cfg(feature = "vek")]
 pub mod vek_support {
     use super::mint_support::*;
-    use super::RandomVec;
-    use rand::SeedableRng;
-    use rand_xoshiro::Xoshiro256Plus;
+    use super::RandomValue;
     use vek;
-    impl_random_vec!(vek::Mat2<f32>, random_mint_invertible_mat2);
-    impl_random_vec!(vek::Mat3<f32>, random_mint_homogeneous_mat3);
-    impl_random_vec!(vek::Mat4<f32>, random_mint_homogeneous_mat4);
-    impl_random_vec!(vek::Quaternion<f32>, random_mint_quat);
-    impl_random_vec!(vek::Vec2<f32>, random_mint_vec2);
-    impl_random_vec!(vek::Vec3<f32>, random_mint_vec3);
-    impl_random_vec!(vek::Vec4<f32>, random_mint_vec4);
+    impl_random_value!(vek::Mat2<f32>, random_mint_invertible_mat2);
+    impl_random_value!(vek::Mat3<f32>, random_mint_homogeneous_mat3);
+    impl_random_value!(vek::Mat4<f32>, random_mint_homogeneous_mat4);
+    impl_random_value!(vek::Quaternion<f32>, random_mint_quat);
+    impl_random_value!(vek::Vec2<f32>, random_mint_vec2);
+    impl_random_value!(vek::Vec3<f32>, random_mint_vec3);
+    impl_random_value!(vek::Vec4<f32>, random_mint_vec4);
 
     // fn random_vek_invertible_mat4<R>(rng: &mut R) -> vek::mat::repr_simd::column_major::Mat4<f32>
     // where
@@ -511,14 +505,13 @@ pub mod vek_support {
 #[cfg(feature = "pathfinder_geometry")]
 pub mod pathfinder_support {
     use super::mint_support::*;
-    use super::RandomVec;
-    use rand::{Rng, SeedableRng};
-    use rand_xoshiro::Xoshiro256Plus;
+    use super::RandomValue;
+    use rand::Rng;
 
-    impl_random_vec!(pathfinder_geometry::vector::Vector2F, random_pf_vec2);
-    impl_random_vec!(pathfinder_geometry::vector::Vector4F, random_pf_vec4);
-    impl_random_vec!(pathfinder_geometry::transform2d::Matrix2x2F, random_pf_mat2);
-    impl_random_vec!(
+    impl_random_value!(pathfinder_geometry::vector::Vector2F, random_pf_vec2);
+    impl_random_value!(pathfinder_geometry::vector::Vector4F, random_pf_vec4);
+    impl_random_value!(pathfinder_geometry::transform2d::Matrix2x2F, random_pf_mat2);
+    impl_random_value!(
         pathfinder_geometry::transform3d::Transform4F,
         random_pf_mat4
     );

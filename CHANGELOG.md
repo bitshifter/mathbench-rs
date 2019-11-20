@@ -8,6 +8,11 @@ The format is based on [Keep a Changelog].
 * Added benchmarks for `pathfinder_geometry` `0.3.0`
 * Updated `euclid` to `0.20.4`
 
+### Changed
+* Use Criterion `Bencher` `iter_batched` instead of `iter` for benchmarks. This
+  changes a lot of the results but I think they are more accurate as output is
+  being stored.
+
 ## [0.1.9] - 2019-11-13
 ### Added
 * Added this `CHANGELOG.md` file!

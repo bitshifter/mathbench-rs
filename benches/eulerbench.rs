@@ -8,18 +8,30 @@ const NUM_OBJECTS: usize = 1 << 13;
 
 macro_rules! bench_euler {
     ($b: ident, ty => $t: ty, zero => $zero: expr, dt => $dt: expr) => {{
-        let accel_data = <$t as mathbench::RandomVec>::random_vec(0, NUM_OBJECTS);
-        let mut vel_data: Vec<$t> = vec![$zero; NUM_OBJECTS];
-        let mut pos_data: Vec<$t> = vec![$zero; NUM_OBJECTS];
+        struct TestData {
+            acc: Vec<$t>,
+            vel: Vec<$t>,
+            pos: Vec<$t>,
+        };
+
         let dt = $dt;
-        $b.iter(|| {
-            for ((position, acceleration), velocity) in
-                pos_data.iter_mut().zip(&accel_data).zip(&mut vel_data)
-            {
-                *velocity = *velocity + *acceleration * dt;
-                *position = *position + *velocity * dt;
-            }
-        })
+        let mut rng = rand::thread_rng();
+        $b.iter_batched_ref(
+            || TestData {
+                acc: vec![<$t as mathbench::RandomValue>::random_value(&mut rng); NUM_OBJECTS],
+                vel: vec![$zero; NUM_OBJECTS],
+                pos: vec![$zero; NUM_OBJECTS],
+            },
+            |data| {
+                for ((position, acceleration), velocity) in
+                    data.pos.iter_mut().zip(&data.acc).zip(&mut data.vel)
+                {
+                    *velocity = *velocity + *acceleration * dt;
+                    *position = *position + *velocity * dt;
+                }
+            },
+            criterion::BatchSize::SmallInput,
+        )
     }};
 }
 
