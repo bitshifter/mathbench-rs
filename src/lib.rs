@@ -512,6 +512,10 @@ pub mod pathfinder_support {
     impl_random_value!(pathfinder_geometry::vector::Vector4F, random_pf_vec4);
     impl_random_value!(pathfinder_geometry::transform2d::Matrix2x2F, random_pf_mat2);
     impl_random_value!(
+        pathfinder_geometry::transform2d::Transform2F,
+        random_pf_mat3
+    );
+    impl_random_value!(
         pathfinder_geometry::transform3d::Transform4F,
         random_pf_mat4
     );
@@ -536,6 +540,16 @@ pub mod pathfinder_support {
     {
         let mat = random_mint_invertible_mat2(rng);
         pathfinder_geometry::transform2d::Matrix2x2F::row_major(mat.x.x, mat.y.x, mat.x.y, mat.y.y)
+    }
+
+    pub fn random_pf_mat3<R>(rng: &mut R) -> pathfinder_geometry::transform2d::Transform2F
+    where
+        R: Rng,
+    {
+        let mat = random_mint_homogeneous_mat3(rng);
+        pathfinder_geometry::transform2d::Transform2F::row_major(
+            mat.x.x, mat.y.x, mat.x.y, mat.y.y, mat.x.z, mat.y.z,
+        )
     }
 
     pub fn random_pf_mat4<R>(rng: &mut R) -> pathfinder_geometry::transform3d::Transform4F

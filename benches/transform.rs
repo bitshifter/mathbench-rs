@@ -132,6 +132,11 @@ fn bench_mat3_transform_vector2(c: &mut Criterion) {
         use vek::{Mat3, Vec2};
         bench_binop!(b, op => mul_direction_2d, ty1 => Mat3<f32>, ty2 => Vec2<f32>)
     });
+    bench_pathfinder!(group, |b| {
+        use pathfinder_geometry::{transform2d::Transform2F, vector::Vector2F};
+        use std::ops::Mul;
+        bench_binop!(b, op => mul, ty1 => Transform2F, ty2 => Vector2F);
+    });
     group.finish();
 }
 
