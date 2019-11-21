@@ -10,8 +10,8 @@ default = ["cgmath", "euclid", "nalgebra", "vek"]
 
 [dependencies]
 mint = "0.5.1"
-rand = { version = "~0.7", default-features = false }
-rand_xoshiro = "~0.4"
+rand = "0.7.2"
+rand_xoshiro = "0.4.0"
 
 [dependencies.glam]
 version = "0.8.2"
