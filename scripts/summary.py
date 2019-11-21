@@ -37,12 +37,16 @@ def fmt_bench(x, max_value, min_value):
 def main():
     default_libs = DEFAULT
     parser = argparse.ArgumentParser()
+    parser.add_argument('-a', '--all', action='store_true', help='include all libraries')
     parser.add_argument('libs', nargs='*', action=DefaultListAction,
                         default=default_libs,
                         help='choose from {0}'.format(CHOICES))
     args = parser.parse_args()
 
-    libs = list(dict.fromkeys(args.libs))
+    if args.all:
+        libs = CHOICES
+    else:
+        libs = list(dict.fromkeys(args.libs))
 
     root_dir = os.path.normpath(os.path.join(os.path.dirname(__file__), '..'))
     criterion_dir = os.path.join(root_dir, 'target', 'criterion')
