@@ -15,7 +15,7 @@ macro_rules! bench_euler {
         };
 
         let dt = $dt;
-        let mut rng = rand::thread_rng();
+        let mut rng = rand_pcg::Pcg64Mcg::new(rand::random());
         $b.iter_batched_ref(
             || TestData {
                 acc: vec![<$t as mathbench::RandomValue>::random_value(&mut rng); NUM_OBJECTS],

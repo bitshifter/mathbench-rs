@@ -3,8 +3,7 @@ use cgmath;
 use glam;
 use mathbench::mint_support::*;
 use nalgebra;
-use rand::SeedableRng;
-use rand_xoshiro::Xoshiro256Plus;
+use rand_pcg::Pcg64Mcg;
 
 const NUM_ITERS: usize = 1024;
 
@@ -21,7 +20,7 @@ macro_rules! semi_implicit_euler {
 }
 
 fn mat2_mul_vec2_compare() {
-    let mut rng = Xoshiro256Plus::seed_from_u64(rand::random());
+    let mut rng = Pcg64Mcg::new(rand::random());
     let mm = random_mint_mat2(&mut rng);
     let mv = random_mint_vec2(&mut rng);
 
@@ -45,7 +44,7 @@ fn mat2_mul_vec2_compare() {
 }
 
 fn mat3_mul_vec3_compare() {
-    let mut rng = Xoshiro256Plus::seed_from_u64(rand::random());
+    let mut rng = Pcg64Mcg::new(rand::random());
     let mm = random_mint_mat3(&mut rng);
     let mv = random_mint_vec3(&mut rng);
 
@@ -69,7 +68,7 @@ fn mat3_mul_vec3_compare() {
 }
 
 fn mat4_mul_vec4_compare() {
-    let mut rng = Xoshiro256Plus::seed_from_u64(rand::random());
+    let mut rng = Pcg64Mcg::new(rand::random());
     let mm = random_mint_mat4(&mut rng);
     let mv = random_mint_vec4(&mut rng);
 
@@ -93,7 +92,7 @@ fn mat4_mul_vec4_compare() {
 }
 
 fn mat2_mul_mat2_compare() {
-    let mut rng = Xoshiro256Plus::seed_from_u64(rand::random());
+    let mut rng = Pcg64Mcg::new(rand::random());
     let mm1 = random_mint_mat2(&mut rng);
     let mm2 = random_mint_mat2(&mut rng);
 
@@ -117,7 +116,7 @@ fn mat2_mul_mat2_compare() {
 }
 
 fn mat3_mul_mat3_compare() {
-    let mut rng = Xoshiro256Plus::seed_from_u64(rand::random());
+    let mut rng = Pcg64Mcg::new(rand::random());
     let mm1 = random_mint_mat3(&mut rng);
     let mm2 = random_mint_mat3(&mut rng);
 
@@ -141,7 +140,7 @@ fn mat3_mul_mat3_compare() {
 }
 
 fn mat4_mul_mat4_compare() {
-    let mut rng = Xoshiro256Plus::seed_from_u64(rand::random());
+    let mut rng = Pcg64Mcg::new(rand::random());
     let mm1 = random_mint_mat4(&mut rng);
     let mm2 = random_mint_mat4(&mut rng);
 
@@ -167,7 +166,7 @@ fn mat4_mul_mat4_compare() {
 fn mat2_det_compare() {
     use cgmath::prelude::*;
 
-    let mut rng = Xoshiro256Plus::seed_from_u64(rand::random());
+    let mut rng = Pcg64Mcg::new(rand::random());
     let mm1 = random_mint_mat2(&mut rng);
 
     let gm1: glam::Mat2 = mm1.into();
@@ -187,7 +186,7 @@ fn mat2_det_compare() {
 fn mat2_inv_compare() {
     use cgmath::prelude::*;
 
-    let mut rng = Xoshiro256Plus::seed_from_u64(rand::random());
+    let mut rng = Pcg64Mcg::new(rand::random());
     let mm1 = random_mint_invertible_mat2(&mut rng);
 
     let gm1: glam::Mat2 = mm1.into();
@@ -212,7 +211,7 @@ fn mat2_inv_compare() {
 fn mat3_inv_compare() {
     use cgmath::prelude::*;
 
-    let mut rng = Xoshiro256Plus::seed_from_u64(0);
+    let mut rng = Pcg64Mcg::new(0);
     let mm1 = random_mint_homogeneous_mat3(&mut rng);
 
     let gm1: glam::Mat3 = mm1.into();
@@ -236,7 +235,7 @@ fn mat3_inv_compare() {
 fn mat4_inv_compare() {
     use cgmath::prelude::*;
 
-    let mut rng = Xoshiro256Plus::seed_from_u64(rand::random());
+    let mut rng = Pcg64Mcg::new(rand::random());
     let mm1 = random_mint_homogeneous_mat4(&mut rng);
 
     let gm1: glam::Mat4 = mm1.into();

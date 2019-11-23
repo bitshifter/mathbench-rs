@@ -3,13 +3,12 @@ use cgmath;
 use glam;
 use mathbench::mint_support::{random_mint_quat, random_mint_vec3};
 use nalgebra;
-use rand::SeedableRng;
-use rand_xoshiro::Xoshiro256Plus;
+use rand_pcg::Pcg64Mcg;
 
 const NUM_ITERS: usize = 1024;
 
 fn quat_mul_vec3_compare() {
-    let mut rng = Xoshiro256Plus::seed_from_u64(rand::random());
+    let mut rng = Pcg64Mcg::new(rand::random());
     let mq = random_mint_quat(&mut rng);
     let mv = random_mint_vec3(&mut rng);
 
@@ -33,7 +32,7 @@ fn quat_mul_vec3_compare() {
 }
 
 fn quat_mul_quat_compare() {
-    let mut rng = Xoshiro256Plus::seed_from_u64(rand::random());
+    let mut rng = Pcg64Mcg::new(rand::random());
     let mq1 = random_mint_quat(&mut rng);
     let mq2 = random_mint_quat(&mut rng);
 

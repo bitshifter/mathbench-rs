@@ -49,7 +49,7 @@ macro_rules! bench_pathfinder {
 #[macro_export]
 macro_rules! bench_unop {
     ($b: ident, op => $unop: ident, ty => $t:ty) => {{
-        let mut rng = rand::thread_rng();
+        let mut rng = rand_pcg::Pcg64Mcg::new(rand::random());
         $b.iter_batched(
             || <$t as mathbench::RandomValue>::random_value(&mut rng),
             |data| data.$unop(),
@@ -75,7 +75,7 @@ macro_rules! by_ref {
 #[macro_export]
 macro_rules! bench_binop {
     ($b: ident, op => $binop: ident, ty1 => $ty1:ty, ty2 => $ty2:ty, param => $param:tt) => {{
-        let mut rng = rand::thread_rng();
+        let mut rng = rand_pcg::Pcg64Mcg::new(rand::random());
         $b.iter_batched(
             || (<$ty1 as mathbench::RandomValue>::random_value(&mut rng), <$ty2 as mathbench::RandomValue>::random_value(&mut rng)),
             |data| (data.0).$binop($param!(&data.1)),

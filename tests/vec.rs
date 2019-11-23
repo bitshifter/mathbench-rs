@@ -4,13 +4,12 @@ use cgmath::{self, InnerSpace};
 use glam;
 use mathbench::mint_support::{random_mint_vec2, random_mint_vec3, random_mint_vec4};
 use nalgebra;
-use rand::SeedableRng;
-use rand_xoshiro::Xoshiro256Plus;
+use rand_pcg::Pcg64Mcg;
 
 const NUM_ITERS: usize = 1024;
 
 fn vec2_normalize_compare() {
-    let mut rng = Xoshiro256Plus::seed_from_u64(rand::random());
+    let mut rng = Pcg64Mcg::new(rand::random());
     let mv = random_mint_vec2(&mut rng);
 
     let gv: glam::Vec2 = mv.into();
@@ -30,7 +29,7 @@ fn vec2_normalize_compare() {
 }
 
 fn vec3_dot_compare() {
-    let mut rng = Xoshiro256Plus::seed_from_u64(rand::random());
+    let mut rng = Pcg64Mcg::new(rand::random());
     let mv1 = random_mint_vec3(&mut rng);
     let mv2 = random_mint_vec3(&mut rng);
 
@@ -52,7 +51,7 @@ fn vec3_dot_compare() {
 }
 
 fn vec3_cross_compare() {
-    let mut rng = Xoshiro256Plus::seed_from_u64(rand::random());
+    let mut rng = Pcg64Mcg::new(rand::random());
     let mv1 = random_mint_vec3(&mut rng);
     let mv2 = random_mint_vec3(&mut rng);
 
@@ -76,7 +75,7 @@ fn vec3_cross_compare() {
 }
 
 fn vec3_normalize_compare() {
-    let mut rng = Xoshiro256Plus::seed_from_u64(rand::random());
+    let mut rng = Pcg64Mcg::new(rand::random());
     let mv = random_mint_vec3(&mut rng);
 
     let gv: glam::Vec3 = mv.into();
@@ -96,7 +95,7 @@ fn vec3_normalize_compare() {
 }
 
 fn vec4_dot_compare() {
-    let mut rng = Xoshiro256Plus::seed_from_u64(rand::random());
+    let mut rng = Pcg64Mcg::new(rand::random());
     let mv1 = random_mint_vec4(&mut rng);
     let mv2 = random_mint_vec4(&mut rng);
 
@@ -118,7 +117,7 @@ fn vec4_dot_compare() {
 }
 
 fn vec4_normalize_compare() {
-    let mut rng = Xoshiro256Plus::seed_from_u64(rand::random());
+    let mut rng = Pcg64Mcg::new(rand::random());
     let mv = random_mint_vec4(&mut rng);
 
     let gv: glam::Vec4 = mv.into();
