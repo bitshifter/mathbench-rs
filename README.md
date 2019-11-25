@@ -69,34 +69,34 @@ performance to `cgmath`, `nalgebra`, `euclid` and `vek` on `f32` data.
 
 | benchmark              |         glam   |       cgmath   |     nalgebra   |       euclid   |           vek   |   pathfinder   |
 |:-----------------------|---------------:|---------------:|---------------:|---------------:|----------------:|---------------:|
-| euler 2d               |      26.8 us   |     26.02 us   |     26.96 us   |     30.95 us   |      26.79 us   |   __19.07 us__ |
-| euler 3d               |     37.06 us   |     37.37 us   |     95.09 us   |      35.7 us   |      38.12 us   |    __35.0 us__ |
-| mat2 determinant       |    1.0438 ns   |    1.0343 ns   |    1.0393 ns   |      N/A       |   __1.0100 ns__ |    1.0934 ns   |
-| mat2 inverse           |    2.4622 ns   |  __2.2760 ns__ |    2.3709 ns   |      N/A       |       N/A       |    2.3311 ns   |
-| mat2 mul mat2          |    2.6205 ns   |    3.0582 ns   |    2.8025 ns   |      N/A       |    20.0352 ns   |  __2.2514 ns__ |
-| mat2 transform vector2 |    2.2416 ns   |  __1.5772 ns__ |    2.3585 ns   |      N/A       |     9.4389 ns   |    1.8940 ns   |
-| mat2 transpose         |    2.4281 ns   |    1.5202 ns   |    2.6319 ns   |      N/A       |   __1.4497 ns__ |      N/A       |
-| mat3 determinant       |    2.4654 ns   |    2.6452 ns   |    2.6726 ns   |  __1.1404 ns__ |     2.9005 ns   |      N/A       |
-| mat3 inverse           |   10.8626 ns   |   10.7703 ns   |   31.2619 ns   |    5.1197 ns   |       N/A       |  __3.6434 ns__ |
-| mat3 mul mat3          |    6.3609 ns   |   21.1416 ns   |   10.8036 ns   |    4.5463 ns   |   147.7749 ns   |  __3.7432 ns__ |
-| mat3 transform point2  |    3.0541 ns   |  __2.2774 ns__ |   24.1383 ns   |    2.5235 ns   |    26.8688 ns   |      N/A       |
-| mat3 transform vector2 |    2.9641 ns   |      N/A       |   16.4682 ns   |    2.0954 ns   |    26.9119 ns   |  __2.0683 ns__ |
-| mat3 transform vector3 |  __2.9362 ns__ |    3.3219 ns   |    3.6070 ns   |      N/A       |    32.1364 ns   |      N/A       |
-| mat3 transpose         |    7.3356 ns   |  __4.2112 ns__ |    7.0528 ns   |      N/A       |     7.1327 ns   |      N/A       |
-| mat4 determinant       | __10.8057 ns__ |   12.5214 ns   |   56.3375 ns   |   18.9185 ns   |    18.6105 ns   |      N/A       |
-| mat4 inverse           | __24.6168 ns__ |   46.0135 ns   |   56.2455 ns   |   56.9040 ns   |   339.7553 ns   |   24.6807 ns   |
-| mat4 mul mat4          |  __8.0256 ns__ |   12.4518 ns   |   13.9407 ns   |   12.1229 ns   |   203.4246 ns   |    8.1587 ns   |
-| mat4 transform point3  |  __3.4690 ns__ |   11.1519 ns   |   29.5191 ns   |    6.9771 ns   |    56.0802 ns   |      N/A       |
-| mat4 transform vector3 |  __3.5153 ns__ |    4.9797 ns   |   21.8940 ns   |    3.9720 ns   |    56.0841 ns   |      N/A       |
-| mat4 transform vector4 |  __3.3714 ns__ |    3.5692 ns   |    3.7053 ns   |      N/A       |    60.0793 ns   |    3.5144 ns   |
-| mat4 transpose         |  __8.4417 ns__ |   17.9832 ns   |   11.4669 ns   |      N/A       |    18.1702 ns   |      N/A       |
-| quat conjugate         |    2.5137 ns   |    1.6490 ns   |    3.5830 ns   |    1.6779 ns   |   __1.6283 ns__ |      N/A       |
-| quat mul quat          |  __2.6916 ns__ |    4.0596 ns   |    3.9678 ns   |    5.5147 ns   |     8.8757 ns   |      N/A       |
-| quat transform vector3 |  __4.0963 ns__ |    4.3275 ns   |   39.5704 ns   |    6.4349 ns   |    24.5135 ns   |      N/A       |
-| vec3 cross             |    2.3659 ns   |    2.1077 ns   |    2.0969 ns   |  __2.0624 ns__ |     2.0992 ns   |      N/A       |
-| vec3 dot               |    1.6676 ns   |    1.4593 ns   |    9.9096 ns   |  __1.3430 ns__ |     1.4347 ns   |      N/A       |
-| vec3 length            |    2.0672 ns   |    2.0527 ns   |   13.7811 ns   |    2.0620 ns   |   __1.0848 ns__ |      N/A       |
-| vec3 normalize         |    4.1256 ns   |  __2.5767 ns__ |   22.5129 ns   |    4.1272 ns   |     4.1285 ns   |      N/A       |
+| euler 2d               |     8.767 us   |     8.713 us   |     20.63 us   |     13.34 us   |    __8.413 us__ |     11.25 us   |
+| euler 3d               |   __15.49 us__ |     28.92 us   |     86.47 us   |     29.77 us   |       28.9 us   |     16.16 us   |
+| mat2 determinant       |  __2.0364 ns__ |    2.0426 ns   |    2.0453 ns   |      N/A       |     2.0466 ns   |    2.0711 ns   |
+| mat2 inverse           |  __2.5694 ns__ |    2.9510 ns   |    2.9472 ns   |      N/A       |       N/A       |    2.7693 ns   |
+| mat2 mul mat2          |    2.5989 ns   |    2.7197 ns   |    4.0973 ns   |      N/A       |    20.3607 ns   |  __2.5301 ns__ |
+| mat2 transform vector2 |    2.6697 ns   |    2.6576 ns   |    6.7453 ns   |      N/A       |     8.4590 ns   |  __2.1183 ns__ |
+| mat2 transpose         |    2.0850 ns   |  __2.0816 ns__ |    2.6265 ns   |      N/A       |     2.0844 ns   |      N/A       |
+| mat3 determinant       |    2.7516 ns   |    3.4176 ns   |    3.3756 ns   |  __2.0323 ns__ |     3.4497 ns   |      N/A       |
+| mat3 inverse           |    9.7384 ns   |    8.8430 ns   |    9.7633 ns   |    4.8761 ns   |       N/A       |  __4.0245 ns__ |
+| mat3 mul mat3          |    5.4994 ns   |    8.1237 ns   |    9.8879 ns   |    5.0860 ns   |   135.3526 ns   |  __3.8668 ns__ |
+| mat3 transform point2  |  __2.7727 ns__ |    2.8822 ns   |    7.7018 ns   |    3.2579 ns   |    26.3885 ns   |      N/A       |
+| mat3 transform vector2 |    3.0376 ns   |      N/A       |    3.7496 ns   |    2.8098 ns   |    26.6436 ns   |  __2.3009 ns__ |
+| mat3 transform vector3 |  __2.9091 ns__ |    4.3690 ns   |    9.1395 ns   |      N/A       |    26.6590 ns   |      N/A       |
+| mat3 transpose         |  __4.9576 ns__ |    5.7245 ns   |   10.5911 ns   |      N/A       |     5.7280 ns   |      N/A       |
+| mat4 determinant       |  __8.3297 ns__ |   11.1496 ns   |   52.0317 ns   |   16.4971 ns   |    17.6341 ns   |      N/A       |
+| mat4 inverse           | __21.9286 ns__ |   42.6754 ns   |   53.4406 ns   |   52.8403 ns   |   331.3933 ns   |   22.4474 ns   |
+| mat4 mul mat4          |    7.6689 ns   |  __7.5832 ns__ |   14.7542 ns   |    9.1091 ns   |   205.1414 ns   |    7.6747 ns   |
+| mat4 transform point3  |  __2.8806 ns__ |    6.2547 ns   |    6.6465 ns   |    6.0872 ns   |    43.7427 ns   |      N/A       |
+| mat4 transform vector3 |  __2.7503 ns__ |    5.5468 ns   |    5.3642 ns   |    4.3981 ns   |    44.4737 ns   |      N/A       |
+| mat4 transform vector4 |  __2.9953 ns__ |    3.0956 ns   |    4.0748 ns   |      N/A       |    41.4363 ns   |    3.0111 ns   |
+| mat4 transpose         |  __5.5896 ns__ |    8.6730 ns   |   19.1668 ns   |      N/A       |     8.5626 ns   |      N/A       |
+| quat conjugate         |  __2.2176 ns__ |    2.9146 ns   |    2.9095 ns   |    2.9100 ns   |     2.9046 ns   |      N/A       |
+| quat mul quat          |  __4.2515 ns__ |    4.4174 ns   |    4.6679 ns   |    7.8819 ns   |     9.4261 ns   |      N/A       |
+| quat transform vector3 |  __5.1249 ns__ |    6.7975 ns   |   26.6022 ns   |    6.9983 ns   |    11.9850 ns   |      N/A       |
+| vec3 cross             |  __2.4443 ns__ |    3.5711 ns   |    3.2860 ns   |    3.5326 ns   |     3.6202 ns   |      N/A       |
+| vec3 dot               |  __2.1148 ns__ |    2.3138 ns   |    2.3122 ns   |    2.3097 ns   |     2.2819 ns   |      N/A       |
+| vec3 length            |    2.2045 ns   |    2.2068 ns   |    2.3512 ns   |  __2.1861 ns__ |     2.3559 ns   |      N/A       |
+| vec3 normalize         |  __4.0705 ns__ |    4.3569 ns   |    8.2144 ns   |    8.0985 ns   |     8.0892 ns   |      N/A       |
 
 These benchmarks were performed on an [Intel i7-4710HQ] CPU on Linux. They were
 compiled with the stable 1.39 Rust compiler. Lower (better) numbers are
@@ -218,4 +218,4 @@ If you are interested in contributing or have a request or suggestion
 [Code of Conduct]: https://www.rust-lang.org/en-US/conduct.html
 [create an issue]: https://github.com/bitshifter/mathbench-rs/issues
 [Intel i7-4710HQ]: https://ark.intel.com/content/www/us/en/ark/products/78930/intel-core-i7-4710hq-processor-6m-cache-up-to-3-50-ghz.html
-[mathbench report]: https://bitshifter.github.io/mathbench/0.1.9/report/index.html
+[mathbench report]: https://bitshifter.github.io/mathbench/0.2.0/report/index.html

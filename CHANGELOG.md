@@ -3,15 +3,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog].
 
-## [Unreleased]
+## [0.2.0] -2019-11-25
 ### Added
 * Added benchmarks for `pathfinder_geometry` `0.3.0`
 * Updated `euclid` to `0.20.4`
 
 ### Changed
-* Use Criterion `Bencher` `iter_batched` instead of `iter` for benchmarks. This
-  changes a lot of the results but I think they are more accurate as output is
-  being stored.
+* Changed benchmarks to store output values instead of discarding them.
 
 ## [0.1.9] - 2019-11-13
 ### Added
@@ -29,5 +27,6 @@ The format is based on [Keep a Changelog].
   benchmarking functions has been silently deprecated in `0.3.0`.
 
 [Keep a Changelog]: https://keepachangelog.com/
-[Unreleased]: https://github.com/bitshifter/mathbench-rs/compare/0.1.9...HEAD
+[Unreleased]: https://github.com/bitshifter/mathbench-rs/compare/0.2.0...HEAD
+[Unreleased]: https://github.com/bitshifter/mathbench-rs/compare/0.1.9...0.2.0
 [0.1.9]: https://github.com/bitshifter/mathbench-rs/compare/0.1.8...0.1.9
