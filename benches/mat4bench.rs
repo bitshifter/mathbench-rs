@@ -7,6 +7,29 @@ use criterion::{criterion_group, criterion_main, Criterion};
 // stored as 4x4 matrix internally. It is included here as a 4x4 matrix is the
 // closest point of comparison.
 
+// returns self to check overhead of benchmark
+fn bench_mat4_nop(c: &mut Criterion) {
+    use mathbench::BenchValue;
+    let mut group = c.benchmark_group("mat4 return self");
+    bench_glam!(group, |b| {
+        use glam::Mat4;
+        bench_unop!(b, op => nop_fn, ty => Mat4)
+    });
+    bench_cgmath!(group, |b| {
+        use cgmath::Matrix4;
+        bench_unop!(b, op => nop_fn, ty => Matrix4<f32>)
+    });
+    bench_nalgebra!(group, |b| {
+        use nalgebra::Matrix4;
+        bench_unop!(b, op => nop_fn, ty => Matrix4<f32>)
+    });
+    bench_vek!(group, |b| {
+        use vek::Mat4;
+        bench_unop!(b, op => nop_fn, ty => Mat4<f32>)
+    });
+    group.finish();
+}
+
 fn bench_mat4_transpose(c: &mut Criterion) {
     let mut group = c.benchmark_group("mat4 transpose");
     bench_glam!(group, |b| {
@@ -114,6 +137,7 @@ fn bench_mat4_mul_mat4(c: &mut Criterion) {
 
 criterion_group!(
     mat4_benches,
+    bench_mat4_nop,
     bench_mat4_transpose,
     bench_mat4_determinant,
     bench_mat4_inverse,

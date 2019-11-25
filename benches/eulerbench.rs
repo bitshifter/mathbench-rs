@@ -14,24 +14,22 @@ macro_rules! bench_euler {
             pos: Vec<$t>,
         };
 
-        let dt = $dt;
         let mut rng = rand_pcg::Pcg64Mcg::new(rand::random());
-        $b.iter_batched_ref(
-            || TestData {
-                acc: vec![<$t as mathbench::RandomValue>::random_value(&mut rng); NUM_OBJECTS],
-                vel: vec![$zero; NUM_OBJECTS],
-                pos: vec![$zero; NUM_OBJECTS],
-            },
-            |data| {
-                for ((position, acceleration), velocity) in
-                    data.pos.iter_mut().zip(&data.acc).zip(&mut data.vel)
-                {
-                    *velocity = *velocity + *acceleration * dt;
-                    *position = *position + *velocity * dt;
-                }
-            },
-            criterion::BatchSize::SmallInput,
-        )
+        let mut data = TestData {
+            acc: vec![<$t as mathbench::BenchValue>::random_value(&mut rng); NUM_OBJECTS],
+            vel: vec![$zero; NUM_OBJECTS],
+            pos: vec![$zero; NUM_OBJECTS],
+        };
+
+        let dt = $dt;
+        $b.iter(|| {
+            for ((position, acceleration), velocity) in
+                data.pos.iter_mut().zip(&data.acc).zip(&mut data.vel)
+            {
+                *velocity = *velocity + *acceleration * dt;
+                *position = *position + *velocity * dt;
+            }
+        })
     }};
 }
 

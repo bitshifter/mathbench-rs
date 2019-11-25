@@ -3,6 +3,29 @@
 mod macros;
 use criterion::{criterion_group, criterion_main, Criterion};
 
+// returns self to check overhead of benchmark
+fn bench_vec3_nop(c: &mut Criterion) {
+    use mathbench::BenchValue;
+    let mut group = c.benchmark_group("vec3 return self");
+    bench_glam!(group, |b| {
+        use glam::Vec3;
+        bench_unop!(b, op => nop_fn, ty => Vec3)
+    });
+    bench_cgmath!(group, |b| {
+        use cgmath::Vector3;
+        bench_unop!(b, op => nop_fn, ty => Vector3<f32>)
+    });
+    bench_nalgebra!(group, |b| {
+        use nalgebra::Vector3;
+        bench_unop!(b, op => nop_fn, ty => Vector3<f32>)
+    });
+    bench_vek!(group, |b| {
+        use vek::Vec3;
+        bench_unop!(b, op => nop_fn, ty => Vec3<f32>)
+    });
+    group.finish();
+}
+
 fn bench_vec3_length(c: &mut Criterion) {
     let mut group = c.benchmark_group("vec3 length");
     bench_glam!(group, |b| {
@@ -105,6 +128,7 @@ fn bench_vec3_cross(c: &mut Criterion) {
 
 criterion_group!(
     vec_benches,
+    bench_vec3_nop,
     bench_vec3_length,
     bench_vec3_normalize,
     bench_vec3_dot,

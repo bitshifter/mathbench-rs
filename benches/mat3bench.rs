@@ -8,6 +8,32 @@ use criterion::{criterion_group, criterion_main, Criterion};
 // closest point of comparison, but euclid can shortcut some things compared to
 // a 3x3 matrix, for example it's determinant and inverse are cheaper.
 
+fn bench_mat3_nop(c: &mut Criterion) {
+    use mathbench::BenchValue;
+    let mut group = c.benchmark_group("mat3 return self");
+    bench_glam!(group, |b| {
+        use glam::Mat3;
+        bench_unop!(b, op => nop_fn, ty => Mat3)
+    });
+    bench_cgmath!(group, |b| {
+        use cgmath::Matrix3;
+        bench_unop!(b, op => nop_fn, ty => Matrix3<f32>)
+    });
+    bench_nalgebra!(group, |b| {
+        use nalgebra::Matrix3;
+        bench_unop!(b, op => nop_fn, ty => Matrix3<f32>)
+    });
+    bench_vek!(group, |b| {
+        use vek::Mat3;
+        bench_unop!(b, op => nop_fn, ty => Mat3<f32>)
+    });
+    bench_pathfinder!(group, |b| {
+        use pathfinder_geometry::transform2d::Transform2F;
+        bench_unop!(b, op => nop_fn, ty => Transform2F)
+    });
+    group.finish();
+}
+
 fn bench_mat3_transpose(c: &mut Criterion) {
     let mut group = c.benchmark_group("mat3 transpose");
     bench_glam!(group, |b| {
@@ -112,6 +138,7 @@ fn bench_mat3_mul_mat3(c: &mut Criterion) {
 
 criterion_group!(
     mat3_benches,
+    bench_mat3_nop,
     bench_mat3_transpose,
     bench_mat3_determinant,
     bench_mat3_inverse,

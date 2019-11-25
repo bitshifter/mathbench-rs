@@ -3,6 +3,29 @@
 mod macros;
 use criterion::{criterion_group, criterion_main, Criterion};
 
+// returns self to check overhead of benchmark
+fn bench_mat2_nop(c: &mut Criterion) {
+    use mathbench::BenchValue;
+    let mut group = c.benchmark_group("mat2 return self");
+    bench_glam!(group, |b| {
+        use glam::Mat2;
+        bench_unop!(b, op => nop_fn, ty => Mat2)
+    });
+    bench_cgmath!(group, |b| {
+        use cgmath::Matrix2;
+        bench_unop!(b, op => nop_fn, ty => Matrix2<f32>)
+    });
+    bench_nalgebra!(group, |b| {
+        use nalgebra::Matrix2;
+        bench_unop!(b, op => nop_fn, ty => Matrix2<f32>)
+    });
+    bench_vek!(group, |b| {
+        use vek::Mat2;
+        bench_unop!(b, op => nop_fn, ty => Mat2<f32>)
+    });
+    group.finish();
+}
+
 fn bench_mat2_transpose(c: &mut Criterion) {
     let mut group = c.benchmark_group("mat2 transpose");
     bench_glam!(group, |b| {
@@ -98,6 +121,7 @@ fn bench_mat2_mul_mat2(c: &mut Criterion) {
 
 criterion_group!(
     mat2_benches,
+    bench_mat2_nop,
     bench_mat2_transpose,
     bench_mat2_determinant,
     bench_mat2_inverse,

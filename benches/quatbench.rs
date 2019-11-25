@@ -3,6 +3,29 @@
 mod macros;
 use criterion::{criterion_group, criterion_main, Criterion};
 
+// returns self to check overhead of benchmark
+fn bench_quat_nop(c: &mut Criterion) {
+    use mathbench::BenchValue;
+    let mut group = c.benchmark_group("quat return self");
+    bench_glam!(group, |b| {
+        use glam::Quat;
+        bench_unop!(b, op => nop_fn, ty => Quat)
+    });
+    bench_cgmath!(group, |b| {
+        use cgmath::Quaternion;
+        bench_unop!(b, op => nop_fn, ty => Quaternion<f32>)
+    });
+    bench_nalgebra!(group, |b| {
+        use nalgebra::UnitQuaternion;
+        bench_unop!(b, op => nop_fn, ty => UnitQuaternion<f32>)
+    });
+    bench_vek!(group, |b| {
+        use vek::Quaternion;
+        bench_unop!(b, op => nop_fn, ty => Quaternion<f32>)
+    });
+    group.finish();
+}
+
 fn bench_quat_conjugate(c: &mut Criterion) {
     let mut group = c.benchmark_group("quat conjugate");
     bench_glam!(group, |b| {
@@ -55,5 +78,10 @@ fn bench_quat_mul_quat(c: &mut Criterion) {
     group.finish();
 }
 
-criterion_group!(quat_benches, bench_quat_conjugate, bench_quat_mul_quat,);
+criterion_group!(
+    quat_benches,
+    bench_quat_nop,
+    bench_quat_conjugate,
+    bench_quat_mul_quat,
+);
 criterion_main!(quat_benches);
