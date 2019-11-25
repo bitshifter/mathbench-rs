@@ -54,27 +54,35 @@ name = "eulerbench"
 harness = false
 
 [[bench]]
-name = "quatbench"
+name = "quaternion"
 harness = false
 
 [[bench]]
-name = "mat2bench"
+name = "matrix2"
 harness = false
 
 [[bench]]
-name = "mat3bench"
+name = "matrix3"
 harness = false
 
 [[bench]]
-name = "mat4bench"
+name = "matrix4"
 harness = false
 
 [[bench]]
-name = "transform"
+name = "transform2d"
 harness = false
 
 [[bench]]
-name = "vecbench"
+name = "transform3d"
+harness = false
+
+[[bench]]
+name = "transformations"
+harness = false
+
+[[bench]]
+name = "vector3"
 harness = false
 
 [profile.bench]

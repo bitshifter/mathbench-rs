@@ -4,9 +4,9 @@ mod macros;
 use criterion::{criterion_group, criterion_main, Criterion};
 
 // returns self to check overhead of benchmark
-fn bench_vec3_nop(c: &mut Criterion) {
+fn bench_vector3_nop(c: &mut Criterion) {
     use mathbench::BenchValue;
-    let mut group = c.benchmark_group("vec3 return self");
+    let mut group = c.benchmark_group("vector3 return self");
     bench_glam!(group, |b| {
         use glam::Vec3;
         bench_unop!(b, op => nop_fn, ty => Vec3)
@@ -26,8 +26,8 @@ fn bench_vec3_nop(c: &mut Criterion) {
     group.finish();
 }
 
-fn bench_vec3_length(c: &mut Criterion) {
-    let mut group = c.benchmark_group("vec3 length");
+fn bench_vector3_length(c: &mut Criterion) {
+    let mut group = c.benchmark_group("vector3 length");
     bench_glam!(group, |b| {
         use glam::Vec3;
         bench_unop!(b, op => length, ty => Vec3)
@@ -51,8 +51,8 @@ fn bench_vec3_length(c: &mut Criterion) {
     group.finish();
 }
 
-fn bench_vec3_normalize(c: &mut Criterion) {
-    let mut group = c.benchmark_group("vec3 normalize");
+fn bench_vector3_normalize(c: &mut Criterion) {
+    let mut group = c.benchmark_group("vector3 normalize");
     bench_glam!(group, |b| {
         use glam::Vec3;
         bench_unop!(b, op => normalize, ty => Vec3)
@@ -76,8 +76,8 @@ fn bench_vec3_normalize(c: &mut Criterion) {
     group.finish();
 }
 
-fn bench_vec3_dot(c: &mut Criterion) {
-    let mut group = c.benchmark_group("vec3 dot");
+fn bench_vector3_dot(c: &mut Criterion) {
+    let mut group = c.benchmark_group("vector3 dot");
     bench_glam!(group, |b| {
         use glam::Vec3;
         bench_binop!(b, op => dot, ty1 => Vec3, ty2 => Vec3)
@@ -101,8 +101,8 @@ fn bench_vec3_dot(c: &mut Criterion) {
     group.finish();
 }
 
-fn bench_vec3_cross(c: &mut Criterion) {
-    let mut group = c.benchmark_group("vec3 cross");
+fn bench_vector3_cross(c: &mut Criterion) {
+    let mut group = c.benchmark_group("vector3 cross");
     bench_glam!(group, |b| {
         use glam::Vec3;
         bench_binop!(b, op => cross, ty1 => Vec3, ty2 => Vec3)
@@ -127,11 +127,11 @@ fn bench_vec3_cross(c: &mut Criterion) {
 }
 
 criterion_group!(
-    vec_benches,
-    bench_vec3_nop,
-    bench_vec3_length,
-    bench_vec3_normalize,
-    bench_vec3_dot,
-    bench_vec3_cross
+    vector3_benches,
+    bench_vector3_nop,
+    bench_vector3_length,
+    bench_vector3_normalize,
+    bench_vector3_dot,
+    bench_vector3_cross
 );
-criterion_main!(vec_benches);
+criterion_main!(vector3_benches);

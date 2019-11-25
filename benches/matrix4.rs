@@ -8,9 +8,9 @@ use criterion::{criterion_group, criterion_main, Criterion};
 // closest point of comparison.
 
 // returns self to check overhead of benchmark
-fn bench_mat4_nop(c: &mut Criterion) {
+fn bench_matrix4_nop(c: &mut Criterion) {
     use mathbench::BenchValue;
-    let mut group = c.benchmark_group("mat4 return self");
+    let mut group = c.benchmark_group("matrix4 return self");
     bench_glam!(group, |b| {
         use glam::Mat4;
         bench_unop!(b, op => nop_fn, ty => Mat4)
@@ -27,11 +27,15 @@ fn bench_mat4_nop(c: &mut Criterion) {
         use vek::Mat4;
         bench_unop!(b, op => nop_fn, ty => Mat4<f32>)
     });
+    bench_pathfinder!(group, |b| {
+        use pathfinder_geometry::transform3d::Transform4F;
+        bench_unop!(b, op => nop_fn, ty => Transform4F)
+    });
     group.finish();
 }
 
-fn bench_mat4_transpose(c: &mut Criterion) {
-    let mut group = c.benchmark_group("mat4 transpose");
+fn bench_matrix4_transpose(c: &mut Criterion) {
+    let mut group = c.benchmark_group("matrix4 transpose");
     bench_glam!(group, |b| {
         use glam::Mat4;
         bench_unop!(b, op => transpose, ty => Mat4);
@@ -51,8 +55,8 @@ fn bench_mat4_transpose(c: &mut Criterion) {
     group.finish();
 }
 
-fn bench_mat4_determinant(c: &mut Criterion) {
-    let mut group = c.benchmark_group("mat4 determinant");
+fn bench_matrix4_determinant(c: &mut Criterion) {
+    let mut group = c.benchmark_group("matrix4 determinant");
     bench_glam!(group, |b| {
         use glam::Mat4;
         bench_unop!(b, op => determinant, ty => Mat4)
@@ -76,8 +80,8 @@ fn bench_mat4_determinant(c: &mut Criterion) {
     group.finish();
 }
 
-fn bench_mat4_inverse(c: &mut Criterion) {
-    let mut group = c.benchmark_group("mat4 inverse");
+fn bench_matrix4_inverse(c: &mut Criterion) {
+    let mut group = c.benchmark_group("matrix4 inverse");
     bench_glam!(group, |b| {
         use glam::Mat4;
         bench_unop!(b, op => inverse, ty => Mat4)
@@ -105,9 +109,9 @@ fn bench_mat4_inverse(c: &mut Criterion) {
     group.finish();
 }
 
-fn bench_mat4_mul_mat4(c: &mut Criterion) {
+fn bench_matrix4_mul_matrix4(c: &mut Criterion) {
     use std::ops::Mul;
-    let mut group = c.benchmark_group("mat4 mul mat4");
+    let mut group = c.benchmark_group("matrix4 mul matrix4");
     bench_glam!(group, |b| {
         use glam::Mat4;
         bench_binop!(b, op => mul, ty1 => Mat4, ty2 => Mat4)
@@ -135,12 +139,39 @@ fn bench_mat4_mul_mat4(c: &mut Criterion) {
     group.finish();
 }
 
+fn bench_matrix4_mul_vector4(c: &mut Criterion) {
+    use std::ops::Mul;
+    let mut group = c.benchmark_group("matrix4 mul vector4");
+    bench_glam!(group, |b| {
+        use glam::{Mat4, Vec4};
+        bench_binop!(b, op => mul, ty1 => Mat4, ty2 => Vec4)
+    });
+    bench_cgmath!(group, |b| {
+        use cgmath::{Matrix4, Vector4};
+        bench_binop!(b, op => mul, ty1 => Matrix4<f32>, ty2 => Vector4<f32>)
+    });
+    bench_nalgebra!(group, |b| {
+        use nalgebra::{Matrix4, Vector4};
+        bench_binop!(b, op => mul, ty1 => Matrix4<f32>, ty2 => Vector4<f32>)
+    });
+    bench_vek!(group, |b| {
+        use vek::{Mat4, Vec4};
+        bench_binop!(b, op => mul, ty1 => Mat4<f32>, ty2 => Vec4<f32>)
+    });
+    bench_pathfinder!(group, |b| {
+        use pathfinder_geometry::{transform3d::Transform4F, vector::Vector4F};
+        bench_binop!(b, op => mul, ty1 => Transform4F, ty2 => Vector4F)
+    });
+    group.finish();
+}
+
 criterion_group!(
-    mat4_benches,
-    bench_mat4_nop,
-    bench_mat4_transpose,
-    bench_mat4_determinant,
-    bench_mat4_inverse,
-    bench_mat4_mul_mat4,
+    matrix4_benches,
+    bench_matrix4_nop,
+    bench_matrix4_transpose,
+    bench_matrix4_determinant,
+    bench_matrix4_inverse,
+    bench_matrix4_mul_matrix4,
+    bench_matrix4_mul_vector4,
 );
-criterion_main!(mat4_benches);
+criterion_main!(matrix4_benches);
