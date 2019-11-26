@@ -33,7 +33,7 @@ fn bench_transform3d_inverse(c: &mut Criterion) {
 
 fn bench_transform3d_mul_transform3d(c: &mut Criterion) {
     use std::ops::Mul;
-    let mut group = c.benchmark_group("transform3d mul matrix4");
+    let mut group = c.benchmark_group("transform3d mul transform3d");
     bench_nalgebra!(group, |b| {
         use nalgebra::Transform3;
         bench_binop!(b, op => mul, ty1 => Transform3<f32>, ty2 => Transform3<f32>, param => by_ref)
