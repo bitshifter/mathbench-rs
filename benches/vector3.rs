@@ -4,24 +4,24 @@ mod macros;
 use criterion::{criterion_group, criterion_main, Criterion};
 
 // returns self to check overhead of benchmark
-fn bench_vector3_nop(c: &mut Criterion) {
+fn bench_vector3_ret_self(c: &mut Criterion) {
     use mathbench::BenchValue;
     let mut group = c.benchmark_group("vector3 return self");
     bench_glam!(group, |b| {
         use glam::Vec3;
-        bench_unop!(b, op => nop_fn, ty => Vec3)
+        bench_unop!(b, op => ret_self, ty => Vec3)
     });
     bench_cgmath!(group, |b| {
         use cgmath::Vector3;
-        bench_unop!(b, op => nop_fn, ty => Vector3<f32>)
+        bench_unop!(b, op => ret_self, ty => Vector3<f32>)
     });
     bench_nalgebra!(group, |b| {
         use nalgebra::Vector3;
-        bench_unop!(b, op => nop_fn, ty => Vector3<f32>)
+        bench_unop!(b, op => ret_self, ty => Vector3<f32>)
     });
     bench_vek!(group, |b| {
         use vek::Vec3;
-        bench_unop!(b, op => nop_fn, ty => Vec3<f32>)
+        bench_unop!(b, op => ret_self, ty => Vec3<f32>)
     });
     group.finish();
 }
@@ -128,7 +128,7 @@ fn bench_vector3_cross(c: &mut Criterion) {
 
 criterion_group!(
     vector3_benches,
-    bench_vector3_nop,
+    bench_vector3_ret_self,
     bench_vector3_length,
     bench_vector3_normalize,
     bench_vector3_dot,

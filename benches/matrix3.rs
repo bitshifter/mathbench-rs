@@ -3,28 +3,28 @@
 mod macros;
 use criterion::{criterion_group, criterion_main, Criterion};
 
-fn bench_matrix3_nop(c: &mut Criterion) {
+fn bench_matrix3_ret_self(c: &mut Criterion) {
     use mathbench::BenchValue;
     let mut group = c.benchmark_group("matrix3 return self");
     bench_glam!(group, |b| {
         use glam::Mat3;
-        bench_unop!(b, op => nop_fn, ty => Mat3)
+        bench_unop!(b, op => ret_self, ty => Mat3)
     });
     bench_cgmath!(group, |b| {
         use cgmath::Matrix3;
-        bench_unop!(b, op => nop_fn, ty => Matrix3<f32>)
+        bench_unop!(b, op => ret_self, ty => Matrix3<f32>)
     });
     bench_nalgebra!(group, |b| {
         use nalgebra::Matrix3;
-        bench_unop!(b, op => nop_fn, ty => Matrix3<f32>)
+        bench_unop!(b, op => ret_self, ty => Matrix3<f32>)
     });
     bench_vek!(group, |b| {
         use vek::Mat3;
-        bench_unop!(b, op => nop_fn, ty => Mat3<f32>)
+        bench_unop!(b, op => ret_self, ty => Mat3<f32>)
     });
     bench_pathfinder!(group, |b| {
         use pathfinder_geometry::transform2d::Transform2F;
-        bench_unop!(b, op => nop_fn, ty => Transform2F)
+        bench_unop!(b, op => ret_self, ty => Transform2F)
     });
     group.finish();
 }
@@ -143,7 +143,7 @@ fn bench_matrix3_mul_vector3(c: &mut Criterion) {
 
 criterion_group!(
     matrix3_benches,
-    bench_matrix3_nop,
+    bench_matrix3_ret_self,
     bench_matrix3_transpose,
     bench_matrix3_determinant,
     bench_matrix3_inverse,

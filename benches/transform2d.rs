@@ -8,20 +8,20 @@ use criterion::{criterion_group, criterion_main, Criterion};
 // closest point of comparison, but euclid can shortcut some things compared to
 // a 3x3 matrix, for example it's determinant and inverse are cheaper.
 
-fn bench_transform2d_nop(c: &mut Criterion) {
+fn bench_transform2d_ret_self(c: &mut Criterion) {
     use mathbench::BenchValue;
     let mut group = c.benchmark_group("transform2d return self");
     bench_nalgebra!(group, |b| {
         use nalgebra::Transform2;
-        bench_unop!(b, op => nop_fn, ty => Transform2<f32>)
+        bench_unop!(b, op => ret_self, ty => Transform2<f32>)
     });
     bench_euclid!(group, |b| {
         use euclid::{Transform2D, UnknownUnit};
-        bench_unop!(b, op => nop_fn, ty => Transform2D<f32, UnknownUnit, UnknownUnit>)
+        bench_unop!(b, op => ret_self, ty => Transform2D<f32, UnknownUnit, UnknownUnit>)
     });
     bench_pathfinder!(group, |b| {
         use pathfinder_geometry::transform2d::Transform2F;
-        bench_unop!(b, op => nop_fn, ty => Transform2F)
+        bench_unop!(b, op => ret_self, ty => Transform2F)
     });
     group.finish();
 }
@@ -64,7 +64,7 @@ fn bench_transform2d_mul_transform2d(c: &mut Criterion) {
 
 criterion_group!(
     transform2d_benches,
-    bench_transform2d_nop,
+    bench_transform2d_ret_self,
     bench_transform2d_inverse,
     bench_transform2d_mul_transform2d,
 );

@@ -4,16 +4,16 @@ mod macros;
 use criterion::{criterion_group, criterion_main, Criterion};
 
 // returns self to check overhead of benchmark
-fn bench_transform3d_nop(c: &mut Criterion) {
+fn bench_transform3d_ret_self(c: &mut Criterion) {
     use mathbench::BenchValue;
     let mut group = c.benchmark_group("transform3d return self");
     bench_nalgebra!(group, |b| {
         use nalgebra::Transform3;
-        bench_unop!(b, op => nop_fn, ty => Transform3<f32>)
+        bench_unop!(b, op => ret_self, ty => Transform3<f32>)
     });
     bench_euclid!(group, |b| {
         use euclid::{Transform3D, UnknownUnit};
-        bench_unop!(b, op => nop_fn, ty => Transform3D<f32, UnknownUnit, UnknownUnit>)
+        bench_unop!(b, op => ret_self, ty => Transform3D<f32, UnknownUnit, UnknownUnit>)
     });
     group.finish();
 }
@@ -47,7 +47,7 @@ fn bench_transform3d_mul_transform3d(c: &mut Criterion) {
 
 criterion_group!(
     transform3d_benches,
-    bench_transform3d_nop,
+    bench_transform3d_ret_self,
     bench_transform3d_inverse,
     bench_transform3d_mul_transform3d,
 );

@@ -9,19 +9,19 @@ fn bench_quaternion_nop(c: &mut Criterion) {
     let mut group = c.benchmark_group("quaternion return self");
     bench_glam!(group, |b| {
         use glam::Quat;
-        bench_unop!(b, op => nop_fn, ty => Quat)
+        bench_unop!(b, op => ret_self, ty => Quat)
     });
     bench_cgmath!(group, |b| {
         use cgmath::Quaternion;
-        bench_unop!(b, op => nop_fn, ty => Quaternion<f32>)
+        bench_unop!(b, op => ret_self, ty => Quaternion<f32>)
     });
     bench_nalgebra!(group, |b| {
         use nalgebra::UnitQuaternion;
-        bench_unop!(b, op => nop_fn, ty => UnitQuaternion<f32>)
+        bench_unop!(b, op => ret_self, ty => UnitQuaternion<f32>)
     });
     bench_vek!(group, |b| {
         use vek::Quaternion;
-        bench_unop!(b, op => nop_fn, ty => Quaternion<f32>)
+        bench_unop!(b, op => ret_self, ty => Quaternion<f32>)
     });
     group.finish();
 }

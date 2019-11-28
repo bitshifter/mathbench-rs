@@ -2,7 +2,8 @@ use rand::Rng;
 
 pub trait BenchValue {
     fn random_value<R: Rng>(rng: &mut R) -> Self;
-    fn nop_fn(&self) -> Self
+    // Return self to test overhead of benches
+    fn ret_self(&self) -> Self
     where
         Self: Copy + std::marker::Sized,
     {

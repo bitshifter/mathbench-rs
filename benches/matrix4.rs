@@ -8,28 +8,28 @@ use criterion::{criterion_group, criterion_main, Criterion};
 // closest point of comparison.
 
 // returns self to check overhead of benchmark
-fn bench_matrix4_nop(c: &mut Criterion) {
+fn bench_matrix4_ret_self(c: &mut Criterion) {
     use mathbench::BenchValue;
     let mut group = c.benchmark_group("matrix4 return self");
     bench_glam!(group, |b| {
         use glam::Mat4;
-        bench_unop!(b, op => nop_fn, ty => Mat4)
+        bench_unop!(b, op => ret_self, ty => Mat4)
     });
     bench_cgmath!(group, |b| {
         use cgmath::Matrix4;
-        bench_unop!(b, op => nop_fn, ty => Matrix4<f32>)
+        bench_unop!(b, op => ret_self, ty => Matrix4<f32>)
     });
     bench_nalgebra!(group, |b| {
         use nalgebra::Matrix4;
-        bench_unop!(b, op => nop_fn, ty => Matrix4<f32>)
+        bench_unop!(b, op => ret_self, ty => Matrix4<f32>)
     });
     bench_vek!(group, |b| {
         use vek::Mat4;
-        bench_unop!(b, op => nop_fn, ty => Mat4<f32>)
+        bench_unop!(b, op => ret_self, ty => Mat4<f32>)
     });
     bench_pathfinder!(group, |b| {
         use pathfinder_geometry::transform3d::Transform4F;
-        bench_unop!(b, op => nop_fn, ty => Transform4F)
+        bench_unop!(b, op => ret_self, ty => Transform4F)
     });
     group.finish();
 }
@@ -167,7 +167,7 @@ fn bench_matrix4_mul_vector4(c: &mut Criterion) {
 
 criterion_group!(
     matrix4_benches,
-    bench_matrix4_nop,
+    bench_matrix4_ret_self,
     bench_matrix4_transpose,
     bench_matrix4_determinant,
     bench_matrix4_inverse,

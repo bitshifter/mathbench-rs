@@ -4,28 +4,28 @@ mod macros;
 use criterion::{criterion_group, criterion_main, Criterion};
 
 // returns self to check overhead of benchmark
-fn bench_matrix2_nop(c: &mut Criterion) {
+fn bench_matrix2_ret_self(c: &mut Criterion) {
     use mathbench::BenchValue;
     let mut group = c.benchmark_group("matrix2 return self");
     bench_glam!(group, |b| {
         use glam::Mat2;
-        bench_unop!(b, op => nop_fn, ty => Mat2)
+        bench_unop!(b, op => ret_self, ty => Mat2)
     });
     bench_cgmath!(group, |b| {
         use cgmath::Matrix2;
-        bench_unop!(b, op => nop_fn, ty => Matrix2<f32>)
+        bench_unop!(b, op => ret_self, ty => Matrix2<f32>)
     });
     bench_nalgebra!(group, |b| {
         use nalgebra::Matrix2;
-        bench_unop!(b, op => nop_fn, ty => Matrix2<f32>)
+        bench_unop!(b, op => ret_self, ty => Matrix2<f32>)
     });
     bench_vek!(group, |b| {
         use vek::Mat2;
-        bench_unop!(b, op => nop_fn, ty => Mat2<f32>)
+        bench_unop!(b, op => ret_self, ty => Mat2<f32>)
     });
     bench_pathfinder!(group, |b| {
         use pathfinder_geometry::transform2d::Matrix2x2F;
-        bench_unop!(b, op => nop_fn, ty => Matrix2x2F)
+        bench_unop!(b, op => ret_self, ty => Matrix2x2F)
     });
     group.finish();
 }
@@ -151,7 +151,7 @@ fn bench_matrix2_mul_vector2(c: &mut Criterion) {
 
 criterion_group!(
     matrix2_benches,
-    bench_matrix2_nop,
+    bench_matrix2_ret_self,
     bench_matrix2_transpose,
     bench_matrix2_determinant,
     bench_matrix2_inverse,
