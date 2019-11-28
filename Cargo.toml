@@ -1,6 +1,6 @@
 [package]
 name = "mathbench"
-version = "0.2.0"
+version = "0.3.0"
 authors = ["Cameron Hart <cameron.hart@gmail.com>"]
 edition = "2018"
 
@@ -14,7 +14,7 @@ rand = "0.7.2"
 rand_pcg = "0.2.1"
 
 [dependencies.glam]
-version = "0.8.2"
+version = "0.8.3"
 features = ["mint", "rand", "debug-glam-assert"]
 # a lot of random data generation uses glam, so can't be optional yet
 # optional = true
