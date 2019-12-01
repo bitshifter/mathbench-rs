@@ -30,7 +30,7 @@ features = ["mint"]
 optional = true
 
 [dependencies.euclid]
-version = "0.20.4"
+version = "0.20.5"
 features = ["mint"]
 optional = true
 
