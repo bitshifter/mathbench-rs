@@ -18,13 +18,36 @@ games and graphics development, including:
 
 ## The benchmarks
 
-All benchmarks are performed using [Criterion.rs].
+All benchmarks are performed using [Criterion.rs]. Benchmarks are logically into
+the following categories:
+
+* single operations - measure the performance of single common operations on
+  types, e.g. a matrix inverse, vector normalization or multiplying two
+  matrices.
+* throughput operations - measure the performance of common operations on
+  batches of data. These measure operations that would commonly be processing
+  batches of input, for example transforming a number of vectors with the same
+  matrix.
+* workload operations - these attempt to recreate common workloads found in game
+  development to try and demonstrate performance on real world tasks.
+
+Despite best attempts, take the results of micro benchmarks with a pinch of
+salt.
+
+### Operation benchmarks
+
+* `matrix benches` - performs common matrix operations such as transpose,
+  inverse, determinant and multiply
+* `quaternion benches` - perform common quaternion operations
+* `transform 2d & 3d benches` - bench special purpose 2D and 3D transform types
+* `transformations benches` - performs affine transformations on vectors - uses
+  the best available type for the job, either matrix or transform types
+  depending on the library
+* `vector benches` - perform common vector operations
+
+### Workload benchmarks
 
 * `euler bench` - performs an Euler integration on arrays of 2D and 3D vectors
-* `mat benches` - performs common matrix operations such as transpose, inverse,
-  determinant and multiply
-* `quat benches` - perform common quaternion operations
-* `transform bench` - performs transformations on vectors
 
 The benchmarks are currently focused on `f32` types as that is all `glam`
 currently supports.
@@ -44,9 +67,7 @@ transforms but `euclid` is unique amongst the libraries tested in that is
 doesn't have generic square matrix types.
 
 The `Transform2D` is stored as a 3x2 row major matrix that can be used to
-transform 2D vectors and points. For the purposes of `mathbench` this is
-compared against 3x3 homogeneous matrices, but the 3x2 matrix can skip some
-computation so it has an advantage there.
+transform 2D vectors and points.
 
 Similarly `Transform3D` is used for transforming 3D vectors and points. This
 is represented as a 4x4 matrix so it is more directly comparable to the other
@@ -58,9 +79,8 @@ There is no equivalent to a 2x2 matrix type in `euclid`.
 ### Matrix inverse
 
 Note that `cgmath` and `nalgebra` matrix inverse methods return an `Option`
-whereas `glam` and `euclid` do not. If a
-non-invertible matrix is inverted by `glam` or `euclid` the result will be invalid (it will
-contain NaNs).
+whereas `glam` and `euclid` do not. If a non-invertible matrix is inverted by
+`glam` or `euclid` the result will be invalid (it will contain NaNs).
 
 ## Benchmark results
 

@@ -95,49 +95,55 @@ fn bench_matrix3_inverse(c: &mut Criterion) {
 fn bench_matrix3_mul_matrix3(c: &mut Criterion) {
     use std::ops::Mul;
     let mut group = c.benchmark_group("matrix3 mul matrix3");
-    bench_glam!(group, |b| {
-        use glam::Mat3;
-        bench_binop!(b, op => mul, ty1 => Mat3, ty2 => Mat3)
-    });
-    bench_cgmath!(group, |b| {
-        use cgmath::Matrix3;
-        bench_binop!(b, op => mul, ty1 => Matrix3<f32>, ty2 => Matrix3<f32>, param => by_ref)
-    });
-    bench_nalgebra!(group, |b| {
-        use nalgebra::Matrix3;
-        bench_binop!(b, op => mul, ty1 => Matrix3<f32>, ty2 => Matrix3<f32>, param => by_ref)
-    });
-    bench_vek!(group, |b| {
-        use vek::Mat3;
-        bench_binop!(b, op => mul, ty1 => Mat3<f32>, ty2 => Mat3<f32>)
-    });
-    bench_pathfinder!(group, |b| {
-        use pathfinder_geometry::transform2d::Transform2F;
-        use std::ops::Mul;
-        bench_binop!(b, op => mul, ty1 => Transform2F, ty2 => Transform2F)
-    });
+    for size in [1, 100].iter() {
+        group.throughput(criterion::Throughput::Elements(*size as u64));
+        bench_glam!(group, size, |b, size| {
+            use glam::Mat3;
+            bench_binop!(b, size, op => mul, ty1 => Mat3, ty2 => Mat3)
+        });
+        bench_cgmath!(group, size, |b, size| {
+            use cgmath::Matrix3;
+            bench_binop!(b, size, op => mul, ty1 => Matrix3<f32>, ty2 => Matrix3<f32>, param => by_ref)
+        });
+        bench_nalgebra!(group, size, |b, size| {
+            use nalgebra::Matrix3;
+            bench_binop!(b, size, op => mul, ty1 => Matrix3<f32>, ty2 => Matrix3<f32>, param => by_ref)
+        });
+        bench_vek!(group, size, |b, size| {
+            use vek::Mat3;
+            bench_binop!(b, size, op => mul, ty1 => Mat3<f32>, ty2 => Mat3<f32>)
+        });
+        bench_pathfinder!(group, size, |b, size| {
+            use pathfinder_geometry::transform2d::Transform2F;
+            use std::ops::Mul;
+            bench_binop!(b, size, op => mul, ty1 => Transform2F, ty2 => Transform2F)
+        });
+    }
     group.finish();
 }
 
 fn bench_matrix3_mul_vector3(c: &mut Criterion) {
     use std::ops::Mul;
     let mut group = c.benchmark_group("matrix3 mul vector3");
-    bench_glam!(group, |b| {
-        use glam::{Mat3, Vec3};
-        bench_binop!(b, op => mul, ty1 => Mat3, ty2 => Vec3)
-    });
-    bench_cgmath!(group, |b| {
-        use cgmath::{Matrix3, Vector3};
-        bench_binop!(b, op => mul, ty1 => Matrix3<f32>, ty2 => Vector3<f32>)
-    });
-    bench_nalgebra!(group, |b| {
-        use nalgebra::{Matrix3, Vector3};
-        bench_binop!(b, op => mul, ty1 => Matrix3<f32>, ty2 => Vector3<f32>)
-    });
-    bench_vek!(group, |b| {
-        use vek::{Mat3, Vec3};
-        bench_binop!(b, op => mul, ty1 => Mat3<f32>, ty2 => Vec3<f32>)
-    });
+    for size in [1, 100].iter() {
+        group.throughput(criterion::Throughput::Elements(*size as u64));
+        bench_glam!(group, size, |b, size| {
+            use glam::{Mat3, Vec3};
+            bench_binop!(b, size, op => mul, ty1 => Mat3, ty2 => Vec3)
+        });
+        bench_cgmath!(group, size, |b, size| {
+            use cgmath::{Matrix3, Vector3};
+            bench_binop!(b, size, op => mul, ty1 => Matrix3<f32>, ty2 => Vector3<f32>)
+        });
+        bench_nalgebra!(group, size, |b, size| {
+            use nalgebra::{Matrix3, Vector3};
+            bench_binop!(b, size, op => mul, ty1 => Matrix3<f32>, ty2 => Vector3<f32>)
+        });
+        bench_vek!(group, size, |b, size| {
+            use vek::{Mat3, Vec3};
+            bench_binop!(b, size, op => mul, ty1 => Mat3<f32>, ty2 => Vec3<f32>)
+        });
+    }
     group.finish();
 }
 
