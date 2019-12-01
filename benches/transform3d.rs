@@ -34,17 +34,14 @@ fn bench_transform3_inverse(c: &mut Criterion) {
 fn bench_transform3_mul_transform3(c: &mut Criterion) {
     use std::ops::Mul;
     let mut group = c.benchmark_group("transform3 mul transform3d");
-    for size in [1, 100].iter() {
-        group.throughput(criterion::Throughput::Elements(*size as u64));
-        bench_nalgebra!(group, size, |b, size| {
-            use nalgebra::Transform3;
-            bench_binop!(b, size, op => mul, ty1 => Transform3<f32>, ty2 => Transform3<f32>, param => by_ref)
-        });
-        bench_euclid!(group, size, |b, size| {
-            use euclid::{Transform3D, UnknownUnit};
-            bench_binop!(b, size, op => post_transform, ty => Transform3D<f32, UnknownUnit, UnknownUnit>, param => by_ref)
-        });
-    }
+    bench_nalgebra!(group, |b| {
+        use nalgebra::Transform3;
+        bench_binop!(b, op => mul, ty1 => Transform3<f32>, ty2 => Transform3<f32>, param => by_ref)
+    });
+    bench_euclid!(group, |b| {
+        use euclid::{Transform3D, UnknownUnit};
+        bench_binop!(b, op => post_transform, ty => Transform3D<f32, UnknownUnit, UnknownUnit>, param => by_ref)
+    });
     group.finish();
 }
 

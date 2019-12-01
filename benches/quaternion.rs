@@ -81,26 +81,29 @@ fn bench_quaternion_mul_quaternion(c: &mut Criterion) {
 fn bench_quaternion_mul_vector3(c: &mut Criterion) {
     use std::ops::Mul;
     let mut group = c.benchmark_group("quaternion mul vector3");
-    bench_glam!(group, |b| {
-        use glam::{Quat, Vec3};
-        bench_binop!(b, op => mul, ty1 => Quat, ty2 => Vec3)
-    });
-    bench_cgmath!(group, |b| {
-        use cgmath::{Quaternion, Vector3};
-        bench_binop!(b, op => mul, ty1 => Quaternion<f32>, ty2 => Vector3<f32>)
-    });
-    bench_nalgebra!(group, |b| {
-        use nalgebra::{UnitQuaternion, Vector3};
-        bench_binop!(b, op => mul, ty1 => UnitQuaternion<f32>, ty2 => Vector3<f32>)
-    });
-    bench_euclid!(group, |b| {
-        use euclid::{Point3D, Rotation3D, UnknownUnit};
-        bench_binop!(b, op => transform_point3d, ty1 => Rotation3D<f32, UnknownUnit, UnknownUnit>, ty2 => Point3D<f32, UnknownUnit>)
-    });
-    bench_vek!(group, |b| {
-        use vek::{Quaternion, Vec3};
-        bench_binop!(b, op => mul, ty1 => Quaternion<f32>, ty2 => Vec3<f32>)
-    });
+    for size in [1, 100].iter() {
+        group.throughput(criterion::Throughput::Elements(*size as u64));
+        bench_glam!(group, |b| {
+            use glam::{Quat, Vec3};
+            bench_binop!(b, op => mul, ty1 => Quat, ty2 => Vec3)
+        });
+        bench_cgmath!(group, |b| {
+            use cgmath::{Quaternion, Vector3};
+            bench_binop!(b, op => mul, ty1 => Quaternion<f32>, ty2 => Vector3<f32>)
+        });
+        bench_nalgebra!(group, |b| {
+            use nalgebra::{UnitQuaternion, Vector3};
+            bench_binop!(b, op => mul, ty1 => UnitQuaternion<f32>, ty2 => Vector3<f32>)
+        });
+        bench_euclid!(group, |b| {
+            use euclid::{Point3D, Rotation3D, UnknownUnit};
+            bench_binop!(b, op => transform_point3d, ty1 => Rotation3D<f32, UnknownUnit, UnknownUnit>, ty2 => Point3D<f32, UnknownUnit>)
+        });
+        bench_vek!(group, |b| {
+            use vek::{Quaternion, Vec3};
+            bench_binop!(b, op => mul, ty1 => Quaternion<f32>, ty2 => Vec3<f32>)
+        });
+    }
     group.finish();
 }
 
