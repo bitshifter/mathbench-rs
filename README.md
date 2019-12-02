@@ -90,7 +90,7 @@ The following is a table of benchmarks produced by `mathbench` comparing `glam`
 performance to `cgmath`, `nalgebra`, `euclid` and `vek` on `f32` data.
 
 | benchmark                  |          glam   |        cgmath   |      nalgebra   |       euclid   |           vek   |    pathfinder   |
-|:---------------------------|-- -------------:|----------------:|----------------:|---------------:|----------------:|----------------:|
+|:---------------------------|----------------:|----------------:|----------------:|---------------:|----------------:|----------------:|
 | euler 2d x10000            |    __7.792 us__ |    __7.648 us__ |      16.58 us   |     11.91 us   |    __7.623 us__ |       10.2 us   |
 | euler 3d x10000            |    __15.73 us__ |      24.99 us   |      106.3 us   |     25.01 us   |      25.04 us   |      16.61 us   |
 | matrix2 determinant        |   __2.0243 ns__ |   __2.0319 ns__ |   __2.0362 ns__ |      N/A       |   __2.0324 ns__ |   __2.0232 ns__ |
