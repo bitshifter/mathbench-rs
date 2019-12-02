@@ -3,10 +3,6 @@
 mod macros;
 use criterion::{criterion_group, criterion_main, Criterion};
 
-// Note that euclid doesn't have a 4x4 matrix, it has Transform3D which is a
-// stored as 4x4 matrix internally. It is included here as a 4x4 matrix is the
-// closest point of comparison.
-
 // returns self to check overhead of benchmark
 fn bench_matrix4_ret_self(c: &mut Criterion) {
     use mathbench::BenchValue;
@@ -26,10 +22,6 @@ fn bench_matrix4_ret_self(c: &mut Criterion) {
     bench_vek!(group, |b| {
         use vek::Mat4;
         bench_unop!(b, op => ret_self, ty => Mat4<f32>)
-    });
-    bench_pathfinder!(group, |b| {
-        use pathfinder_geometry::transform3d::Transform4F;
-        bench_unop!(b, op => ret_self, ty => Transform4F)
     });
     group.finish();
 }
@@ -102,10 +94,6 @@ fn bench_matrix4_inverse(c: &mut Criterion) {
         use vek::Mat4;
         bench_unop!(b, op => inverted, ty => Mat4<f32>)
     });
-    bench_pathfinder!(group, |b| {
-        use pathfinder_geometry::transform3d::Transform4F;
-        bench_unop!(b, op => inverse, ty => Transform4F)
-    });
     group.finish();
 }
 
@@ -132,10 +120,6 @@ fn bench_matrix4_mul_matrix4(c: &mut Criterion) {
         use vek::Mat4;
         bench_binop!(b, op => mul, ty1 => Mat4<f32>, ty2 => Mat4<f32>)
     });
-    bench_pathfinder!(group, |b| {
-        use pathfinder_geometry::transform3d::Transform4F;
-        bench_binop!(b, op => mul, ty1 => Transform4F, ty2 => Transform4F)
-    });
     group.finish();
 }
 
@@ -159,10 +143,6 @@ fn bench_matrix4_mul_vector4(c: &mut Criterion) {
         bench_vek!(group, size, |b, size| {
             use vek::{Mat4, Vec4};
             bench_binop!(b, size, op => mul, ty1 => Mat4<f32>, ty2 => Vec4<f32>)
-        });
-        bench_pathfinder!(group, size, |b, size| {
-            use pathfinder_geometry::{transform3d::Transform4F, vector::Vector4F};
-            bench_binop!(b, size, op => mul, ty1 => Transform4F, ty2 => Vector4F)
         });
     }
     group.finish();

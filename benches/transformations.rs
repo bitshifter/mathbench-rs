@@ -55,6 +55,12 @@ fn bench_transform_point3(c: &mut Criterion) {
             use vek::{Mat4, Vec3};
             bench_binop!(b, size, op => mul_point, ty1 => Mat4<f32>, ty2 => Vec3<f32>)
         });
+        bench_pathfinder!(group, size, |b, size| {
+            // pathfinder doesn't have a point3 or vector3 type
+            use pathfinder_geometry::{transform3d::Transform4F, vector::Vector4F};
+            use std::ops::Mul;
+            bench_binop!(b, size, op => mul, ty1 => Transform4F, ty2 => Vector4F)
+        });
     }
     group.finish();
 }
@@ -82,6 +88,12 @@ fn bench_transform_point2(c: &mut Criterion) {
         bench_vek!(group, size, |b, size| {
             use vek::{Mat3, Vec2};
             bench_binop!(b, size, op => mul_point_2d, ty1 => Mat3<f32>, ty2 => Vec2<f32>)
+        });
+        bench_pathfinder!(group, size, |b, size| {
+            // pathfinder doesn't have a point type, this is an affine transformation.
+            use pathfinder_geometry::{transform2d::Transform2F, vector::Vector2F};
+            use std::ops::Mul;
+            bench_binop!(b, size, op => mul, ty1 => Transform2F, ty2 => Vector2F);
         });
     }
     group.finish();
@@ -111,11 +123,6 @@ fn bench_transform_vector2(c: &mut Criterion) {
         bench_vek!(group, size, |b, size| {
             use vek::{Mat3, Vec2};
             bench_binop!(b, size, op => mul_direction_2d, ty1 => Mat3<f32>, ty2 => Vec2<f32>)
-        });
-        bench_pathfinder!(group, size, |b, size| {
-            use pathfinder_geometry::{transform2d::Transform2F, vector::Vector2F};
-            use std::ops::Mul;
-            bench_binop!(b, size, op => mul, ty1 => Transform2F, ty2 => Vector2F);
         });
     }
     group.finish();

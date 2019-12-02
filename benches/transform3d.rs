@@ -15,6 +15,10 @@ fn bench_transform3_ret_self(c: &mut Criterion) {
         use euclid::{Transform3D, UnknownUnit};
         bench_unop!(b, op => ret_self, ty => Transform3D<f32, UnknownUnit, UnknownUnit>)
     });
+    bench_pathfinder!(group, |b| {
+        use pathfinder_geometry::transform3d::Transform4F;
+        bench_unop!(b, op => ret_self, ty => Transform4F)
+    });
     group.finish();
 }
 
@@ -27,6 +31,10 @@ fn bench_transform3_inverse(c: &mut Criterion) {
     bench_euclid!(group, |b| {
         use euclid::{Transform3D, UnknownUnit};
         bench_unop!(b, op => inverse, ty => Transform3D<f32, UnknownUnit, UnknownUnit>)
+    });
+    bench_pathfinder!(group, |b| {
+        use pathfinder_geometry::transform3d::Transform4F;
+        bench_unop!(b, op => inverse, ty => Transform4F)
     });
     group.finish();
 }
@@ -41,6 +49,10 @@ fn bench_transform3_mul_transform3(c: &mut Criterion) {
     bench_euclid!(group, |b| {
         use euclid::{Transform3D, UnknownUnit};
         bench_binop!(b, op => post_transform, ty => Transform3D<f32, UnknownUnit, UnknownUnit>, param => by_ref)
+    });
+    bench_pathfinder!(group, |b| {
+        use pathfinder_geometry::transform3d::Transform4F;
+        bench_binop!(b, op => mul, ty1 => Transform4F, ty2 => Transform4F)
     });
     group.finish();
 }
