@@ -22,10 +22,6 @@ fn bench_matrix3_ret_self(c: &mut Criterion) {
         use vek::Mat3;
         bench_unop!(b, op => ret_self, ty => Mat3<f32>)
     });
-    bench_pathfinder!(group, |b| {
-        use pathfinder_geometry::transform2d::Transform2F;
-        bench_unop!(b, op => ret_self, ty => Transform2F)
-    });
     group.finish();
 }
 
@@ -85,10 +81,6 @@ fn bench_matrix3_inverse(c: &mut Criterion) {
         use nalgebra::Matrix3;
         bench_unop!(b, op => try_inverse, ty => Matrix3<f32>)
     });
-    bench_pathfinder!(group, |b| {
-        use pathfinder_geometry::transform2d::Transform2F;
-        bench_unop!(b, op => inverse, ty => Transform2F)
-    });
     group.finish();
 }
 
@@ -110,11 +102,6 @@ fn bench_matrix3_mul_matrix3(c: &mut Criterion) {
     bench_vek!(group, |b| {
         use vek::Mat3;
         bench_binop!(b, op => mul, ty1 => Mat3<f32>, ty2 => Mat3<f32>)
-    });
-    bench_pathfinder!(group, |b| {
-        use pathfinder_geometry::transform2d::Transform2F;
-        use std::ops::Mul;
-        bench_binop!(b, op => mul, ty1 => Transform2F, ty2 => Transform2F)
     });
     group.finish();
 }

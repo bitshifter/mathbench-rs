@@ -101,11 +101,11 @@ performance to `cgmath`, `nalgebra`, `euclid` and `vek` on `f32` data.
 | matrix2 return self        |   __2.5002 ns__ |     2.6048 ns   |     2.6037 ns   |      N/A       |     2.6053 ns   |   __2.4642 ns__ |
 | matrix2 transpose          |   __2.0986 ns__ |   __2.0800 ns__ |     2.6048 ns   |      N/A       |   __2.1175 ns__ |       N/A       |
 | matrix3 determinant        |   __2.7236 ns__ |     3.4337 ns   |     3.3859 ns   |      N/A       |     3.4829 ns   |       N/A       |
-| matrix3 inverse            |     9.0184 ns   |     8.4953 ns   |     9.7601 ns   |      N/A       |       N/A       |   __4.3284 ns__ |
-| matrix3 mul matrix3        |     5.4612 ns   |     8.2805 ns   |    10.0504 ns   |      N/A       |   128.3130 ns   |   __3.8671 ns__ |
+| matrix3 inverse            |     9.0184 ns   |   __8.4953 ns__ |     9.7601 ns   |      N/A       |       N/A       |       N/A       |
+| matrix3 mul matrix3        |   __5.4612 ns__ |     8.2805 ns   |    10.0504 ns   |      N/A       |   128.3130 ns   |       N/A       |
 | matrix3 mul vector3 x1     |   __2.6286 ns__ |     4.3930 ns   |     4.3352 ns   |      N/A       |    40.8996 ns   |       N/A       |
 | matrix3 mul vector3 x100   |     0.5308 us   |   __0.4601 us__ |     0.4776 us   |      N/A       |      4.131 us   |       N/A       |
-| matrix3 return self        |     5.6968 ns   |     4.8419 ns   |     4.8427 ns   |      N/A       |     4.8328 ns   |   __4.0853 ns__ |
+| matrix3 return self        |     5.6968 ns   |   __4.8419 ns__ |   __4.8427 ns__ |      N/A       |   __4.8328 ns__ |       N/A       |
 | matrix3 transpose          |   __4.9974 ns__ |     5.7100 ns   |    10.7090 ns   |      N/A       |     5.7240 ns   |       N/A       |
 | matrix4 determinant        |   __8.3825 ns__ |    11.1800 ns   |    55.4632 ns   |   16.2066 ns   |    17.8108 ns   |       N/A       |
 | matrix4 inverse            |  __21.9264 ns__ |    41.7964 ns   |    51.6510 ns   |   52.8500 ns   |   330.2365 ns   |    24.2825 ns   |
@@ -140,7 +140,9 @@ performance to `cgmath`, `nalgebra`, `euclid` and `vek` on `f32` data.
 
 These benchmarks were performed on an [Intel i7-4710HQ] CPU on Linux. They were
 compiled with the stable 1.39 Rust compiler. Lower (better) numbers are
-highlighted. The versions of the libraries tested were:
+highlighted within a 2.5% range of the minimum for each row.
+
+The versions of the libraries tested were:
 
 * `glam` - `0.8.3`
 * `cgmath` - `0.17.0`
