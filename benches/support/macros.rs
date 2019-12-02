@@ -69,10 +69,16 @@ macro_rules! bench_vek {
 #[macro_export]
 macro_rules! bench_pathfinder {
     ($group:ident, $closure:expr) => {
-        bench_lib!("pathfinder_geometry", $group, $closure)
+        #[cfg(feature = "pathfinder_geometry")]
+        $group.bench_function("pathfinder", $closure)
     };
     ($group:ident, $size:expr, $closure:expr) => {
-        bench_lib!("pathfinder_geometry", $group, $size, $closure)
+        #[cfg(feature = "pathfinder_geometry")]
+        $group.bench_with_input(
+            criterion::BenchmarkId::new("pathfinder", $size),
+            $size,
+            $closure,
+        )
     };
 }
 

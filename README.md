@@ -21,6 +21,7 @@ games and graphics development, including:
 All benchmarks are performed using [Criterion.rs]. Benchmarks are logically into
 the following categories:
 
+* return self - attempts to measure overhead of benchmarking each type.
 * single operations - measure the performance of single common operations on
   types, e.g. a matrix inverse, vector normalization or multiplying two
   matrices.
@@ -37,13 +38,14 @@ salt.
 ### Operation benchmarks
 
 * `matrix benches` - performs common matrix operations such as transpose,
-  inverse, determinant and multiply
-* `quaternion benches` - perform common quaternion operations
-* `transform 2d & 3d benches` - bench special purpose 2D and 3D transform types
+  inverse, determinant and multiply.
+* `quaternion benches` - perform common quaternion operations.
+* `transform 2d & 3d benches` - bench special purpose 2D and 3D transform types.
+  These can be compared to 3x3 and 4x4 matrix benches to some extent.
 * `transformations benches` - performs affine transformations on vectors - uses
   the best available type for the job, either matrix or transform types
-  depending on the library
-* `vector benches` - perform common vector operations
+  depending on the library.
+* `vector benches` - perform common vector operations.
 
 ### Workload benchmarks
 
@@ -87,45 +89,63 @@ whereas `glam` and `euclid` do not. If a non-invertible matrix is inverted by
 The following is a table of benchmarks produced by `mathbench` comparing `glam`
 performance to `cgmath`, `nalgebra`, `euclid` and `vek` on `f32` data.
 
-| benchmark              |         glam   |       cgmath   |     nalgebra   |       euclid   |           vek   |   pathfinder   |
-|:-----------------------|---------------:|---------------:|---------------:|---------------:|----------------:|---------------:|
-| euler 2d               |     8.767 us   |     8.713 us   |     20.63 us   |     13.34 us   |    __8.413 us__ |     11.25 us   |
-| euler 3d               |   __15.49 us__ |     28.92 us   |     86.47 us   |     29.77 us   |       28.9 us   |     16.16 us   |
-| mat2 determinant       |  __2.0364 ns__ |    2.0426 ns   |    2.0453 ns   |      N/A       |     2.0466 ns   |    2.0711 ns   |
-| mat2 inverse           |  __2.5694 ns__ |    2.9510 ns   |    2.9472 ns   |      N/A       |       N/A       |    2.7693 ns   |
-| mat2 mul mat2          |    2.5989 ns   |    2.7197 ns   |    4.0973 ns   |      N/A       |    20.3607 ns   |  __2.5301 ns__ |
-| mat2 transform vector2 |    2.6697 ns   |    2.6576 ns   |    6.7453 ns   |      N/A       |     8.4590 ns   |  __2.1183 ns__ |
-| mat2 transpose         |    2.0850 ns   |  __2.0816 ns__ |    2.6265 ns   |      N/A       |     2.0844 ns   |      N/A       |
-| mat3 determinant       |    2.7516 ns   |    3.4176 ns   |    3.3756 ns   |  __2.0323 ns__ |     3.4497 ns   |      N/A       |
-| mat3 inverse           |    9.7384 ns   |    8.8430 ns   |    9.7633 ns   |    4.8761 ns   |       N/A       |  __4.0245 ns__ |
-| mat3 mul mat3          |    5.4994 ns   |    8.1237 ns   |    9.8879 ns   |    5.0860 ns   |   135.3526 ns   |  __3.8668 ns__ |
-| mat3 transform point2  |  __2.7727 ns__ |    2.8822 ns   |    7.7018 ns   |    3.2579 ns   |    26.3885 ns   |      N/A       |
-| mat3 transform vector2 |    3.0376 ns   |      N/A       |    3.7496 ns   |    2.8098 ns   |    26.6436 ns   |  __2.3009 ns__ |
-| mat3 transform vector3 |  __2.9091 ns__ |    4.3690 ns   |    9.1395 ns   |      N/A       |    26.6590 ns   |      N/A       |
-| mat3 transpose         |  __4.9576 ns__ |    5.7245 ns   |   10.5911 ns   |      N/A       |     5.7280 ns   |      N/A       |
-| mat4 determinant       |  __8.3297 ns__ |   11.1496 ns   |   52.0317 ns   |   16.4971 ns   |    17.6341 ns   |      N/A       |
-| mat4 inverse           | __21.9286 ns__ |   42.6754 ns   |   53.4406 ns   |   52.8403 ns   |   331.3933 ns   |   22.4474 ns   |
-| mat4 mul mat4          |    7.6689 ns   |  __7.5832 ns__ |   14.7542 ns   |    9.1091 ns   |   205.1414 ns   |    7.6747 ns   |
-| mat4 transform point3  |  __2.8806 ns__ |    6.2547 ns   |    6.6465 ns   |    6.0872 ns   |    43.7427 ns   |      N/A       |
-| mat4 transform vector3 |  __2.7503 ns__ |    5.5468 ns   |    5.3642 ns   |    4.3981 ns   |    44.4737 ns   |      N/A       |
-| mat4 transform vector4 |  __2.9953 ns__ |    3.0956 ns   |    4.0748 ns   |      N/A       |    41.4363 ns   |    3.0111 ns   |
-| mat4 transpose         |  __5.5896 ns__ |    8.6730 ns   |   19.1668 ns   |      N/A       |     8.5626 ns   |      N/A       |
-| quat conjugate         |  __2.2176 ns__ |    2.9146 ns   |    2.9095 ns   |    2.9100 ns   |     2.9046 ns   |      N/A       |
-| quat mul quat          |  __4.2515 ns__ |    4.4174 ns   |    4.6679 ns   |    7.8819 ns   |     9.4261 ns   |      N/A       |
-| quat transform vector3 |  __5.1249 ns__ |    6.7975 ns   |   26.6022 ns   |    6.9983 ns   |    11.9850 ns   |      N/A       |
-| vec3 cross             |  __2.4443 ns__ |    3.5711 ns   |    3.2860 ns   |    3.5326 ns   |     3.6202 ns   |      N/A       |
-| vec3 dot               |  __2.1148 ns__ |    2.3138 ns   |    2.3122 ns   |    2.3097 ns   |     2.2819 ns   |      N/A       |
-| vec3 length            |    2.2045 ns   |    2.2068 ns   |    2.3512 ns   |  __2.1861 ns__ |     2.3559 ns   |      N/A       |
-| vec3 normalize         |  __4.0705 ns__ |    4.3569 ns   |    8.2144 ns   |    8.0985 ns   |     8.0892 ns   |      N/A       |
+| benchmark                  |          glam   |        cgmath   |      nalgebra   |       euclid   |           vek   |    pathfinder   |
+|:---------------------------|-- -------------:|----------------:|----------------:|---------------:|----------------:|----------------:|
+| euler 2d x10000            |    __7.792 us__ |    __7.648 us__ |      16.58 us   |     11.91 us   |    __7.623 us__ |       10.2 us   |
+| euler 3d x10000            |    __15.73 us__ |      24.99 us   |      106.3 us   |     25.01 us   |      25.04 us   |      16.61 us   |
+| matrix2 determinant        |   __2.0243 ns__ |   __2.0319 ns__ |   __2.0362 ns__ |      N/A       |   __2.0324 ns__ |   __2.0232 ns__ |
+| matrix2 inverse            |   __2.5931 ns__ |     3.0771 ns   |     3.0963 ns   |      N/A       |       N/A       |     2.7660 ns   |
+| matrix2 mul matrix2        |     2.6517 ns   |     2.7582 ns   |     2.7541 ns   |      N/A       |    19.9018 ns   |   __2.5568 ns__ |
+| matrix2 mul vector2 x1     |     2.7149 ns   |     2.6294 ns   |     2.6264 ns   |      N/A       |     9.1836 ns   |   __2.1251 ns__ |
+| matrix2 mul vector2 x100   |   249.2675 ns   |   239.2375 ns   |   243.6050 ns   |      N/A       |   887.8139 ns   | __221.0440 ns__ |
+| matrix2 return self        |   __2.5002 ns__ |     2.6048 ns   |     2.6037 ns   |      N/A       |     2.6053 ns   |   __2.4642 ns__ |
+| matrix2 transpose          |   __2.0986 ns__ |   __2.0800 ns__ |     2.6048 ns   |      N/A       |   __2.1175 ns__ |       N/A       |
+| matrix3 determinant        |   __2.7236 ns__ |     3.4337 ns   |     3.3859 ns   |      N/A       |     3.4829 ns   |       N/A       |
+| matrix3 inverse            |     9.0184 ns   |     8.4953 ns   |     9.7601 ns   |      N/A       |       N/A       |   __4.3284 ns__ |
+| matrix3 mul matrix3        |     5.4612 ns   |     8.2805 ns   |    10.0504 ns   |      N/A       |   128.3130 ns   |   __3.8671 ns__ |
+| matrix3 mul vector3 x1     |   __2.6286 ns__ |     4.3930 ns   |     4.3352 ns   |      N/A       |    40.8996 ns   |       N/A       |
+| matrix3 mul vector3 x100   |     0.5308 us   |   __0.4601 us__ |     0.4776 us   |      N/A       |      4.131 us   |       N/A       |
+| matrix3 return self        |     5.6968 ns   |     4.8419 ns   |     4.8427 ns   |      N/A       |     4.8328 ns   |   __4.0853 ns__ |
+| matrix3 transpose          |   __4.9974 ns__ |     5.7100 ns   |    10.7090 ns   |      N/A       |     5.7240 ns   |       N/A       |
+| matrix4 determinant        |   __8.3825 ns__ |    11.1800 ns   |    55.4632 ns   |   16.2066 ns   |    17.8108 ns   |       N/A       |
+| matrix4 inverse            |  __21.9264 ns__ |    41.7964 ns   |    51.6510 ns   |   52.8500 ns   |   330.2365 ns   |    24.2825 ns   |
+| matrix4 mul matrix4        |   __7.3645 ns__ |     7.8721 ns   |    10.0062 ns   |    9.0023 ns   |   189.4262 ns   |     7.6715 ns   |
+| matrix4 mul vector4 x1     |   __3.0289 ns__ |     3.2053 ns   |     3.2392 ns   |      N/A       |    46.9531 ns   |   __3.0904 ns__ |
+| matrix4 mul vector4 x100   |   __0.6255 us__ |   __0.6271 us__ |   __0.6258 us__ |      N/A       |      4.738 us   |   __0.6375 us__ |
+| matrix4 return self        |     7.1649 ns   |     7.4951 ns   |     7.5701 ns   |      N/A       |     7.4928 ns   |   __6.9258 ns__ |
+| matrix4 transpose          |   __7.1278 ns__ |    10.5022 ns   |    19.3988 ns   |      N/A       |    10.5206 ns   |       N/A       |
+| quaternion conjugate       |   __2.1343 ns__ |     2.9152 ns   |     2.9108 ns   |    2.9205 ns   |     2.9131 ns   |       N/A       |
+| quaternion mul quaternion  |   __3.5744 ns__ |     4.5548 ns   |     4.8202 ns   |    8.0146 ns   |    10.5981 ns   |       N/A       |
+| quaternion mul vector3     |   __5.8698 ns__ |     6.7802 ns   |     7.0169 ns   |    6.9912 ns   |    11.9606 ns   |       N/A       |
+| quaternion return self     |   __2.4632 ns__ |     2.5960 ns   |     2.5907 ns   |      N/A       |     2.6003 ns   |       N/A       |
+| transform point2 x1        |   __2.7688 ns__ |     2.8938 ns   |     4.3806 ns   |    3.2530 ns   |    44.4697 ns   |       N/A       |
+| transform point2 x100      |     0.4057 us   |     0.3586 us   |     0.4423 us   |  __0.3125 us__ |      4.385 us   |       N/A       |
+| transform point3 x1        |   __2.9630 ns__ |     6.0267 ns   |     6.1170 ns   |    7.3728 ns   |    43.7141 ns   |       N/A       |
+| transform point3 x100      |    __0.628 us__ |     0.7261 us   |     0.7432 us   |    0.7335 us   |      4.406 us   |       N/A       |
+| transform vector2 x1       |     3.0185 ns   |       N/A       |     3.7697 ns   |    2.9227 ns   |    44.6045 ns   |   __2.3072 ns__ |
+| transform vector2 x100     |     0.4115 us   |       N/A       |     0.3999 us   |  __0.2863 us__ |      4.383 us   |     0.3238 us   |
+| transform vector3 x1       |   __2.9747 ns__ |     5.1365 ns   |     8.8130 ns   |    4.2195 ns   |    43.7552 ns   |       N/A       |
+| transform vector3 x100     |   __0.6201 us__ |     0.6534 us   |     0.9004 us   |  __0.6217 us__ |       4.37 us   |       N/A       |
+| transform2 inverse         |       N/A       |       N/A       |     9.9566 ns   |    4.9061 ns   |       N/A       |   __4.0351 ns__ |
+| transform2 mul transform2  |       N/A       |       N/A       |     9.9321 ns   |    5.1075 ns   |       N/A       |   __3.6289 ns__ |
+| transform2 return self     |       N/A       |       N/A       |     4.8614 ns   |  __3.5146 ns__ |       N/A       |     4.1484 ns   |
+| transform3 inverse         |       N/A       |       N/A       |  __51.7319 ns__ |   62.0064 ns   |       N/A       |       N/A       |
+| transform3 mul transform3d |       N/A       |       N/A       |  __10.3848 ns__ |   11.6121 ns   |       N/A       |       N/A       |
+| transform3 return self     |       N/A       |       N/A       |     7.4340 ns   |  __6.8873 ns__ |       N/A       |       N/A       |
+| vector3 cross              |   __2.4698 ns__ |     3.5068 ns   |     3.2558 ns   |    3.5117 ns   |     3.5321 ns   |       N/A       |
+| vector3 dot                |   __2.1109 ns__ |     2.4331 ns   |     2.2965 ns   |    2.2988 ns   |     2.2628 ns   |       N/A       |
+| vector3 length             |     2.2261 ns   |   __2.1732 ns__ |     2.3382 ns   |  __2.1707 ns__ |     2.3648 ns   |       N/A       |
+| vector3 normalize          |   __4.0715 ns__ |     4.2994 ns   |     8.1961 ns   |    8.0856 ns   |     8.0477 ns   |       N/A       |
+| vector3 return self        |   __2.4993 ns__ |     2.9701 ns   |     2.9681 ns   |      N/A       |     3.0001 ns   |       N/A       |
 
 These benchmarks were performed on an [Intel i7-4710HQ] CPU on Linux. They were
 compiled with the stable 1.39 Rust compiler. Lower (better) numbers are
 highlighted. The versions of the libraries tested were:
 
-* `glam` - `0.8.2`
+* `glam` - `0.8.3`
 * `cgmath` - `0.17.0`
 * `nalgebra` - `0.19.0`
-* `euclid` - `0.20.3`
+* `euclid` - `0.20.5`
 * `vek` - `0.9.10` (`repr_c` types)
 
 See the full [mathbench report] for more detailed results.
