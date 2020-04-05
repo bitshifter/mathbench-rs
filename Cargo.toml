@@ -14,13 +14,13 @@ rand = "0.7.2"
 rand_pcg = "0.2.1"
 
 [dependencies.glam]
-version = "0.8.3"
+version = "0.8.6"
 features = ["mint", "rand", "debug-glam-assert"]
 # a lot of random data generation uses glam, so can't be optional yet
 # optional = true
 
 [dependencies.nalgebra]
-version = "0.19.0"
+version = "0.20.0"
 features = ["std", "mint"]
 optional = true
 
@@ -35,16 +35,16 @@ features = ["mint"]
 optional = true
 
 [dependencies.vek]
-version = "0.9.10"
+version = "0.10.0"
 features = ["mint"]
 optional = true
 
 [dependencies.pathfinder_geometry]
-version = "0.3.0"
+version = "0.4.0"
 optional = true
 
 [dev-dependencies]
-criterion = "0.3.0"
+criterion = "0.3.1"
 
 # [patch.crates-io]
 # glam = { path = "../glam-rs" }
