@@ -1,0 +1,8 @@
+[package]
+name = "mathbench-buildtime-vek"
+version = "0.1.0"
+authors = ["Cameron Hart <cameron.hart@gmail.com>"]
+edition = "2018"
+
+[dependencies.vek]
+version = "0.10.0"

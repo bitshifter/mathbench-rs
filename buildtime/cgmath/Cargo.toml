@@ -1,0 +1,8 @@
+[package]
+name = "mathbench-buildtime-cgmath"
+version = "0.1.0"
+authors = ["Cameron Hart <cameron.hart@gmail.com>"]
+edition = "2018"
+
+[dependencies]
+cgmath = "0.17.0"

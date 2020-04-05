@@ -1,0 +1,8 @@
+[package]
+name = "mathbench-buildtime-glam"
+version = "0.1.0"
+authors = ["Cameron Hart <cameron.hart@gmail.com>"]
+edition = "2018"
+
+[dependencies.glam]
+version = "0.8.6"
