@@ -88,3 +88,6 @@ harness = false
 [profile.bench]
 debug = true
 # lto = true
+
+[workspace]
+members = ["tools/summarize", "tools/buildbench"]

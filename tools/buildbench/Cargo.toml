@@ -1,8 +1,9 @@
 [package]
-name = "mathbench-buildtime-cgmath"
+name = "buildbench"
 version = "0.1.0"
 authors = ["Cameron Hart <cameron.hart@gmail.com>"]
 edition = "2018"
 
 [dependencies]
-cgmath = "0.17.0"
+cargo_toml = "0.8.0"
+tempfile = "3.1.0"

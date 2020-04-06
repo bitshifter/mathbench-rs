@@ -1,8 +1,0 @@
-[package]
-name = "mathbench-buildtime-euclid"
-version = "0.1.0"
-authors = ["Cameron Hart <cameron.hart@gmail.com>"]
-edition = "2018"
-
-[dependencies]
-euclid = "0.20.10"
