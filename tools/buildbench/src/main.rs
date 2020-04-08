@@ -1,33 +1,23 @@
 use cargo_toml::Manifest;
 use clap::{App, Arg};
-use serde::{Deserialize, Serialize};
+use regex::Regex;
 use std::{
     collections::HashSet,
     env,
     fs::{self, File},
-    io::{self, BufRead, Cursor, Write},
+    io::{self, BufRead, BufReader, Error, ErrorKind, Write},
     process::{Command, Stdio},
+    str::FromStr,
 };
 use tempfile::{tempdir, TempDir};
 
-#[derive(Debug, Serialize, Deserialize)]
-struct Target {
-    crate_types: Vec<String>,
-    doctest: bool,
-    edition: String,
-    kind: Vec<String>,
-    name: String,
-    src_path: String,
-}
-
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Default)]
 struct TimingInfo {
-    duration: f64,
-    mode: String,
-    package_id: String,
-    reason: String,
-    rmeta_time: f64,
-    target: Target,
+    name: String,
+    profile: String,
+    total_time: f64,
+    self_time: f64,
+    units: u32,
 }
 
 fn create_temp_dir(name: &str, version: &str) -> io::Result<TempDir> {
@@ -57,56 +47,64 @@ fn create_temp_dir(name: &str, version: &str) -> io::Result<TempDir> {
     Ok(dir)
 }
 
-fn build_crate(target_name: &str, dir: TempDir) -> io::Result<Vec<u8>> {
-    let output = Command::new("cargo")
+fn parse_time(time: &str) -> f64 {
+    let time_match = Regex::new(r"^(\d+\.\d+)s$").unwrap();
+    let completed_time = time_match.captures(time).unwrap().get(1).unwrap().as_str();
+    f64::from_str(completed_time).unwrap()
+}
+
+fn build_crate(name: &str, dir: TempDir) -> io::Result<TimingInfo> {
+    let stderr = Command::new("cargo")
         .current_dir(dir.path())
-        .args(&["+nightly", "build", "--release", "-Z", "timings=html,info,json"])
-        .stderr(Stdio::inherit())
-        .output()?;
+        .args(&["+nightly", "build", "--release", "-Z", "timings=html,info"])
+        .stderr(Stdio::piped())
+        .spawn()?
+        .stderr
+        .ok_or_else(|| Error::new(ErrorKind::Other, "Could not capture standard error."))?;
 
-    let path = env::current_dir()?;
-    let timing_html = format!("cargo-timing-{}.html", target_name);
-    fs::copy(dir.path().join("cargo-timing.html"), path.join(timing_html))?;
+    let reader = BufReader::new(stderr);
 
-    Ok(output.stdout)
-}
+    let mut timing_info = TimingInfo::default();
+    timing_info.name = name.to_string();
 
-fn collect_timing_info(output: Vec<u8>) -> io::Result<Vec<TimingInfo>> {
-    let mut timing_infos = Vec::new();
-    for line in Cursor::new(output).lines() {
-        let line = line.unwrap();
-        dbg!(&line);
-        let timing_info: TimingInfo = serde_json::from_str(&line)?;
-        timing_infos.push(timing_info);
-    }
-    Ok(timing_infos)
-}
+    let completed_match = Regex::new(r"^\s*Completed ([\S]+) ([\S]+) in ([\S]+)").unwrap();
+    let finished_match = Regex::new(r"\s*Finished ([\S]+) \[.+\] target\(s\) in ([\S]+)").unwrap();
 
-fn summarize_timing_infos(target_name: &str, timing_infos: &[TimingInfo]) {
-    let total_units = timing_infos.len();
-    let mut total_time = 0.0;
-    let mut self_time = 0.0;
-    for timing_info in timing_infos {
-        println!("{:?}", timing_info);
-        if timing_info.target.name == target_name {
-            self_time = timing_info.duration;
-            total_time = timing_info.rmeta_time + timing_info.duration;
+    for line in reader.lines() {
+        let line = line?;
+        println!("{}", line);
+        if let Some(completed_captures) = completed_match.captures(line.as_str()) {
+            timing_info.units += 1;
+            let completed_name = completed_captures.get(1).unwrap().as_str();
+            if name == completed_name {
+                timing_info.self_time = parse_time(completed_captures.get(3).unwrap().as_str());
+            }
+        } else if let Some(finished_captures) = finished_match.captures(line.as_str()) {
+            timing_info.profile = finished_captures.get(1).unwrap().as_str().to_string();
+            timing_info.total_time = parse_time(finished_captures.get(2).unwrap().as_str());
         }
     }
-    println!(
-        "{} total time: {}, self time: {}, units {}",
-        target_name, total_time, self_time, total_units
-    );
+
+    dbg!(&timing_info);
+
+    // let output: Vec<String> = reader.lines().filter_map(|line| line.ok()).inspect(|line| println!("{}", line)).collect();
+
+    // copy timing file
+    let current_dir = env::current_dir()?;
+    let timing_html = format!("cargo-timing-{}.html", name);
+    fs::copy(dir.path().join("cargo-timing.html"), current_dir.join(timing_html))?;
+
+    Ok(timing_info)
 }
 
 fn benchlib(target_name: &str, target_version: &str) -> io::Result<()> {
     let dir = create_temp_dir(target_name, target_version)?;
 
-    let output = build_crate(target_name, dir)?;
+    let _output = build_crate(target_name, dir)?;
 
-    let timing_infos = collect_timing_info(output)?;
+    // let timing_infos = collect_timing_info(output)?;
 
-    summarize_timing_infos(target_name, &timing_infos);
+    // summarize_timing_infos(target_name, &timing_infos);
 
     Ok(())
 }
