@@ -5,10 +5,10 @@ use regex::Regex;
 use std::{
     collections::HashSet,
     convert::{TryFrom, TryInto},
-    env,
     error::Error,
     fs::{self, File},
     io::{self, BufRead, Cursor, Write},
+    path::Path,
     process::Command,
     str::FromStr,
 };
@@ -146,9 +146,10 @@ fn bench_crate(
     version: &str,
     profile: Profile,
     features: Features,
+    report_dir: Option<&Path>,
     verbose: bool,
 ) -> io::Result<TimingInfo> {
-    let dir = create_temp_build(name, version, features)?;
+    let build_dir = create_temp_build(name, version, features)?;
 
     let mut args = vec!["+nightly", "build", "-Z", "timings=html,info"];
     if let Some(profile_flags) = profile.get_flags() {
@@ -156,7 +157,7 @@ fn bench_crate(
     }
 
     let output = Command::new("cargo")
-        .current_dir(dir.path())
+        .current_dir(build_dir.path())
         .args(&["+nightly", "build", "--release", "-Z", "timings=html,info"])
         .output()?;
 
@@ -192,18 +193,17 @@ fn bench_crate(
         }
     }
 
-    // copy timing file
-    let current_dir = env::current_dir()?;
-    let timing_html = format!(
-        "cargo-timing-{}-{}-{}.html",
-        name,
-        profile.as_str(),
-        features.as_str()
-    );
-    fs::copy(
-        dir.path().join("cargo-timing.html"),
-        current_dir.join(timing_html),
-    )?;
+    if let Some(report_dir) = report_dir {
+        // copy timing file
+        let timing_html = report_dir.join(format!(
+            "cargo-timing-{}-{}-{}.html",
+            name,
+            profile.as_str(),
+            features.as_str()
+        ));
+        println!("Copying timing report to {:?}", timing_html.as_path());
+        fs::copy(build_dir.path().join("cargo-timing.html"), timing_html)?;
+    }
 
     Ok(timing_info)
 }
@@ -306,6 +306,10 @@ fn main() -> Result<(), Box<dyn Error>> {
                 .takes_value(true)
                 .multiple(true)
                 .possible_values(Profile::possible_values()),
+            Arg::with_name("report-dir")
+                .long("report-dir")
+                .short("R")
+                .takes_value(true),
             Arg::with_name("verbose").long("verbose").short("v"),
         ])
         .get_matches();
@@ -326,6 +330,12 @@ fn main() -> Result<(), Box<dyn Error>> {
         vec![Features::default()]
     };
 
+    let report_dir = matches.value_of("report-dir").map(|dir| {
+        let report_dir = Path::new(dir);
+        assert!(report_dir.is_dir());
+        report_dir
+    });
+
     let verbose = matches.is_present("verbose");
 
     let mut results = Vec::new();
@@ -340,7 +350,7 @@ fn main() -> Result<(), Box<dyn Error>> {
                         profile.as_str(),
                         feature.as_str()
                     );
-                    match bench_crate(name, version, *profile, *feature, verbose) {
+                    match bench_crate(name, version, *profile, *feature, report_dir, verbose) {
                         Ok(info) => results.push(info),
                         Err(e) => {
                             eprintln!(
