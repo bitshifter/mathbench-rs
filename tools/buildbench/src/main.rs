@@ -141,12 +141,15 @@ fn parse_time(time: &str) -> f64 {
     f64::from_str(completed_time).unwrap()
 }
 
-fn build_crate(
+fn bench_crate(
     name: &str,
+    version: &str,
     profile: Profile,
     features: Features,
-    dir: TempDir,
+    verbose: bool,
 ) -> io::Result<TimingInfo> {
+    let dir = create_temp_build(name, version, features)?;
+
     let mut args = vec!["+nightly", "build", "-Z", "timings=html,info"];
     if let Some(profile_flags) = profile.get_flags() {
         args.push(profile_flags);
@@ -175,7 +178,9 @@ fn build_crate(
 
     for line in reader.lines() {
         let line = line?;
-        println!("{}", line);
+        if verbose {
+            println!("{}", line);
+        }
         if let Some(completed_captures) = COMPLETED_MATCH.captures(line.as_str()) {
             timing_info.units += 1;
             let completed_name = completed_captures.get(1).unwrap().as_str();
@@ -189,7 +194,12 @@ fn build_crate(
 
     // copy timing file
     let current_dir = env::current_dir()?;
-    let timing_html = format!("cargo-timing-{}.html", name);
+    let timing_html = format!(
+        "cargo-timing-{}-{}-{}.html",
+        name,
+        profile.as_str(),
+        features.as_str()
+    );
     fs::copy(
         dir.path().join("cargo-timing.html"),
         current_dir.join(timing_html),
@@ -198,17 +208,7 @@ fn build_crate(
     Ok(timing_info)
 }
 
-fn benchlib(
-    name: &str,
-    version: &str,
-    profile: Profile,
-    features: Features,
-) -> io::Result<TimingInfo> {
-    let dir = create_temp_build(name, version, features)?;
-    build_crate(name, profile, features, dir)
-}
-
-fn summarize(results: &[TimingInfo]) {
+fn summarize(profiles: &[Profile], features: &[Features], results: &[TimingInfo]) {
     use prettytable::{
         format::{Alignment, FormatBuilder, LinePosition, LineSeparator},
         Cell, Row, Table,
@@ -224,24 +224,39 @@ fn summarize(results: &[TimingInfo]) {
     let mut table = Table::new();
     table.set_format(markdown_format);
 
-    table.set_titles(Row::new(vec![
-        Cell::new_align("name", Alignment::LEFT),
-        Cell::new_align("profile", Alignment::LEFT),
-        Cell::new_align("features", Alignment::LEFT),
-        Cell::new_align("total (s)", Alignment::RIGHT),
-        Cell::new_align("self (s)", Alignment::RIGHT),
-        Cell::new_align("units", Alignment::RIGHT),
-    ]));
+    let mut titles = vec![Cell::new_align("crate", Alignment::LEFT)];
+    if profiles.len() > 1 {
+        titles.push(Cell::new_align("profile", Alignment::LEFT));
+    }
+    if features.len() > 1 {
+        titles.push(Cell::new_align("features", Alignment::LEFT));
+    }
+    titles.push(Cell::new_align("total (s)", Alignment::RIGHT));
+    titles.push(Cell::new_align("self (s)", Alignment::RIGHT));
+    titles.push(Cell::new_align("units", Alignment::RIGHT));
+    table.set_titles(Row::new(titles));
 
     for info in results {
-        table.add_row(Row::new(vec![
-            Cell::new_align(info.name.as_str(), Alignment::LEFT),
-            Cell::new_align(info.profile.as_str(), Alignment::LEFT),
-            Cell::new_align(info.features.as_str(), Alignment::LEFT),
-            Cell::new_align(&format!("{:.1}", info.total_time), Alignment::RIGHT),
-            Cell::new_align(&format!("{:.1}", info.self_time), Alignment::RIGHT),
-            Cell::new_align(&format!("{}", info.units), Alignment::RIGHT),
-        ]));
+        let mut row = vec![Cell::new_align(info.name.as_str(), Alignment::LEFT)];
+        if profiles.len() > 1 {
+            row.push(Cell::new_align(info.profile.as_str(), Alignment::LEFT));
+        }
+        if features.len() > 1 {
+            row.push(Cell::new_align(info.features.as_str(), Alignment::LEFT));
+        }
+        row.push(Cell::new_align(
+            &format!("{:.1}", info.total_time),
+            Alignment::RIGHT,
+        ));
+        row.push(Cell::new_align(
+            &format!("{:.1}", info.self_time),
+            Alignment::RIGHT,
+        ));
+        row.push(Cell::new_align(
+            &format!("{}", info.units),
+            Alignment::RIGHT,
+        ));
+        table.add_row(Row::new(row));
     }
 
     table.printstd();
@@ -273,29 +288,26 @@ fn main() -> Result<(), Box<dyn Error>> {
     let possible_libs: Vec<&str> = lib_pairs.iter().map(|&(name, _)| name).collect();
     let matches = App::new("mathbench buildbench")
         .about("Benchmarks build times of supported mathbench libraries.")
-        .arg(
+        .args(&[
             Arg::with_name("lib")
                 .takes_value(true)
                 .multiple(true)
                 .required(false)
                 .possible_values(&possible_libs),
-        )
-        .arg(
             Arg::with_name("features")
                 .long("features")
                 .short("F")
                 .takes_value(true)
                 .multiple(true)
                 .possible_values(Features::possible_values()),
-        )
-        .arg(
             Arg::with_name("profiles")
                 .long("profile")
                 .short("P")
                 .takes_value(true)
                 .multiple(true)
                 .possible_values(Profile::possible_values()),
-        )
+            Arg::with_name("verbose").short("v"),
+        ])
         .get_matches();
 
     let allowed_libs: HashSet<&str> = matches
@@ -314,19 +326,21 @@ fn main() -> Result<(), Box<dyn Error>> {
         vec![Features::default()]
     };
 
+    let verbose = matches.value_of("verbose").is_some();
+
     let mut results = Vec::new();
     for (name, version) in lib_pairs {
         if allowed_libs.is_empty() || allowed_libs.contains(name) {
             for profile in &profiles {
                 for feature in &features {
                     println!(
-                        "Building {} {} {} profile {} features",
+                        "Building {} {} {} profile {}",
                         name,
                         version,
                         profile.as_str(),
                         feature.as_str()
                     );
-                    match benchlib(name, version, *profile, *feature) {
+                    match bench_crate(name, version, *profile, *feature, verbose) {
                         Ok(info) => results.push(info),
                         Err(e) => {
                             eprintln!("Error building {}: {:?}", name, e);
@@ -337,7 +351,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         }
     }
 
-    summarize(&results);
+    summarize(&profiles, &features, &results);
 
     Ok(())
 }
