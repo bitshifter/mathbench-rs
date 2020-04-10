@@ -8,8 +8,8 @@ use std::{
     env,
     error::Error,
     fs::{self, File},
-    io::{self, BufRead, BufReader, ErrorKind, Write},
-    process::{Command, Stdio},
+    io::{self, BufRead, Cursor, Write},
+    process::Command,
     str::FromStr,
 };
 use tempfile::{tempdir, TempDir};
@@ -154,15 +154,15 @@ fn bench_crate(
     if let Some(profile_flags) = profile.get_flags() {
         args.push(profile_flags);
     }
-    let stderr = Command::new("cargo")
+
+    let output = Command::new("cargo")
         .current_dir(dir.path())
         .args(&["+nightly", "build", "--release", "-Z", "timings=html,info"])
-        .stderr(Stdio::piped())
-        .spawn()?
-        .stderr
-        .ok_or_else(|| io::Error::new(ErrorKind::Other, "Could not capture standard error."))?;
+        .output()?;
 
-    let reader = BufReader::new(stderr);
+    if !output.status.success() {
+        return Err(io::Error::new(io::ErrorKind::Other, "Build failed."));
+    }
 
     let mut timing_info = TimingInfo::default();
     timing_info.name = name.to_string();
@@ -176,7 +176,7 @@ fn bench_crate(
             Regex::new(r"\s*Finished [\S]+ \[.+\] target\(s\) in ([\S]+)").unwrap();
     }
 
-    for line in reader.lines() {
+    for line in Cursor::new(output.stderr).lines() {
         let line = line?;
         if verbose {
             println!("{}", line);
@@ -306,7 +306,7 @@ fn main() -> Result<(), Box<dyn Error>> {
                 .takes_value(true)
                 .multiple(true)
                 .possible_values(Profile::possible_values()),
-            Arg::with_name("verbose").short("v"),
+            Arg::with_name("verbose").long("verbose").short("v"),
         ])
         .get_matches();
 
@@ -326,7 +326,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         vec![Features::default()]
     };
 
-    let verbose = matches.value_of("verbose").is_some();
+    let verbose = matches.is_present("verbose");
 
     let mut results = Vec::new();
     for (name, version) in lib_pairs {
@@ -343,7 +343,13 @@ fn main() -> Result<(), Box<dyn Error>> {
                     match bench_crate(name, version, *profile, *feature, verbose) {
                         Ok(info) => results.push(info),
                         Err(e) => {
-                            eprintln!("Error building {}: {:?}", name, e);
+                            eprintln!(
+                                "Error building {} {} {}: {:?}",
+                                name,
+                                profile.as_str(),
+                                feature.as_str(),
+                                e
+                            );
                         }
                     }
                 }
@@ -351,7 +357,10 @@ fn main() -> Result<(), Box<dyn Error>> {
         }
     }
 
-    summarize(&profiles, &features, &results);
+    if !results.is_empty() {
+        summarize(&profiles, &features, &results);
+    }
 
+    // TODO: output error if any build failed
     Ok(())
 }
