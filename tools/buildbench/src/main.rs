@@ -1,3 +1,4 @@
+use anyhow::{anyhow, Result};
 use cargo_toml::Manifest;
 use clap::{App, Arg};
 use lazy_static::lazy_static;
@@ -5,9 +6,8 @@ use regex::Regex;
 use std::{
     collections::HashSet,
     convert::{TryFrom, TryInto},
-    error::Error,
     fs::{self, File},
-    io::{self, BufRead, Cursor, Write},
+    io::{BufRead, Cursor, Write},
     path::Path,
     process::Command,
     str::FromStr,
@@ -109,7 +109,7 @@ impl Features {
     }
 }
 
-fn create_temp_build(name: &str, version: &str, features: Features) -> io::Result<TempDir> {
+fn create_temp_build(name: &str, version: &str, features: Features) -> Result<TempDir> {
     let dir = tempdir()?;
 
     let toml_path = dir.path().join("Cargo.toml");
@@ -148,7 +148,7 @@ fn bench_crate(
     features: Features,
     report_dir: Option<&Path>,
     verbose: bool,
-) -> io::Result<TimingInfo> {
+) -> Result<TimingInfo> {
     let build_dir = create_temp_build(name, version, features)?;
 
     let mut args = vec!["+nightly", "build", "-Z", "timings=html,info"];
@@ -162,7 +162,7 @@ fn bench_crate(
         .output()?;
 
     if !output.status.success() {
-        return Err(io::Error::new(io::ErrorKind::Other, "Build failed."));
+        return Err(anyhow!("Build failed."));
     }
 
     let mut timing_info = TimingInfo::default();
@@ -262,7 +262,7 @@ fn summarize(profiles: &[Profile], features: &[Features], results: &[TimingInfo]
     table.printstd();
 }
 
-fn main() -> Result<(), Box<dyn Error>> {
+fn main() -> Result<()> {
     let manifest = Manifest::from_path("Cargo.toml")?;
 
     let lib_pairs: Vec<(&str, &str)> = manifest
