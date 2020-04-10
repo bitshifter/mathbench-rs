@@ -202,7 +202,9 @@ fn bench_crate(
             features.as_str()
         ));
         println!("Copying timing report to {:?}", timing_html.as_path());
-        fs::copy(build_dir.path().join("cargo-timing.html"), timing_html)?;
+        if let Err(e) = fs::copy(build_dir.path().join("cargo-timing.html"), timing_html) {
+            eprintln!("Failed to copy file: {}", e);
+        }
     }
 
     Ok(timing_info)
