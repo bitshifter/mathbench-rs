@@ -3,6 +3,11 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog].
 
+## [0.3.1] - 2020-04-10
+### Added
+* Added `buildbench` tool for comparing build times of the math libraries
+  supported by `mathbench`.
+
 ## [0.3.0] - 2019-12-03
 ### Added
 * Added "return self" benchmarks to try establish the overhead of running a
