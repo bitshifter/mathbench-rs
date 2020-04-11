@@ -220,21 +220,45 @@ Update `CHANGELOG.md`.
 
 ## Build times
 
-| crate               | total (s) | self (s) | units |
-|:--------------------|----------:|---------:|------:|
-| cgmath              |       7.0 |      2.9 |    17 |
-| euclid              |       3.2 |      1.1 |     4 |
-| glam                |       0.8 |      0.5 |     3 |
-| nalgebra            |      22.9 |     16.5 |    22 |
-| pathfinder_geometry |       2.7 |      0.3 |     8 |
-| vek                 |      37.9 |     10.7 |    16 |
+`mathbench` also includes a tool for comparing build times in
+`tools/buildbench`.
 
-## Future work
+The `buildbench` tool uses the `-Z timing` feature of the nightly build of
+`cargo`, thus you need a nightly build to run it.
 
-* Calculate average error for each library against a high precision result
-* Add more benchmarks
-* Add `packed_simd` to benchmarks
-* Add `ISPC` to benchmarks
+`buildbench` generates a `Cargo.toml` and empty `src/lib.rs` in a temporary
+directory for each library, recording some build time information which is
+included in the summary table below. The temporary directory is created every
+time the tool is run so this is a full build from a clean state.
+
+Each library is only built once so you may wish to run `buildbench` multiple
+times to ensure results are consistent.
+
+By default crates are built using the `release` profile with default features
+enabled. There are options for building the `dev` profile or without default
+features, see `buildbench --help` for more information.
+
+The columns outputted include the total build time, the self build time which is
+the time it took to build the crate on it's own excluding dependencies, and the
+number of units which is the number of dependencies (this will be 2 at minimum).
+
+When comparing build times keep in mind that each library has different feature
+sets and that naturally larger libraries will take longer to build. For many
+crates tested the dependencies take longer than the math crate. Also keep in
+mind if you are already building one of the dependencies in your project you
+won't pay the build cost twice (unless it's a different version).
+
+| crate               | total (s) | self (s) | units | report                     |
+|:--------------------|----------:|---------:|------:|:---------------------------|
+| cgmath              |       7.0 |      2.9 |    17 | [cgmath build timings]     |
+| euclid              |       3.2 |      1.1 |     4 | [euclid build timings]     |
+| glam                |       0.8 |      0.5 |     3 | [glam build timings]       |
+| nalgebra            |      22.9 |     16.5 |    22 | [nalgebra build timings]   |
+| pathfinder_geometry |       2.7 |      0.3 |     8 | [pathfinder build timings] |
+| vek                 |      37.9 |     10.7 |    16 | [vek build timings]        |
+
+These benchmarks were performed on an [Intel i7-4710HQ] CPU with 16GB RAM and a
+Toshiba MQ01ABD100 HDD (SATA 3Gbps 5400RPM) on Linux.
 
 ## License
 
@@ -274,3 +298,9 @@ If you are interested in contributing or have a request or suggestion
 [create an issue]: https://github.com/bitshifter/mathbench-rs/issues
 [Intel i7-4710HQ]: https://ark.intel.com/content/www/us/en/ark/products/78930/intel-core-i7-4710hq-processor-6m-cache-up-to-3-50-ghz.html
 [mathbench report]: https://bitshifter.github.io/mathbench/0.3.0/report/index.html
+[cgmath build timings]: https://bitshifter.github.io/buildbench/0.3.1/cargo-timing-cgmath-release-defaults.html
+[euclid build timings]: https://bitshifter.github.io/buildbench/0.3.1/cargo-timing-euclid-release-defaults.html
+[glam build timings]: https://bitshifter.github.io/buildbench/0.3.1/cargo-timing-glam-release-defaults.html
+[nalgebra build timings]: https://bitshifter.github.io/buildbench/0.3.1/cargo-timing-nalgebra-release-defaults.html
+[pathfinder build timings]: https://bitshifter.github.io/buildbench/0.3.1/cargo-timing-pathfinder_geometry-release-defaults.html
+[vek build timings]: https://bitshifter.github.io/buildbench/0.3.1/cargo-timing-vek-release-defaults.html
