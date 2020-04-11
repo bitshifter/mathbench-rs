@@ -218,6 +218,17 @@ Increment the patch version number of `mathbench` in the `Cargo.toml`.
 
 Update `CHANGELOG.md`.
 
+## Build times
+
+| crate               | total (s) | self (s) | units |
+|:--------------------|----------:|---------:|------:|
+| cgmath              |       7.0 |      2.9 |    17 |
+| euclid              |       3.2 |      1.1 |     4 |
+| glam                |       0.8 |      0.5 |     3 |
+| nalgebra            |      22.9 |     16.5 |    22 |
+| pathfinder_geometry |       2.7 |      0.3 |     8 |
+| vek                 |      37.9 |     10.7 |    16 |
+
 ## Future work
 
 * Calculate average error for each library against a high precision result
