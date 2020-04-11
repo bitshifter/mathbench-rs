@@ -161,10 +161,6 @@ fn bench_crate(
         .args(&["+nightly", "build", "--release", "-Z", "timings=html,info"])
         .output()?;
 
-    if !output.status.success() {
-        return Err(anyhow!("Build failed."));
-    }
-
     let mut timing_info = TimingInfo::default();
     timing_info.name = name.to_string();
     timing_info.profile = profile;
@@ -191,6 +187,10 @@ fn bench_crate(
         } else if let Some(finished_captures) = FINISHED_MATCH.captures(line.as_str()) {
             timing_info.total_time = parse_time(finished_captures.get(1).unwrap().as_str());
         }
+    }
+
+    if !output.status.success() {
+        return Err(anyhow!("Build failed."));
     }
 
     if let Some(report_dir) = report_dir {
