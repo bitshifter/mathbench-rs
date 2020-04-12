@@ -248,14 +248,14 @@ crates tested the dependencies take longer than the math crate. Also keep in
 mind if you are already building one of the dependencies in your project you
 won't pay the build cost twice (unless it's a different version).
 
-| crate               | total (s) | self (s) | units | report                     |
-|:--------------------|----------:|---------:|------:|:---------------------------|
-| cgmath              |       7.0 |      2.9 |    17 | [cgmath build timings]     |
-| euclid              |       3.2 |      1.1 |     4 | [euclid build timings]     |
-| glam                |       0.8 |      0.5 |     3 | [glam build timings]       |
-| nalgebra            |      22.9 |     16.5 |    22 | [nalgebra build timings]   |
-| pathfinder_geometry |       2.7 |      0.3 |     8 | [pathfinder build timings] |
-| vek                 |      37.9 |     10.7 |    16 | [vek build timings]        |
+| crate               | version | total (s) | self (s) | units | full report link           |
+|---------------------|---------|-----------|----------|-------|:---------------------------|
+| cgmath              | 0.17.0  |       9.5 |      3.0 |    17 | [cgmath build timings]     |
+| euclid              | 0.20.5  |       3.2 |      1.1 |     4 | [euclid build timings]     |
+| glam                | 0.8.6   |       0.8 |      0.5 |     3 | [glam build timings]       |
+| nalgebra            | 0.21.0  |      32.1 |     17.9 |    29 | [nalgebra build timings]   |
+| pathfinder_geometry | 0.4.0   |       2.9 |      0.3 |     8 | [pathfinder build timings] |
+| vek                 | 0.10.1  |      38.3 |     10.8 |    16 | [vek build timings]        |
 
 These benchmarks were performed on an [Intel i7-4710HQ] CPU with 16GB RAM and a
 Toshiba MQ01ABD100 HDD (SATA 3Gbps 5400RPM) on Linux.

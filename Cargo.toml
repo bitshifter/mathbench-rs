@@ -20,8 +20,8 @@ features = ["mint", "rand", "debug-glam-assert"]
 # optional = true
 
 [dependencies.nalgebra]
-version = "0.20.0"
-features = ["std", "mint"]
+version = "0.21.0"
+features = ["mint"]
 optional = true
 
 [dependencies.cgmath]
