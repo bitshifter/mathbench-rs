@@ -249,7 +249,7 @@ mind if you are already building one of the dependencies in your project you
 won't pay the build cost twice (unless it's a different version).
 
 | crate               | version | total (s) | self (s) | units | full report link           |
-|---------------------|---------|-----------|----------|-------|:---------------------------|
+|:--------------------|:--------|----------:|---------:|------:|:---------------------------|
 | cgmath              | 0.17.0  |       9.5 |      3.0 |    17 | [cgmath build timings]     |
 | euclid              | 0.20.5  |       3.2 |      1.1 |     4 | [euclid build timings]     |
 | glam                | 0.8.6   |       0.8 |      0.5 |     3 | [glam build timings]       |
