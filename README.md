@@ -248,17 +248,21 @@ crates tested the dependencies take longer than the math crate. Also keep in
 mind if you are already building one of the dependencies in your project you
 won't pay the build cost twice (unless it's a different version).
 
-| crate               | version | total (s) | self (s) | units | full report link           |
-|:--------------------|:--------|----------:|---------:|------:|:---------------------------|
-| cgmath              | 0.17.0  |       9.5 |      3.0 |    17 | [cgmath build timings]     |
-| euclid              | 0.20.5  |       3.2 |      1.1 |     4 | [euclid build timings]     |
-| glam                | 0.8.6   |       0.8 |      0.5 |     3 | [glam build timings]       |
-| nalgebra            | 0.21.0  |      32.1 |     17.9 |    29 | [nalgebra build timings]   |
-| pathfinder_geometry | 0.4.0   |       2.9 |      0.3 |     8 | [pathfinder build timings] |
-| vek                 | 0.10.1  |      38.3 |     10.8 |    16 | [vek build timings]        |
+| crate               | version | total (s) | self (s) | units | full report link            |
+|:--------------------|:--------|----------:|---------:|------:|:----------------------------|
+| cgmath              | 0.17.0  |       6.5 |      3.0 |    17 | [cgmath build timings]      |
+| euclid              | 0.20.5  |       3.2 |      1.1 |     4 | [euclid build timings]      |
+| glam                | 0.8.6   |       0.8 |      0.5 |     3 | [glam build timings]        |
+| nalgebra            | 0.21.0  |      32.1 |     17.8 |    29 | [nalgebra build timings]    |
+| pathfinder_geometry | 0.5.0   |       5.6 |      0.3 |     8 | [pathfinder build timings]  |
+| ultraviolet         | 0.4.5   |       2.4 |      1.2 |     4 | [ultraviolet build timings] |
+| vek                 | 0.10.1  |      38.0 |     10.6 |    16 | [vek build timings]         |
 
 These benchmarks were performed on an [Intel i7-4710HQ] CPU with 16GB RAM and a
 Toshiba MQ01ABD100 HDD (SATA 3Gbps 5400RPM) on Linux.
+
+Note that `ultraviolet` has been included in the build timings but I want to
+resolve [issue #21] before including it in performance benchmarks.
 
 ## License
 
@@ -288,12 +292,12 @@ If you are interested in contributing or have a request or suggestion
 [travis-ci]: https://travis-ci.org/bitshifter/mathbench-rs
 [Criterion.rs]: https://bheisler.github.io/criterion.rs/book/index.html
 [glam]: https://github.com/bitshifter/glam-rs
-[cgmath]: https://github.com/rustgd/cgmath
-[nalgebra]: https://github.com/rustsim/nalgebra
-[euclid]: https://github.com/servo/euclid
-[vek]: https://github.com/yoanlcq/vek
+[cgmath]: https://crates.io/crates/cgmath
+[nalgebra]: https://nalgebra.org
+[euclid]: https://crates.io/crates/euclid
 [pathfinder_geometry]: https://crates.io/crates/pathfinder_geometry
-[Criterion.rs]: https://bheisler.github.io/criterion.rs/book/index.html
+[ultraviolet]: https://crates.io/crates/ultraviolet
+[vek]: https://crates.io/crates/vek
 [Code of Conduct]: https://www.rust-lang.org/en-US/conduct.html
 [create an issue]: https://github.com/bitshifter/mathbench-rs/issues
 [Intel i7-4710HQ]: https://ark.intel.com/content/www/us/en/ark/products/78930/intel-core-i7-4710hq-processor-6m-cache-up-to-3-50-ghz.html
@@ -303,4 +307,6 @@ If you are interested in contributing or have a request or suggestion
 [glam build timings]: https://bitshifter.github.io/buildbench/0.3.1/cargo-timing-glam-release-defaults.html
 [nalgebra build timings]: https://bitshifter.github.io/buildbench/0.3.1/cargo-timing-nalgebra-release-defaults.html
 [pathfinder build timings]: https://bitshifter.github.io/buildbench/0.3.1/cargo-timing-pathfinder_geometry-release-defaults.html
+[ultraviolet build timings]: https://bitshifter.github.io/buildbench/0.3.1/cargo-timing-ultraviolet-release-defaults.html
 [vek build timings]: https://bitshifter.github.io/buildbench/0.3.1/cargo-timing-vek-release-defaults.html
+[issue #21]: https://github.com/bitshifter/mathbench-rs/issues/21

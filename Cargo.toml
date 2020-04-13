@@ -43,6 +43,12 @@ optional = true
 version = "0.5.0"
 optional = true
 
+# Note tha ultraviolet is inlucded here for build timings only
+# I want to add benchmarks for SoA types before fully supporting ultraviolet.
+[dependencies.ultraviolet]
+version = "0.4.5"
+optional = true
+
 [dev-dependencies]
 criterion = "0.3.1"
 
