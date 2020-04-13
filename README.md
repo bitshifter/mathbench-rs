@@ -223,7 +223,7 @@ Update `CHANGELOG.md`.
 `mathbench` also includes a tool for comparing build times in
 `tools/buildbench`.
 
-The `buildbench` tool uses the `-Z timing` feature of the nightly build of
+The `buildbench` tool uses the `-Z timings` feature of the nightly build of
 `cargo`, thus you need a nightly build to run it.
 
 `buildbench` generates a `Cargo.toml` and empty `src/lib.rs` in a temporary
