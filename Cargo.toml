@@ -20,8 +20,8 @@ features = ["mint", "rand", "debug-glam-assert"]
 # optional = true
 
 [dependencies.nalgebra]
-version = "0.20.0"
-features = ["std", "mint"]
+version = "0.21.0"
+features = ["mint"]
 optional = true
 
 [dependencies.cgmath]
@@ -40,7 +40,7 @@ features = ["mint"]
 optional = true
 
 [dependencies.pathfinder_geometry]
-version = "0.4.0"
+version = "0.5.0"
 optional = true
 
 [dev-dependencies]

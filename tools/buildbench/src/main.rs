@@ -17,6 +17,7 @@ use tempfile::{tempdir, TempDir};
 #[derive(Debug, Default)]
 struct TimingInfo {
     name: String,
+    version: String,
     profile: Profile,
     features: Features,
     total_time: f64,
@@ -163,6 +164,7 @@ fn bench_crate(
 
     let mut timing_info = TimingInfo::default();
     timing_info.name = name.to_string();
+    timing_info.version = version.to_string();
     timing_info.profile = profile;
     timing_info.features = features;
 
@@ -226,7 +228,10 @@ fn summarize(profiles: &[Profile], features: &[Features], results: &[TimingInfo]
     let mut table = Table::new();
     table.set_format(markdown_format);
 
-    let mut titles = vec![Cell::new_align("crate", Alignment::LEFT)];
+    let mut titles = vec![
+        Cell::new_align("crate", Alignment::LEFT),
+        Cell::new_align("version", Alignment::LEFT),
+    ];
     if profiles.len() > 1 {
         titles.push(Cell::new_align("profile", Alignment::LEFT));
     }
@@ -239,7 +244,10 @@ fn summarize(profiles: &[Profile], features: &[Features], results: &[TimingInfo]
     table.set_titles(Row::new(titles));
 
     for info in results {
-        let mut row = vec![Cell::new_align(info.name.as_str(), Alignment::LEFT)];
+        let mut row = vec![
+            Cell::new_align(info.name.as_str(), Alignment::LEFT),
+            Cell::new_align(info.version.as_str(), Alignment::LEFT),
+        ];
         if profiles.len() > 1 {
             row.push(Cell::new_align(info.profile.as_str(), Alignment::LEFT));
         }
