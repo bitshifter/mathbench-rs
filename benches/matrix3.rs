@@ -18,6 +18,10 @@ fn bench_matrix3_ret_self(c: &mut Criterion) {
         use nalgebra::Matrix3;
         bench_unop!(b, op => ret_self, ty => Matrix3<f32>)
     });
+    bench_static_math!(group, |b| {
+        use static_math::matrix3x3::M33;
+        bench_unop!(b, op => ret_self, ty => M33<f32>)
+    });
     bench_vek!(group, |b| {
         use vek::Mat3;
         bench_unop!(b, op => ret_self, ty => Mat3<f32>)
@@ -38,6 +42,11 @@ fn bench_matrix3_transpose(c: &mut Criterion) {
     bench_nalgebra!(group, |b| {
         use nalgebra::Matrix3;
         bench_unop!(b, op => transpose, ty => Matrix3<f32>)
+    });
+    bench_static_math!(group, |b| {
+        use static_math::matrix3x3::M33;
+        use static_math::traits::LinearAlgebra;
+        bench_unop!(b, op => transpose, ty => M33<f32>)
     });
     bench_vek!(group, |b| {
         use vek::Mat3;
@@ -60,6 +69,11 @@ fn bench_matrix3_determinant(c: &mut Criterion) {
         use nalgebra::Matrix3;
         bench_unop!(b, op => determinant, ty => Matrix3<f32>)
     });
+    bench_static_math!(group, |b| {
+        use static_math::matrix3x3::M33;
+        use static_math::traits::LinearAlgebra;
+        bench_unop!(b, op => det, ty => M33<f32>)
+    });
     bench_vek!(group, |b| {
         use vek::Mat3;
         bench_unop!(b, op => determinant, ty => Mat3<f32>)
@@ -81,6 +95,11 @@ fn bench_matrix3_inverse(c: &mut Criterion) {
         use nalgebra::Matrix3;
         bench_unop!(b, op => try_inverse, ty => Matrix3<f32>)
     });
+    bench_static_math!(group, |b| {
+        use static_math::matrix3x3::M33;
+        use static_math::traits::LinearAlgebra;
+        bench_unop!(b, op => inverse, ty => M33<f32>)
+    });
     group.finish();
 }
 
@@ -98,6 +117,10 @@ fn bench_matrix3_mul_matrix3(c: &mut Criterion) {
     bench_nalgebra!(group, |b| {
         use nalgebra::Matrix3;
         bench_binop!(b, op => mul, ty1 => Matrix3<f32>, ty2 => Matrix3<f32>, param => by_ref)
+    });
+    bench_static_math!(group, |b| {
+        use static_math::matrix3x3::M33;
+        bench_binop!(b, op => mul, ty1 => M33<f32>, ty2 => M33<f32>)
     });
     bench_vek!(group, |b| {
         use vek::Mat3;
@@ -122,6 +145,11 @@ fn bench_matrix3_mul_vector3(c: &mut Criterion) {
         bench_nalgebra!(group, size, |b, size| {
             use nalgebra::{Matrix3, Vector3};
             bench_binop!(b, size, op => mul, ty1 => Matrix3<f32>, ty2 => Vector3<f32>)
+        });
+        bench_static_math!(group, size, |b, size| {
+            use static_math::matrix3x3::M33;
+            use static_math::vector3::V3;
+            bench_binop!(b, size, op => mul, ty1 => M33<f32>, ty2 => V3<f32>)
         });
         bench_vek!(group, size, |b, size| {
             use vek::{Mat3, Vec3};

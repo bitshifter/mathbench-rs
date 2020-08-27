@@ -12,6 +12,7 @@ games and graphics development, including:
 
 * [`cgmath`][cgmath]
 * [`nalgebra`][nalgebra]
+* [`static-math`][static-math]
 * [`euclid`][euclid]
 * [`vek`][vek]
 * [`pathfinder_geometry`][pathfinder_geometry]
@@ -148,6 +149,7 @@ The versions of the libraries tested were:
 * `glam` - `0.8.3`
 * `cgmath` - `0.17.0`
 * `nalgebra` - `0.19.0`
+* `static-math` - `0.1.4`
 * `euclid` - `0.20.5`
 * `vek` - `0.9.10` (`repr_c` types)
 * `pathfinder_geometry` - `0.3.0`
@@ -294,6 +296,7 @@ If you are interested in contributing or have a request or suggestion
 [glam]: https://github.com/bitshifter/glam-rs
 [cgmath]: https://crates.io/crates/cgmath
 [nalgebra]: https://nalgebra.org
+[static-math]: https://crates.io/crates/static-math
 [euclid]: https://crates.io/crates/euclid
 [pathfinder_geometry]: https://crates.io/crates/pathfinder_geometry
 [ultraviolet]: https://crates.io/crates/ultraviolet

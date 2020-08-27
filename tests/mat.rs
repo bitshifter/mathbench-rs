@@ -41,6 +41,7 @@ fn mat2_mul_vec2_compare() {
 
     assert_ulps_eq!(cmv, mmv.into());
     assert_ulps_eq!(gmv, mmv.into());
+    // assert_ulps_eq!(stmv, mmv.into());
 }
 
 fn mat3_mul_vec3_compare() {

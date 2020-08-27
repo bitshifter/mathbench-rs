@@ -19,6 +19,10 @@ fn bench_vector3_ret_self(c: &mut Criterion) {
         use nalgebra::Vector3;
         bench_unop!(b, op => ret_self, ty => Vector3<f32>)
     });
+    bench_static_math!(group, |b| {
+        use static_math::vector3::V3;
+        bench_unop!(b, op => ret_self, ty => V3<f32>)
+    });
     bench_vek!(group, |b| {
         use vek::Vec3;
         bench_unop!(b, op => ret_self, ty => Vec3<f32>)
@@ -39,6 +43,10 @@ fn bench_vector3_length(c: &mut Criterion) {
     bench_nalgebra!(group, |b| {
         use nalgebra::Vector3;
         bench_unop!(b, op => magnitude, ty => Vector3<f32>)
+    });
+    bench_static_math!(group, |b| {
+        use static_math::vector3::V3;
+        bench_unop!(b, op => norm2, ty => V3<f32>)
     });
     bench_euclid!(group, |b| {
         use euclid::{UnknownUnit, Vector3D};
@@ -65,6 +73,10 @@ fn bench_vector3_normalize(c: &mut Criterion) {
         use nalgebra::Vector3;
         bench_unop!(b, op => normalize, ty => Vector3<f32>)
     });
+    // bench_static_math!(group, |b| {
+    //     use static_math::vector3::V3;
+    //     bench_unop!(b, op => normalize, ty => V3<f32>)
+    // });
     bench_euclid!(group, |b| {
         use euclid::{UnknownUnit, Vector3D};
         bench_unop!(b, op => normalize, ty => Vector3D<f32, UnknownUnit>)
@@ -90,6 +102,11 @@ fn bench_vector3_dot(c: &mut Criterion) {
         use nalgebra::Vector3;
         bench_binop!(b, op => dot, ty1 => Vector3<f32>, ty2 => Vector3<f32>, param => by_ref)
     });
+    bench_static_math!(group, |b| {
+        use static_math::vector3::V3;
+        use std::ops::Mul;
+        bench_binop!(b, op => mul, ty1 => V3<f32>, ty2 => V3<f32>)
+    });
     bench_euclid!(group, |b| {
         use euclid::{UnknownUnit, Vector3D};
         bench_binop!(b, op => dot, ty1 => Vector3D<f32, UnknownUnit>, ty2 => Vector3D<f32, UnknownUnit>)
@@ -114,6 +131,10 @@ fn bench_vector3_cross(c: &mut Criterion) {
     bench_nalgebra!(group, |b| {
         use nalgebra::Vector3;
         bench_binop!(b, op => cross, ty1 => Vector3<f32>, ty2 => Vector3<f32>, param => by_ref)
+    });
+    bench_static_math!(group, |b| {
+        use static_math::vector3::V3;
+        bench_binop!(b, op => cross, ty1 => V3<f32>, ty2 => V3<f32>)
     });
     bench_euclid!(group, |b| {
         use euclid::{UnknownUnit, Vector3D};

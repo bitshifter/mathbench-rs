@@ -67,6 +67,16 @@ macro_rules! bench_vek {
 }
 
 #[macro_export]
+macro_rules! bench_static_math {
+    ($group:ident, $closure:expr) => {
+        bench_lib!("static-math", $group, $closure)
+    };
+    ($group:ident, $size:expr, $closure:expr) => {
+        bench_lib!("static-math", $group, $size, $closure)
+    };
+}
+
+#[macro_export]
 macro_rules! bench_pathfinder {
     ($group:ident, $closure:expr) => {
         #[cfg(feature = "pathfinder_geometry")]
