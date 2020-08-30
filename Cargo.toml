@@ -6,7 +6,7 @@ edition = "2018"
 
 [features]
 # defaults can be disabled for benchmarks but are required for tests
-default = ["cgmath", "euclid", "nalgebra", "vek", "static-math"]
+default = ["cgmath", "euclid", "nalgebra", "vek"]
 
 [dependencies]
 mint = "0.5.4"

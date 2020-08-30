@@ -73,10 +73,6 @@ fn bench_vector3_normalize(c: &mut Criterion) {
         use nalgebra::Vector3;
         bench_unop!(b, op => normalize, ty => Vector3<f32>)
     });
-    // bench_static_math!(group, |b| {
-    //     use static_math::vector3::V3;
-    //     bench_unop!(b, op => normalize, ty => V3<f32>)
-    // });
     bench_euclid!(group, |b| {
         use euclid::{UnknownUnit, Vector3D};
         bench_unop!(b, op => normalize, ty => Vector3D<f32, UnknownUnit>)
