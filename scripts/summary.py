@@ -8,7 +8,7 @@ import prettytable
 
 
 DEFAULT = ['glam', 'cgmath', 'nalgebra', 'euclid', 'vek']
-OPTIONAL = ['pathfinder']
+OPTIONAL = ['pathfinder', 'static-math']
 CHOICES = DEFAULT + OPTIONAL
 
 class DefaultListAction(argparse.Action):
@@ -41,7 +41,7 @@ def parse_bench(json_dir, benches):
         with open(benchmark_path) as f:
             benchmarks = json.load(f)
             bench_name = benchmarks['group_id']
-            input_size = benchmarks['value_str'] 
+            input_size = benchmarks['value_str']
             try:
                 if input_size is not None:
                     bench_name = '{} x{}'.format(bench_name, input_size)

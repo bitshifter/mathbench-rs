@@ -48,6 +48,10 @@ fn bench_euler_3d(c: &mut Criterion) {
             use nalgebra::{zero, Vector3};
             bench_euler!(b, size, ty => Vector3<f32>, zero => zero(), dt => UPDATE_RATE);
         });
+        bench_static_math!(group, size, |b, size| {
+            use static_math::vector3::V3;
+            bench_euler!(b, size, ty => V3<f32>, zero => V3::zeros(), dt => UPDATE_RATE);
+        });
         bench_euclid!(group, size, |b, size| {
             use euclid::{UnknownUnit, Vector3D};
             bench_euler!(b, size, ty => Vector3D<f32, UnknownUnit>, zero => Vector3D::zero(), dt => UPDATE_RATE);
@@ -79,6 +83,10 @@ fn bench_euler_2d(c: &mut Criterion) {
         bench_nalgebra!(group, size, |b, size| {
             use nalgebra::{zero, Vector2};
             bench_euler!(b, size, ty => Vector2<f32>, zero => zero(), dt => UPDATE_RATE);
+        });
+        bench_static_math!(group, size, |b, size| {
+            use static_math::vector2::V2;
+            bench_euler!(b, size, ty => V2<f32>, zero => V2::zeros(), dt => UPDATE_RATE);
         });
         bench_euclid!(group, size, |b, size| {
             use euclid::{UnknownUnit, Vector2D};

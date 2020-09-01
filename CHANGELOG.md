@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog].
 
+## [0.3.2] - 2020-08-27
+### Added
+* Added the `static-math` library
+
 ## [0.3.1] - 2020-04-10
 ### Added
 * Added `buildbench` tool for comparing build times of the math libraries

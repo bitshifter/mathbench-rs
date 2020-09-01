@@ -19,6 +19,10 @@ fn bench_matrix4_ret_self(c: &mut Criterion) {
         use nalgebra::Matrix4;
         bench_unop!(b, op => ret_self, ty => Matrix4<f32>)
     });
+    bench_static_math!(group, |b| {
+        use static_math::matrix4x4::M44;
+        bench_unop!(b, op => ret_self, ty => M44<f32>)
+    });
     bench_vek!(group, |b| {
         use vek::Mat4;
         bench_unop!(b, op => ret_self, ty => Mat4<f32>)
@@ -40,6 +44,11 @@ fn bench_matrix4_transpose(c: &mut Criterion) {
         use nalgebra::Matrix4;
         bench_unop!(b, op => transpose, ty => Matrix4<f32>);
     });
+    bench_static_math!(group, |b| {
+        use static_math::matrix4x4::M44;
+        use static_math::traits::LinearAlgebra;
+        bench_unop!(b, op => transpose, ty => M44<f32>);
+    });
     bench_vek!(group, |b| {
         use vek::Mat4;
         bench_unop!(b, op => transposed, ty => Mat4<f32>)
@@ -60,6 +69,11 @@ fn bench_matrix4_determinant(c: &mut Criterion) {
     bench_nalgebra!(group, |b| {
         use nalgebra::Matrix4;
         bench_unop!(b, op => determinant, ty => Matrix4<f32>)
+    });
+    bench_static_math!(group, |b| {
+        use static_math::matrix4x4::M44;
+        use static_math::traits::LinearAlgebra;
+        bench_unop!(b, op => det, ty => M44<f32>)
     });
     bench_euclid!(group, |b| {
         use euclid::{Transform3D, UnknownUnit};
@@ -86,6 +100,11 @@ fn bench_matrix4_inverse(c: &mut Criterion) {
         use nalgebra::Matrix4;
         bench_unop!(b, op => try_inverse, ty => Matrix4<f32>)
     });
+    bench_static_math!(group, |b| {
+        use static_math::matrix4x4::M44;
+        use static_math::traits::LinearAlgebra;
+        bench_unop!(b, op => inverse, ty => M44<f32>)
+    });
     bench_euclid!(group, |b| {
         use euclid::{Transform3D, UnknownUnit};
         bench_unop!(b, op => inverse, ty => Transform3D<f32, UnknownUnit, UnknownUnit>)
@@ -111,6 +130,10 @@ fn bench_matrix4_mul_matrix4(c: &mut Criterion) {
     bench_nalgebra!(group, |b| {
         use nalgebra::Matrix4;
         bench_binop!(b, op => mul, ty1 => Matrix4<f32>, ty2 => Matrix4<f32>, param => by_ref)
+    });
+    bench_static_math!(group, |b| {
+        use static_math::matrix4x4::M44;
+        bench_binop!(b, op => mul, ty1 => M44<f32>, ty2 => M44<f32>)
     });
     bench_euclid!(group, |b| {
         use euclid::{Transform3D, UnknownUnit};
@@ -139,6 +162,11 @@ fn bench_matrix4_mul_vector4(c: &mut Criterion) {
         bench_nalgebra!(group, size, |b, size| {
             use nalgebra::{Matrix4, Vector4};
             bench_binop!(b, size, op => mul, ty1 => Matrix4<f32>, ty2 => Vector4<f32>)
+        });
+        bench_static_math!(group, size, |b, size| {
+            use static_math::matrix4x4::M44;
+            use static_math::vector4::V4;
+            bench_binop!(b, size, op => mul, ty1 => M44<f32>, ty2 => V4<f32>)
         });
         bench_vek!(group, size, |b, size| {
             use vek::{Mat4, Vec4};

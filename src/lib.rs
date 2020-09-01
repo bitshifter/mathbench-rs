@@ -27,6 +27,7 @@ macro_rules! impl_bench_value {
     };
 }
 
+
 pub mod mint_support {
     use super::glam_support::*;
     use mint;
@@ -385,6 +386,104 @@ pub mod nalgebra_support {
         rhs: &nalgebra::Matrix4<f32>,
     ) -> nalgebra::Matrix4<f32> {
         lhs * rhs
+    }
+}
+
+pub mod static_math_support {
+    use super::BenchValue;
+    use rand::Rng;
+    use static_math;
+    use static_math::matrix2x2::M22;
+    use static_math::vector2::V2;
+    use static_math::matrix3x3::M33;
+    use static_math::vector3::V3;
+    use static_math::matrix4x4::M44;
+    use static_math::vector4::V4;
+
+    fn random_nonzero_f32<R>(rng: &mut R) -> f32
+    where
+        R: Rng,
+    {
+        rng.gen_range(0.1, 1.0)
+    }
+
+    impl BenchValue for M22<f32> {
+        fn random_value<R: Rng>(rng: &mut R) -> Self {
+            let a = random_nonzero_f32(rng);
+            let b = random_nonzero_f32(rng);
+            let c = random_nonzero_f32(rng);
+            let d = random_nonzero_f32(rng);
+            M22::new([[a, b],
+                     [c, d]])
+        }
+    }
+
+    impl BenchValue for V2<f32> {
+        fn random_value<R: Rng>(rng: &mut R) -> Self {
+            let a = random_nonzero_f32(rng);
+            let b = random_nonzero_f32(rng);
+            V2::new([a, b])
+        }
+    }
+
+    impl BenchValue for M33<f32> {
+        fn random_value<R: Rng>(rng: &mut R) -> Self {
+            let a_00 = random_nonzero_f32(rng);
+            let a_01 = random_nonzero_f32(rng);
+            let a_02 = random_nonzero_f32(rng);
+            let a_10 = random_nonzero_f32(rng);
+            let a_11 = random_nonzero_f32(rng);
+            let a_12 = random_nonzero_f32(rng);
+            let a_20 = random_nonzero_f32(rng);
+            let a_21 = random_nonzero_f32(rng);
+            let a_22 = random_nonzero_f32(rng);
+            M33::new([[a_00, a_01, a_02],
+                      [a_10, a_11, a_12],
+                      [a_20, a_21, a_22]])
+        }
+    }
+    impl BenchValue for V3<f32> {
+        fn random_value<R: Rng>(rng: &mut R) -> Self {
+            let a = random_nonzero_f32(rng);
+            let b = random_nonzero_f32(rng);
+            let c = random_nonzero_f32(rng);
+            V3::new([a, b, c])
+        }
+    }
+    impl BenchValue for M44<f32> {
+        fn random_value<R: Rng>(rng: &mut R) -> Self {
+            let a1 = random_nonzero_f32(rng);
+            let a2 = random_nonzero_f32(rng);
+            let a3 = random_nonzero_f32(rng);
+            let a4 = random_nonzero_f32(rng);
+            let a5 = random_nonzero_f32(rng);
+            let a6 = random_nonzero_f32(rng);
+            let a7 = random_nonzero_f32(rng);
+            let a8 = random_nonzero_f32(rng);
+            let a9 = random_nonzero_f32(rng);
+            let a10 = random_nonzero_f32(rng);
+            let a11 = random_nonzero_f32(rng);
+            let a12 = random_nonzero_f32(rng);
+            let a13 = random_nonzero_f32(rng);
+            let a14 = random_nonzero_f32(rng);
+            let a15 = random_nonzero_f32(rng);
+            let a16 = random_nonzero_f32(rng);
+            M44::new([[a1, a5,  a9, a13],
+                      [a2, a6, a10, a14],
+                      [a3, a7, a11, a15],
+                      [a4, a8, a12, a16]])
+
+        }
+    }
+
+    impl BenchValue for V4<f32> {
+        fn random_value<R: Rng>(rng: &mut R) -> Self {
+            let a = random_nonzero_f32(rng);
+            let b = random_nonzero_f32(rng);
+            let c = random_nonzero_f32(rng);
+            let d = random_nonzero_f32(rng);
+            V4::new([a, b, c, d])
+        }
     }
 }
 
