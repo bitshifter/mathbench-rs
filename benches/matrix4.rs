@@ -137,7 +137,7 @@ fn bench_matrix4_mul_matrix4(c: &mut Criterion) {
     });
     bench_euclid!(group, |b| {
         use euclid::{Transform3D, UnknownUnit};
-        bench_binop!(b, op => post_transform, ty => Transform3D<f32, UnknownUnit, UnknownUnit>, param => by_ref)
+        bench_binop!(b, op => then, ty => Transform3D<f32, UnknownUnit, UnknownUnit>, param => by_ref)
     });
     bench_vek!(group, |b| {
         use vek::Mat4;

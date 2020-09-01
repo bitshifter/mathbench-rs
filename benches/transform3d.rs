@@ -48,7 +48,7 @@ fn bench_transform3_mul_transform3(c: &mut Criterion) {
     });
     bench_euclid!(group, |b| {
         use euclid::{Transform3D, UnknownUnit};
-        bench_binop!(b, op => post_transform, ty => Transform3D<f32, UnknownUnit, UnknownUnit>, param => by_ref)
+        bench_binop!(b, op => then, ty => Transform3D<f32, UnknownUnit, UnknownUnit>, param => by_ref)
     });
     bench_pathfinder!(group, |b| {
         use pathfinder_geometry::transform3d::Transform4F;

@@ -69,7 +69,7 @@ fn bench_quaternion_mul_quaternion(c: &mut Criterion) {
     });
     bench_euclid!(group, |b| {
         use euclid::{Rotation3D, UnknownUnit};
-        bench_binop!(b, op => pre_rotate, ty => Rotation3D<f32, UnknownUnit, UnknownUnit>, param => by_ref)
+        bench_binop!(b, op => then, ty => Rotation3D<f32, UnknownUnit, UnknownUnit>, param => by_ref)
     });
     bench_vek!(group, |b| {
         use vek::Quaternion;

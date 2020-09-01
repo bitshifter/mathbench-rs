@@ -139,6 +139,7 @@ pub mod glam_support {
     impl_bench_value!(glam::Quat, random_mint_quat);
     impl_bench_value!(glam::Vec2, random_mint_vec2);
     impl_bench_value!(glam::Vec3, random_mint_vec3);
+    impl_bench_value!(glam::Vec3A, random_mint_vec3);
     impl_bench_value!(glam::Vec4, random_mint_vec4);
 
     // f32 random functions  ------------------------------------------------------
@@ -389,6 +390,7 @@ pub mod nalgebra_support {
     }
 }
 
+#[cfg(feature = "static-math")]
 pub mod static_math_support {
     use super::BenchValue;
     use rand::Rng;
@@ -549,7 +551,7 @@ pub mod euclid_support {
         R: Rng,
     {
         let m = random_mint_homogeneous_mat3(rng);
-        euclid::Transform2D::column_major(m.x.x, m.x.y, m.x.z, m.y.x, m.y.y, m.y.z)
+        euclid::Transform2D::new(m.x.x, m.x.y, m.x.z, m.y.x, m.y.y, m.y.z)
     }
 
     fn random_euclid_mat4<R>(
@@ -559,7 +561,7 @@ pub mod euclid_support {
         R: Rng,
     {
         let m = random_mint_homogeneous_mat4(rng);
-        euclid::Transform3D::column_major(
+        euclid::Transform3D::new(
             m.x.x, m.x.y, m.x.z, m.x.w, m.y.x, m.y.y, m.y.z, m.y.w, m.z.x, m.z.y, m.z.z, m.z.w,
             m.w.x, m.w.y, m.w.z, m.w.w,
         )

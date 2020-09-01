@@ -8,8 +8,8 @@ fn bench_vector3_ret_self(c: &mut Criterion) {
     use mathbench::BenchValue;
     let mut group = c.benchmark_group("vector3 return self");
     bench_glam!(group, |b| {
-        use glam::Vec3;
-        bench_unop!(b, op => ret_self, ty => Vec3)
+        use glam::Vec3A;
+        bench_unop!(b, op => ret_self, ty => Vec3A)
     });
     bench_cgmath!(group, |b| {
         use cgmath::Vector3;
@@ -62,8 +62,8 @@ fn bench_vector3_length(c: &mut Criterion) {
 fn bench_vector3_normalize(c: &mut Criterion) {
     let mut group = c.benchmark_group("vector3 normalize");
     bench_glam!(group, |b| {
-        use glam::Vec3;
-        bench_unop!(b, op => normalize, ty => Vec3)
+        use glam::Vec3A;
+        bench_unop!(b, op => normalize, ty => Vec3A)
     });
     bench_cgmath!(group, |b| {
         use cgmath::{InnerSpace, Vector3};
@@ -87,8 +87,8 @@ fn bench_vector3_normalize(c: &mut Criterion) {
 fn bench_vector3_dot(c: &mut Criterion) {
     let mut group = c.benchmark_group("vector3 dot");
     bench_glam!(group, |b| {
-        use glam::Vec3;
-        bench_binop!(b, op => dot, ty1 => Vec3, ty2 => Vec3)
+        use glam::Vec3A;
+        bench_binop!(b, op => dot, ty1 => Vec3A, ty2 => Vec3A)
     });
     bench_cgmath!(group, |b| {
         use cgmath::{InnerSpace, Vector3};
@@ -117,8 +117,8 @@ fn bench_vector3_dot(c: &mut Criterion) {
 fn bench_vector3_cross(c: &mut Criterion) {
     let mut group = c.benchmark_group("vector3 cross");
     bench_glam!(group, |b| {
-        use glam::Vec3;
-        bench_binop!(b, op => cross, ty1 => Vec3, ty2 => Vec3)
+        use glam::Vec3A;
+        bench_binop!(b, op => cross, ty1 => Vec3A, ty2 => Vec3A)
     });
     bench_cgmath!(group, |b| {
         use cgmath::Vector3;

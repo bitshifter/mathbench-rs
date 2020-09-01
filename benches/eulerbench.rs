@@ -37,8 +37,8 @@ fn bench_euler_3d(c: &mut Criterion) {
     for size in [10000].iter() {
         group.throughput(Throughput::Elements(*size as u64));
         bench_glam!(group, size, |b, size| {
-            use glam::Vec3;
-            bench_euler!(b, size, ty => Vec3, zero => Vec3::zero(), dt => Vec3::splat(UPDATE_RATE))
+            use glam::Vec3A;
+            bench_euler!(b, size, ty => Vec3A, zero => Vec3A::zero(), dt => Vec3A::splat(UPDATE_RATE))
         });
         bench_cgmath!(group, size, |b, size| {
             use cgmath::{prelude::*, Vector3};

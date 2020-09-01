@@ -6,21 +6,21 @@ edition = "2018"
 
 [features]
 # defaults can be disabled for benchmarks but are required for tests
-default = ["cgmath", "euclid", "nalgebra", "vek"]
+default = ["cgmath", "nalgebra"]
 
 [dependencies]
-mint = "0.5.4"
+mint = "0.5.5"
 rand = "0.7.2"
 rand_pcg = "0.2.1"
 
 [dependencies.glam]
-version = "0.8.6"
+version = "0.9.4"
 features = ["mint", "rand", "debug-glam-assert"]
 # a lot of random data generation uses glam, so can't be optional yet
 # optional = true
 
 [dependencies.nalgebra]
-version = "0.21.0"
+version = "0.22.0"
 features = ["mint"]
 optional = true
 
@@ -30,31 +30,30 @@ features = ["mint"]
 optional = true
 
 [dependencies.euclid]
-version = "0.20.5"
-features = ["mint"]
+version = "0.22.1"
 optional = true
 
 [dependencies.vek]
-version = "0.10.1"
+version = "0.12.0"
 features = ["mint"]
 optional = true
 
 [dependencies.pathfinder_geometry]
-version = "0.5.0"
+version = "0.5.1"
 optional = true
 
 [dependencies.static-math]
-version = "0.1.4"
+version = "0.1.6"
 optional = true
 
 # Note tha ultraviolet is inlucded here for build timings only
 # I want to add benchmarks for SoA types before fully supporting ultraviolet.
 [dependencies.ultraviolet]
-version = "0.4.5"
+version = "0.5.1"
 optional = true
 
 [dev-dependencies]
-criterion = "0.3.1"
+criterion = "0.3.3"
 
 # [patch.crates-io]
 # glam = { path = "../glam-rs" }
