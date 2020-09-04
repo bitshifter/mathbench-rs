@@ -4,9 +4,9 @@ mod macros;
 use criterion::{criterion_group, criterion_main, Criterion};
 
 // returns self to check overhead of benchmark
-fn bench_quaternion_nop(c: &mut Criterion) {
+fn bench_rotation3_nop(c: &mut Criterion) {
     use mathbench::BenchValue;
-    let mut group = c.benchmark_group("quaternion return self");
+    let mut group = c.benchmark_group("rotation3 return self");
     bench_glam!(group, |b| {
         use glam::Quat;
         bench_unop!(b, op => ret_self, ty => Quat)
@@ -14,6 +14,10 @@ fn bench_quaternion_nop(c: &mut Criterion) {
     bench_cgmath!(group, |b| {
         use cgmath::Quaternion;
         bench_unop!(b, op => ret_self, ty => Quaternion<f32>)
+    });
+    bench_ultraviolet!(group, |b| {
+        use ultraviolet::Rotor3;
+        bench_unop!(b, op => ret_self, ty => Rotor3)
     });
     bench_nalgebra!(group, |b| {
         use nalgebra::UnitQuaternion;
@@ -26,8 +30,9 @@ fn bench_quaternion_nop(c: &mut Criterion) {
     group.finish();
 }
 
-fn bench_quaternion_conjugate(c: &mut Criterion) {
-    let mut group = c.benchmark_group("quaternion conjugate");
+fn bench_rotation3_inverse(c: &mut Criterion) {
+    // unit quaternion inverse is the conjugate
+    let mut group = c.benchmark_group("rotation3 inverse");
     bench_glam!(group, |b| {
         use glam::Quat;
         bench_unop!(b, op => conjugate, ty => Quat)
@@ -35,6 +40,10 @@ fn bench_quaternion_conjugate(c: &mut Criterion) {
     bench_cgmath!(group, |b| {
         use cgmath::Quaternion;
         bench_unop!(b, op => conjugate, ty => Quaternion<f32>)
+    });
+    bench_ultraviolet!(group, |b| {
+        use ultraviolet::Rotor3;
+        bench_unop!(b, op => reversed, ty => Rotor3)
     });
     bench_nalgebra!(group, |b| {
         use nalgebra::UnitQuaternion;
@@ -52,9 +61,9 @@ fn bench_quaternion_conjugate(c: &mut Criterion) {
     group.finish();
 }
 
-fn bench_quaternion_mul_quaternion(c: &mut Criterion) {
+fn bench_rotation3_mul_rotation3(c: &mut Criterion) {
     use std::ops::Mul;
-    let mut group = c.benchmark_group("quaternion mul quaternion");
+    let mut group = c.benchmark_group("rotation3 mul rotation3");
     bench_glam!(group, |b| {
         use glam::Quat;
         bench_binop!(b, op => mul, ty1 => Quat, ty2 => Quat)
@@ -62,6 +71,10 @@ fn bench_quaternion_mul_quaternion(c: &mut Criterion) {
     bench_cgmath!(group, |b| {
         use cgmath::Quaternion;
         bench_binop!(b, op => mul, ty1 => Quaternion<f32>, ty2 => Quaternion<f32>)
+    });
+    bench_ultraviolet!(group, |b| {
+        use ultraviolet::Rotor3;
+        bench_binop!(b, op => mul, ty1 => Rotor3, ty2 => Rotor3)
     });
     bench_nalgebra!(group, |b| {
         use nalgebra::UnitQuaternion;
@@ -78,9 +91,9 @@ fn bench_quaternion_mul_quaternion(c: &mut Criterion) {
     group.finish();
 }
 
-fn bench_quaternion_mul_vector3(c: &mut Criterion) {
+fn bench_rotation3_mul_vector3(c: &mut Criterion) {
     use std::ops::Mul;
-    let mut group = c.benchmark_group("quaternion mul vector3");
+    let mut group = c.benchmark_group("rotation3 mul vector3");
     for size in [1, 100].iter() {
         group.throughput(criterion::Throughput::Elements(*size as u64));
         bench_glam!(group, |b| {
@@ -90,6 +103,10 @@ fn bench_quaternion_mul_vector3(c: &mut Criterion) {
         bench_cgmath!(group, |b| {
             use cgmath::{Quaternion, Vector3};
             bench_binop!(b, op => mul, ty1 => Quaternion<f32>, ty2 => Vector3<f32>)
+        });
+        bench_ultraviolet!(group, |b| {
+            use ultraviolet::{Rotor3, Vec3};
+            bench_binop!(b, op => mul, ty1 => Rotor3, ty2 => Vec3)
         });
         bench_nalgebra!(group, |b| {
             use nalgebra::{UnitQuaternion, Vector3};
@@ -108,10 +125,10 @@ fn bench_quaternion_mul_vector3(c: &mut Criterion) {
 }
 
 criterion_group!(
-    quaternion_benches,
-    bench_quaternion_nop,
-    bench_quaternion_conjugate,
-    bench_quaternion_mul_quaternion,
-    bench_quaternion_mul_vector3,
+    rotation3_benches,
+    bench_rotation3_nop,
+    bench_rotation3_inverse,
+    bench_rotation3_mul_rotation3,
+    bench_rotation3_mul_vector3,
 );
-criterion_main!(quaternion_benches);
+criterion_main!(rotation3_benches);

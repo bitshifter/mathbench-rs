@@ -44,6 +44,10 @@ fn bench_euler_3d(c: &mut Criterion) {
             use cgmath::{prelude::*, Vector3};
             bench_euler!(b, size, ty => Vector3<f32>, zero => Vector3::zero(), dt => UPDATE_RATE)
         });
+        bench_ultraviolet!(group, size, |b, size| {
+            use ultraviolet::Vec3;
+            bench_euler!(b, size, ty => Vec3, zero => Vec3::zero(), dt => UPDATE_RATE);
+        });
         bench_nalgebra!(group, size, |b, size| {
             use nalgebra::{zero, Vector3};
             bench_euler!(b, size, ty => Vector3<f32>, zero => zero(), dt => UPDATE_RATE);
@@ -79,6 +83,10 @@ fn bench_euler_2d(c: &mut Criterion) {
         bench_cgmath!(group, size, |b, size| {
             use cgmath::{prelude::*, Vector2};
             bench_euler!(b, size, ty => Vector2<f32>, zero => Vector2::zero(), dt => UPDATE_RATE)
+        });
+        bench_ultraviolet!(group, size, |b, size| {
+            use ultraviolet::Vec2;
+            bench_euler!(b, size, ty => Vec2, zero => Vec2::zero(), dt => UPDATE_RATE);
         });
         bench_nalgebra!(group, size, |b, size| {
             use nalgebra::{zero, Vector2};

@@ -63,7 +63,7 @@ name = "eulerbench"
 harness = false
 
 [[bench]]
-name = "quaternion"
+name = "rotation3"
 harness = false
 
 [[bench]]

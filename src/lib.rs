@@ -27,7 +27,6 @@ macro_rules! impl_bench_value {
     };
 }
 
-
 pub mod mint_support {
     use super::glam_support::*;
     use mint;
@@ -396,10 +395,10 @@ pub mod static_math_support {
     use rand::Rng;
     use static_math;
     use static_math::matrix2x2::M22;
-    use static_math::vector2::V2;
     use static_math::matrix3x3::M33;
-    use static_math::vector3::V3;
     use static_math::matrix4x4::M44;
+    use static_math::vector2::V2;
+    use static_math::vector3::V3;
     use static_math::vector4::V4;
 
     fn random_nonzero_f32<R>(rng: &mut R) -> f32
@@ -415,8 +414,7 @@ pub mod static_math_support {
             let b = random_nonzero_f32(rng);
             let c = random_nonzero_f32(rng);
             let d = random_nonzero_f32(rng);
-            M22::new([[a, b],
-                     [c, d]])
+            M22::new([[a, b], [c, d]])
         }
     }
 
@@ -439,9 +437,7 @@ pub mod static_math_support {
             let a_20 = random_nonzero_f32(rng);
             let a_21 = random_nonzero_f32(rng);
             let a_22 = random_nonzero_f32(rng);
-            M33::new([[a_00, a_01, a_02],
-                      [a_10, a_11, a_12],
-                      [a_20, a_21, a_22]])
+            M33::new([[a_00, a_01, a_02], [a_10, a_11, a_12], [a_20, a_21, a_22]])
         }
     }
     impl BenchValue for V3<f32> {
@@ -470,11 +466,12 @@ pub mod static_math_support {
             let a14 = random_nonzero_f32(rng);
             let a15 = random_nonzero_f32(rng);
             let a16 = random_nonzero_f32(rng);
-            M44::new([[a1, a5,  a9, a13],
-                      [a2, a6, a10, a14],
-                      [a3, a7, a11, a15],
-                      [a4, a8, a12, a16]])
-
+            M44::new([
+                [a1, a5, a9, a13],
+                [a2, a6, a10, a14],
+                [a3, a7, a11, a15],
+                [a4, a8, a12, a16],
+            ])
         }
     }
 
@@ -485,6 +482,198 @@ pub mod static_math_support {
             let c = random_nonzero_f32(rng);
             let d = random_nonzero_f32(rng);
             V4::new([a, b, c, d])
+        }
+    }
+}
+
+#[cfg(feature = "ultraviolet")]
+pub mod ultraviolet_support {
+    use super::BenchValue;
+    use ultraviolet::*;
+
+    impl BenchValue for Wec2 {
+        fn random_value<R: rand::Rng>(rng: &mut R) -> Self {
+            Wec2::new(
+                ultraviolet::f32x4::from(rng.gen::<[f32; 4]>()),
+                ultraviolet::f32x4::from(rng.gen::<[f32; 4]>()),
+            )
+        }
+    }
+
+    impl BenchValue for Wec3 {
+        fn random_value<R: rand::Rng>(rng: &mut R) -> Self {
+            Wec3::new(
+                ultraviolet::f32x4::from(rng.gen::<[f32; 4]>()),
+                ultraviolet::f32x4::from(rng.gen::<[f32; 4]>()),
+                ultraviolet::f32x4::from(rng.gen::<[f32; 4]>()),
+            )
+        }
+    }
+
+    impl BenchValue for Wec4 {
+        fn random_value<R: rand::Rng>(rng: &mut R) -> Self {
+            Wec4::new(
+                ultraviolet::f32x4::from(rng.gen::<[f32; 4]>()),
+                ultraviolet::f32x4::from(rng.gen::<[f32; 4]>()),
+                ultraviolet::f32x4::from(rng.gen::<[f32; 4]>()),
+                ultraviolet::f32x4::from(rng.gen::<[f32; 4]>()),
+            )
+        }
+    }
+
+    impl BenchValue for Wat2 {
+        fn random_value<R: rand::Rng>(rng: &mut R) -> Self {
+            Wat2::new(Wec2::random_value(rng), Wec2::random_value(rng))
+        }
+    }
+
+    impl BenchValue for Wat3 {
+        fn random_value<R: rand::Rng>(rng: &mut R) -> Self {
+            Wat3::new(
+                Wec3::random_value(rng),
+                Wec3::random_value(rng),
+                Wec3::random_value(rng),
+            )
+        }
+    }
+
+    impl BenchValue for Wat4 {
+        fn random_value<R: rand::Rng>(rng: &mut R) -> Self {
+            Wat4::new(
+                Wec4::random_value(rng),
+                Wec4::random_value(rng),
+                Wec4::random_value(rng),
+                Wec4::random_value(rng),
+            )
+        }
+    }
+
+    impl BenchValue for WRotor2 {
+        fn random_value<R: rand::Rng>(rng: &mut R) -> Self {
+            let angle = f32x4::from([
+                super::glam_support::random_angle_radians(rng),
+                super::glam_support::random_angle_radians(rng),
+                super::glam_support::random_angle_radians(rng),
+                super::glam_support::random_angle_radians(rng),
+            ]);
+            WRotor2::from_angle(angle)
+        }
+    }
+
+    impl BenchValue for WRotor3 {
+        fn random_value<R: rand::Rng>(rng: &mut R) -> Self {
+            let yaw = f32x4::from([
+                super::glam_support::random_angle_radians(rng),
+                super::glam_support::random_angle_radians(rng),
+                super::glam_support::random_angle_radians(rng),
+                super::glam_support::random_angle_radians(rng),
+            ]);
+            let pitch = f32x4::from([
+                super::glam_support::random_angle_radians(rng),
+                super::glam_support::random_angle_radians(rng),
+                super::glam_support::random_angle_radians(rng),
+                super::glam_support::random_angle_radians(rng),
+            ]);
+            let roll = f32x4::from([
+                super::glam_support::random_angle_radians(rng),
+                super::glam_support::random_angle_radians(rng),
+                super::glam_support::random_angle_radians(rng),
+                super::glam_support::random_angle_radians(rng),
+            ]);
+            WRotor3::from_euler_angles(yaw, pitch, roll)
+        }
+    }
+
+    impl BenchValue for WIsometry2 {
+        fn random_value<R: rand::Rng>(rng: &mut R) -> Self {
+            let tra = Wec2::random_value(rng);
+            let rot = WRotor2::random_value(rng);
+            WIsometry2::new(tra, rot)
+        }
+    }
+
+    impl BenchValue for WIsometry3 {
+        fn random_value<R: rand::Rng>(rng: &mut R) -> Self {
+            let tra = Wec3::random_value(rng);
+            let rot = WRotor3::random_value(rng);
+            WIsometry3::new(tra, rot)
+        }
+    }
+
+    impl BenchValue for Vec2 {
+        fn random_value<R: rand::Rng>(rng: &mut R) -> Self {
+            Vec2::new(rng.gen(), rng.gen())
+        }
+    }
+
+    impl BenchValue for Vec3 {
+        fn random_value<R: rand::Rng>(rng: &mut R) -> Self {
+            Vec3::new(rng.gen(), rng.gen(), rng.gen())
+        }
+    }
+
+    impl BenchValue for Vec4 {
+        fn random_value<R: rand::Rng>(rng: &mut R) -> Self {
+            Vec4::new(rng.gen::<f32>(), rng.gen(), rng.gen(), rng.gen())
+        }
+    }
+
+    impl BenchValue for Mat2 {
+        fn random_value<R: rand::Rng>(rng: &mut R) -> Self {
+            Mat2::new(Vec2::random_value(rng), Vec2::random_value(rng))
+        }
+    }
+
+    impl BenchValue for Mat3 {
+        fn random_value<R: rand::Rng>(rng: &mut R) -> Self {
+            Mat3::new(
+                Vec3::random_value(rng),
+                Vec3::random_value(rng),
+                Vec3::random_value(rng),
+            )
+        }
+    }
+
+    impl BenchValue for Mat4 {
+        fn random_value<R: rand::Rng>(rng: &mut R) -> Self {
+            Mat4::new(
+                Vec4::random_value(rng),
+                Vec4::random_value(rng),
+                Vec4::random_value(rng),
+                Vec4::random_value(rng),
+            )
+        }
+    }
+
+    impl BenchValue for Rotor2 {
+        fn random_value<R: rand::Rng>(rng: &mut R) -> Self {
+            let angle = crate::glam_support::random_angle_radians(rng);
+            Rotor2::from_angle(angle)
+        }
+    }
+
+    impl BenchValue for Rotor3 {
+        fn random_value<R: rand::Rng>(rng: &mut R) -> Self {
+            let yaw = crate::glam_support::random_angle_radians(rng);
+            let pitch = crate::glam_support::random_angle_radians(rng);
+            let roll = crate::glam_support::random_angle_radians(rng);
+            Rotor3::from_euler_angles(yaw, pitch, roll)
+        }
+    }
+
+    impl BenchValue for Isometry2 {
+        fn random_value<R: rand::Rng>(rng: &mut R) -> Self {
+            let tra = Vec2::random_value(rng);
+            let rot = Rotor2::random_value(rng);
+            Isometry2::new(tra, rot)
+        }
+    }
+
+    impl BenchValue for Isometry3 {
+        fn random_value<R: rand::Rng>(rng: &mut R) -> Self {
+            let tra = Vec3::random_value(rng);
+            let rot = Rotor3::random_value(rng);
+            Isometry3::new(tra, rot)
         }
     }
 }

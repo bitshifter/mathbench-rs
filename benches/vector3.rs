@@ -15,6 +15,10 @@ fn bench_vector3_ret_self(c: &mut Criterion) {
         use cgmath::Vector3;
         bench_unop!(b, op => ret_self, ty => Vector3<f32>)
     });
+    bench_ultraviolet!(group, |b| {
+        use ultraviolet::Vec3;
+        bench_unop!(b, op => ret_self, ty => Vec3)
+    });
     bench_nalgebra!(group, |b| {
         use nalgebra::Vector3;
         bench_unop!(b, op => ret_self, ty => Vector3<f32>)
@@ -39,6 +43,10 @@ fn bench_vector3_length(c: &mut Criterion) {
     bench_cgmath!(group, |b| {
         use cgmath::{InnerSpace, Vector3};
         bench_unop!(b, op => magnitude, ty => Vector3<f32>)
+    });
+    bench_ultraviolet!(group, |b| {
+        use ultraviolet::Vec3;
+        bench_unop!(b, op => mag, ty => Vec3)
     });
     bench_nalgebra!(group, |b| {
         use nalgebra::Vector3;
@@ -69,6 +77,10 @@ fn bench_vector3_normalize(c: &mut Criterion) {
         use cgmath::{InnerSpace, Vector3};
         bench_unop!(b, op => normalize, ty => Vector3<f32>)
     });
+    bench_ultraviolet!(group, |b| {
+        use ultraviolet::Vec3;
+        bench_unop!(b, op => normalized, ty => Vec3)
+    });
     bench_nalgebra!(group, |b| {
         use nalgebra::Vector3;
         bench_unop!(b, op => normalize, ty => Vector3<f32>)
@@ -93,6 +105,10 @@ fn bench_vector3_dot(c: &mut Criterion) {
     bench_cgmath!(group, |b| {
         use cgmath::{InnerSpace, Vector3};
         bench_binop!(b, op => dot, ty1 => Vector3<f32>, ty2 => Vector3<f32>)
+    });
+    bench_ultraviolet!(group, |b| {
+        use ultraviolet::Vec3;
+        bench_binop!(b, op => dot, ty1 => Vec3, ty2 => Vec3)
     });
     bench_nalgebra!(group, |b| {
         use nalgebra::Vector3;
@@ -123,6 +139,10 @@ fn bench_vector3_cross(c: &mut Criterion) {
     bench_cgmath!(group, |b| {
         use cgmath::Vector3;
         bench_binop!(b, op => cross, ty1 => Vector3<f32>, ty2 => Vector3<f32>)
+    });
+    bench_ultraviolet!(group, |b| {
+        use ultraviolet::Vec3;
+        bench_binop!(b, op => cross, ty1 => Vec3, ty2 => Vec3)
     });
     bench_nalgebra!(group, |b| {
         use nalgebra::Vector3;

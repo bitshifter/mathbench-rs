@@ -15,6 +15,10 @@ fn bench_matrix2_ret_self(c: &mut Criterion) {
         use cgmath::Matrix2;
         bench_unop!(b, op => ret_self, ty => Matrix2<f32>)
     });
+    bench_ultraviolet!(group, |b| {
+        use ultraviolet::Mat2;
+        bench_unop!(b, op => ret_self, ty => Mat2)
+    });
     bench_nalgebra!(group, |b| {
         use nalgebra::Matrix2;
         bench_unop!(b, op => ret_self, ty => Matrix2<f32>)
@@ -127,6 +131,10 @@ fn bench_matrix2_mul_matrix2(c: &mut Criterion) {
         use cgmath::Matrix2;
         bench_binop!(b, op => mul, ty1 => Matrix2<f32>, ty2 => Matrix2<f32>)
     });
+    bench_ultraviolet!(group, |b| {
+        use ultraviolet::Mat2;
+        bench_binop!(b, op => mul, ty1 => Mat2, ty2 => Mat2)
+    });
     bench_nalgebra!(group, |b| {
         use nalgebra::Matrix2;
         bench_binop!(b, op => mul, ty1 => Matrix2<f32>, ty2 => Matrix2<f32>)
@@ -159,13 +167,17 @@ fn bench_matrix2_mul_vector2(c: &mut Criterion) {
             use cgmath::{Matrix2, Vector2};
             bench_binop!(b, size, op => mul, ty1 => Matrix2<f32>, ty2 => Vector2<f32>)
         });
+        bench_ultraviolet!(group, size, |b, size| {
+            use ultraviolet::{Mat2, Vec2};
+            bench_binop!(b, size, op => mul, ty1 => Mat2, ty2 => Vec2)
+        });
         bench_nalgebra!(group, size, |b, size| {
             use nalgebra::{Matrix2, Vector2};
             bench_binop!(b, size, op => mul, ty1 => Matrix2<f32>, ty2 => Vector2<f32>)
         });
         bench_static_math!(group, size, |b, size| {
-            use static_math::vector2::V2;
             use static_math::matrix2x2::M22;
+            use static_math::vector2::V2;
             bench_binop!(b, size, op => mul, ty1 => M22<f32>, ty2 => V2<f32>)
         });
         bench_vek!(group, size, |b, size| {

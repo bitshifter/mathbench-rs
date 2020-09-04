@@ -14,6 +14,10 @@ fn bench_matrix3_ret_self(c: &mut Criterion) {
         use cgmath::Matrix3;
         bench_unop!(b, op => ret_self, ty => Matrix3<f32>)
     });
+    bench_ultraviolet!(group, |b| {
+        use ultraviolet::Mat3;
+        bench_unop!(b, op => ret_self, ty => Mat3)
+    });
     bench_nalgebra!(group, |b| {
         use nalgebra::Matrix3;
         bench_unop!(b, op => ret_self, ty => Matrix3<f32>)
@@ -38,6 +42,10 @@ fn bench_matrix3_transpose(c: &mut Criterion) {
     bench_cgmath!(group, |b| {
         use cgmath::{prelude::*, Matrix3};
         bench_unop!(b, op => transpose, ty => Matrix3<f32>)
+    });
+    bench_ultraviolet!(group, |b| {
+        use ultraviolet::Mat3;
+        bench_unop!(b, op => transposed, ty => Mat3)
     });
     bench_nalgebra!(group, |b| {
         use nalgebra::Matrix3;
@@ -91,6 +99,10 @@ fn bench_matrix3_inverse(c: &mut Criterion) {
         use cgmath::{prelude::*, Matrix3};
         bench_unop!(b, op => invert, ty => Matrix3<f32>)
     });
+    bench_ultraviolet!(group, |b| {
+        use ultraviolet::Mat3;
+        bench_unop!(b, op => inversed, ty => Mat3)
+    });
     bench_nalgebra!(group, |b| {
         use nalgebra::Matrix3;
         bench_unop!(b, op => try_inverse, ty => Matrix3<f32>)
@@ -113,6 +125,10 @@ fn bench_matrix3_mul_matrix3(c: &mut Criterion) {
     bench_cgmath!(group, |b| {
         use cgmath::Matrix3;
         bench_binop!(b, op => mul, ty1 => Matrix3<f32>, ty2 => Matrix3<f32>, param => by_ref)
+    });
+    bench_ultraviolet!(group, |b| {
+        use ultraviolet::Mat3;
+        bench_binop!(b, op => mul, ty1 => Mat3, ty2 => Mat3)
     });
     bench_nalgebra!(group, |b| {
         use nalgebra::Matrix3;
@@ -141,6 +157,10 @@ fn bench_matrix3_mul_vector3(c: &mut Criterion) {
         bench_cgmath!(group, size, |b, size| {
             use cgmath::{Matrix3, Vector3};
             bench_binop!(b, size, op => mul, ty1 => Matrix3<f32>, ty2 => Vector3<f32>)
+        });
+        bench_ultraviolet!(group, size, |b, size| {
+            use ultraviolet::{Mat3, Vec3};
+            bench_binop!(b, size, op => mul, ty1 => Mat3, ty2 => Vec3)
         });
         bench_nalgebra!(group, size, |b, size| {
             use nalgebra::{Matrix3, Vector3};

@@ -37,6 +37,16 @@ macro_rules! bench_cgmath {
 }
 
 #[macro_export]
+macro_rules! bench_ultraviolet {
+    ($group:ident, $closure:expr) => {
+        bench_lib!("ultraviolet", $group, $closure)
+    };
+    ($group:ident, $size:expr, $closure:expr) => {
+        bench_lib!("ultraviolet", $group, $size, $closure)
+    };
+}
+
+#[macro_export]
 macro_rules! bench_euclid {
     ($group:ident, $closure:expr) => {
         bench_lib!("euclid", $group, $closure)

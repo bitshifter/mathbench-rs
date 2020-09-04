@@ -15,6 +15,10 @@ fn bench_matrix4_ret_self(c: &mut Criterion) {
         use cgmath::Matrix4;
         bench_unop!(b, op => ret_self, ty => Matrix4<f32>)
     });
+    bench_ultraviolet!(group, |b| {
+        use ultraviolet::Mat4;
+        bench_unop!(b, op => ret_self, ty => Mat4)
+    });
     bench_nalgebra!(group, |b| {
         use nalgebra::Matrix4;
         bench_unop!(b, op => ret_self, ty => Matrix4<f32>)
@@ -39,6 +43,10 @@ fn bench_matrix4_transpose(c: &mut Criterion) {
     bench_cgmath!(group, |b| {
         use cgmath::{prelude::*, Matrix4};
         bench_unop!(b, op => transpose, ty => Matrix4<f32>);
+    });
+    bench_ultraviolet!(group, |b| {
+        use ultraviolet::Mat4;
+        bench_unop!(b, op => transposed, ty => Mat4)
     });
     bench_nalgebra!(group, |b| {
         use nalgebra::Matrix4;
@@ -96,6 +104,10 @@ fn bench_matrix4_inverse(c: &mut Criterion) {
         use cgmath::{Matrix4, SquareMatrix};
         bench_unop!(b, op => invert, ty => Matrix4<f32>)
     });
+    bench_ultraviolet!(group, |b| {
+        use ultraviolet::Mat4;
+        bench_unop!(b, op => inversed, ty => Mat4)
+    });
     bench_nalgebra!(group, |b| {
         use nalgebra::Matrix4;
         bench_unop!(b, op => try_inverse, ty => Matrix4<f32>)
@@ -126,6 +138,10 @@ fn bench_matrix4_mul_matrix4(c: &mut Criterion) {
     bench_cgmath!(group, |b| {
         use cgmath::Matrix4;
         bench_binop!(b, op => mul, ty1 => Matrix4<f32>, ty2 => Matrix4<f32>, param => by_ref)
+    });
+    bench_ultraviolet!(group, |b| {
+        use ultraviolet::Mat4;
+        bench_binop!(b, op => mul, ty1 => Mat4, ty2 => Mat4)
     });
     bench_nalgebra!(group, |b| {
         use nalgebra::Matrix4;
@@ -158,6 +174,10 @@ fn bench_matrix4_mul_vector4(c: &mut Criterion) {
         bench_cgmath!(group, size, |b, size| {
             use cgmath::{Matrix4, Vector4};
             bench_binop!(b, size, op => mul, ty1 => Matrix4<f32>, ty2 => Vector4<f32>)
+        });
+        bench_ultraviolet!(group, size, |b, size| {
+            use ultraviolet::{Mat4, Vec4};
+            bench_binop!(b, size, op => mul, ty1 => Mat4, ty2 => Vec4)
         });
         bench_nalgebra!(group, size, |b, size| {
             use nalgebra::{Matrix4, Vector4};
