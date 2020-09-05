@@ -7,8 +7,8 @@ import sys
 import prettytable
 
 
-DEFAULT = ['glam', 'cgmath', 'nalgebra', 'euclid', 'vek']
-OPTIONAL = ['pathfinder', 'static-math']
+DEFAULT = ['glam', 'cgmath', 'nalgebra']
+OPTIONAL = ['euclid', 'vek', 'pathfinder', 'static-math', 'ultraviolet']
 CHOICES = DEFAULT + OPTIONAL
 
 class DefaultListAction(argparse.Action):
@@ -50,7 +50,7 @@ def parse_bench(json_dir, benches):
             lib_name = benchmarks['function_id']
         with open(estimates_path) as f:
             estimates = json.load(f)
-            slope_point = estimates['Slope']['point_estimate']
+            slope_point = estimates['slope']['point_estimate']
             benches.setdefault(bench_name, {}).setdefault(lib_name, slope_point)
     except FileNotFoundError:
         pass

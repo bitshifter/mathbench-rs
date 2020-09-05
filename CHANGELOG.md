@@ -4,11 +4,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog].
 
-## [0.3.2] - 2020-08-27
+## [0.3.2] - 2020-09-05
 
 ### Added
 
-* Added the `static-math` library
+* Added the `static-math` library.
+* Added scalar benchmarks for the `ultraviolet` library.
+* Added section on wide benchmarks.
 
 ### Changed
 
