@@ -320,7 +320,7 @@ If you are interested in contributing or have a request or suggestion
 [Code of Conduct]: https://www.rust-lang.org/en-US/conduct.html
 [create an issue]: https://github.com/bitshifter/mathbench-rs/issues
 [Intel i7-4710HQ]: https://ark.intel.com/content/www/us/en/ark/products/78930/intel-core-i7-4710hq-processor-6m-cache-up-to-3-50-ghz.html
-[mathbench report]: https://bitshifter.github.io/mathbench/0.3.0/report/index.html
+[mathbench report]: https://bitshifter.github.io/mathbench/0.3.2/report/index.html
 [cgmath build timings]: https://bitshifter.github.io/buildbench/0.3.1/cargo-timing-cgmath-release-defaults.html
 [euclid build timings]: https://bitshifter.github.io/buildbench/0.3.1/cargo-timing-euclid-release-defaults.html
 [glam build timings]: https://bitshifter.github.io/buildbench/0.3.1/cargo-timing-glam-release-defaults.html
