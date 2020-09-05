@@ -268,15 +268,16 @@ crates tested the dependencies take longer than the math crate. Also keep in
 mind if you are already building one of the dependencies in your project you
 won't pay the build cost twice (unless it's a different version).
 
-| crate               | version | total (s) | self (s) | units | full report link            |
-|:--------------------|:--------|----------:|---------:|------:|:----------------------------|
-| cgmath              | 0.17.0  |       6.5 |      3.0 |    17 | [cgmath build timings]      |
-| euclid              | 0.20.5  |       3.2 |      1.1 |     4 | [euclid build timings]      |
-| glam                | 0.8.6   |       0.8 |      0.5 |     3 | [glam build timings]        |
-| nalgebra            | 0.21.0  |      32.1 |     17.8 |    29 | [nalgebra build timings]    |
-| pathfinder_geometry | 0.5.0   |       5.6 |      0.3 |     8 | [pathfinder build timings]  |
-| ultraviolet         | 0.4.5   |       2.4 |      1.2 |     4 | [ultraviolet build timings] |
-| vek                 | 0.10.1  |      38.0 |     10.6 |    16 | [vek build timings]         |
+| crate               | version | total (s) | self (s) | units |
+|:--------------------|:--------|----------:|---------:|------:|
+| cgmath              | 0.17.0  |       6.8 |      3.0 |    17 |
+| euclid              | 0.22.1  |       3.4 |      1.0 |     4 |
+| glam                | 0.9.4   |       1.1 |      0.6 |     2 |
+| nalgebra            | 0.22.0  |      24.2 |     18.0 |    24 |
+| pathfinder_geometry | 0.5.1   |       3.0 |      0.3 |     8 |
+| static-math         | 0.1.6   |       6.9 |      1.7 |    10 |
+| ultraviolet         | 0.5.1   |       2.5 |      1.3 |     4 |
+| vek                 | 0.12.0  |      34.4 |     10.1 |    16 |
 
 These benchmarks were performed on an [Intel i7-4710HQ] CPU with 16GB RAM and a
 Toshiba MQ01ABD100 HDD (SATA 3Gbps 5400RPM) on Linux.
@@ -321,11 +322,4 @@ If you are interested in contributing or have a request or suggestion
 [create an issue]: https://github.com/bitshifter/mathbench-rs/issues
 [Intel i7-4710HQ]: https://ark.intel.com/content/www/us/en/ark/products/78930/intel-core-i7-4710hq-processor-6m-cache-up-to-3-50-ghz.html
 [mathbench report]: https://bitshifter.github.io/mathbench/0.3.2/report/index.html
-[cgmath build timings]: https://bitshifter.github.io/buildbench/0.3.1/cargo-timing-cgmath-release-defaults.html
-[euclid build timings]: https://bitshifter.github.io/buildbench/0.3.1/cargo-timing-euclid-release-defaults.html
-[glam build timings]: https://bitshifter.github.io/buildbench/0.3.1/cargo-timing-glam-release-defaults.html
-[nalgebra build timings]: https://bitshifter.github.io/buildbench/0.3.1/cargo-timing-nalgebra-release-defaults.html
-[pathfinder build timings]: https://bitshifter.github.io/buildbench/0.3.1/cargo-timing-pathfinder_geometry-release-defaults.html
-[ultraviolet build timings]: https://bitshifter.github.io/buildbench/0.3.1/cargo-timing-ultraviolet-release-defaults.html
-[vek build timings]: https://bitshifter.github.io/buildbench/0.3.1/cargo-timing-vek-release-defaults.html
 [issue #21]: https://github.com/bitshifter/mathbench-rs/issues/21
