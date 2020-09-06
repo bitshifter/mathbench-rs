@@ -58,6 +58,9 @@ criterion = "0.3.3"
 # [patch.crates-io]
 # glam = { path = "../glam-rs" }
 
+[lib]
+bench = false
+
 [[bench]]
 name = "eulerbench"
 harness = false
@@ -96,6 +99,7 @@ harness = false
 
 [profile.bench]
 debug = true
+# codegen-units = 1
 # lto = true
 
 [workspace]
