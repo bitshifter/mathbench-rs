@@ -18,6 +18,17 @@ games and graphics development, including:
 * [`ultraviolet`][ultraviolet]
 * [`vek`][vek]
 
+[Build Status]: https://travis-ci.org/bitshifter/mathbench-rs.svg?branch=master
+[travis-ci]: https://travis-ci.org/bitshifter/mathbench-rs
+[cgmath]: https://crates.io/crates/cgmath
+[euclid]: https://crates.io/crates/euclid
+[glam]: https://github.com/bitshifter/glam-rs
+[nalgebra]: https://nalgebra.org
+[pathfinder_geometry]: https://crates.io/crates/pathfinder_geometry
+[static-math]: https://crates.io/crates/static-math
+[ultraviolet]: https://crates.io/crates/ultraviolet
+[vek]: https://crates.io/crates/vek
+
 ## The benchmarks
 
 All benchmarks are performed using [Criterion.rs]. Benchmarks are logically into
@@ -34,8 +45,9 @@ the following categories:
 * workload operations - these attempt to recreate common workloads found in game
   development to try and demonstrate performance on real world tasks.
 
-Despite best attempts, take the results of micro benchmarks with a pinch of
-salt.
+Despite best attempts, take the results of micro benchmarks with a pinch of salt.
+
+[Criterion.rs]: https://bheisler.github.io/criterion.rs/book/index.html
 
 ### Operation benchmarks
 
@@ -98,9 +110,28 @@ able to better utililise SIMD instructions to get a higher throughput. The
 caveat being that your program's data must be organised into an array of
 structure of arrays format to take advantage of it. Until support for
 benchmarking wide types is added to mathbench the author of `nalgebra` has his
-own fork of mathbench and a [blog
-post](https://www.rustsim.org/blog/2020/03/23/simd-aosoa-in-nalgebra/) with
-benchmark results from `nalgebra` and `ultraviolet`.
+own fork of mathbench and a [blog post] with benchmark results from
+`nalgebra` and `ultraviolet`.
+
+[blog post]: https://www.rustsim.org/blog/2020/03/23/simd-aosoa-in-nalgebra/
+
+## Build settings
+
+The default `profile.bench` settings are used, these are documented in the
+[cargo reference].
+
+Some math libraries are optimized to use specific instruction sets and may
+benefit building with settings different to the defaults. Typically a game team
+will need to decided on a minimum specification that they will target. Deciding
+on a minimum specifiction dictates the potential audience size for a project.
+This is an important decision for any game and it will be different for every
+project. `mathbench` doesn't want to make assumptions about what build settings
+any particular project may want to use which is why default settings are used.
+
+I would encourage users who to use build settigs different to the defaults to
+run the benchmarks themselves and consider publishing their results.
+
+[cargo reference]: https://doc.rust-lang.org/cargo/reference/profiles.html#bench
 
 ## Benchmark results
 
@@ -174,6 +205,9 @@ The versions of the libraries tested were:
 
 See the full [mathbench report] for more detailed results.
 
+[Intel i7-4710HQ]: https://ark.intel.com/content/www/us/en/ark/products/78930/intel-core-i7-4710hq-processor-6m-cache-up-to-3-50-ghz.html
+[mathbench report]: https://bitshifter.github.io/mathbench/0.3.2/report/index.html
+
 ## Running the benchmarks
 
 The benchmarks use the criterion crate which works on stable Rust, they can be
@@ -219,6 +253,19 @@ The tests can be run using:
 ```sh
 cargo test
 ```
+
+## Publishing results
+
+When publishing benchmark results it is important to document the details of how
+the benchmarks were run, including:
+
+* The version of `mathbench` used
+* The versions of all libraries benched
+* The Rust version
+* The build settings used, especially when they differ from the defaults
+* The specification of the hardware that was used
+* The output of `scripts/summary.py`
+* The full Criterion output from `target/criterion`
 
 ## Adding a new library
 
@@ -302,24 +349,11 @@ Unless you explicitly state otherwise, any contribution intentionally submitted
 for inclusion in the work by you, as defined in the Apache-2.0 license, shall be
 dual licensed as above, without any additional terms or conditions.
 
+[Code of Conduct]: https://www.rust-lang.org/en-US/conduct.html
+
 ## Support
 
 If you are interested in contributing or have a request or suggestion
 [create an issue] on github.
 
-[Build Status]: https://travis-ci.org/bitshifter/mathbench-rs.svg?branch=master
-[travis-ci]: https://travis-ci.org/bitshifter/mathbench-rs
-[Criterion.rs]: https://bheisler.github.io/criterion.rs/book/index.html
-[cgmath]: https://crates.io/crates/cgmath
-[euclid]: https://crates.io/crates/euclid
-[glam]: https://github.com/bitshifter/glam-rs
-[nalgebra]: https://nalgebra.org
-[pathfinder_geometry]: https://crates.io/crates/pathfinder_geometry
-[static-math]: https://crates.io/crates/static-math
-[ultraviolet]: https://crates.io/crates/ultraviolet
-[vek]: https://crates.io/crates/vek
-[Code of Conduct]: https://www.rust-lang.org/en-US/conduct.html
 [create an issue]: https://github.com/bitshifter/mathbench-rs/issues
-[Intel i7-4710HQ]: https://ark.intel.com/content/www/us/en/ark/products/78930/intel-core-i7-4710hq-processor-6m-cache-up-to-3-50-ghz.html
-[mathbench report]: https://bitshifter.github.io/mathbench/0.3.2/report/index.html
-[issue #21]: https://github.com/bitshifter/mathbench-rs/issues/21
