@@ -6,10 +6,18 @@ import os
 import sys
 import prettytable
 
+DO_WIDE_TABLE = True
 
 DEFAULT = ['glam', 'cgmath', 'nalgebra']
 OPTIONAL = ['euclid', 'vek', 'pathfinder', 'static-math', 'ultraviolet']
-CHOICES = DEFAULT + OPTIONAL
+SCALAR = DEFAULT + OPTIONAL
+
+WIDE = ['glam', 'ultraviolet_f32x4', 'nalgebra_f32x4', 'ultraviolet_f32x8', 'nalgebra_f32x8']
+
+CHOICES = SCALAR
+
+if DO_WIDE_TABLE:
+    CHOICES = WIDE
 
 class DefaultListAction(argparse.Action):
     def __call__(self, parser, namespace, values, option_string=None):
@@ -105,6 +113,13 @@ def main():
 
     pt = prettytable.PrettyTable(['benchmark'] + [f'  {x:}  ' for x in libs])
     for bench_name in benches:
+        if DO_WIDE_TABLE:
+            if not bench_name.contains('wide'):
+                continue
+        else:
+            if bench_name.contains('wide'):
+                continue
+
         bench = benches[bench_name]
         values = [bench[x] for x in libs if x in bench]
         max_value = max(values)

@@ -8,6 +8,14 @@ edition = "2018"
 # defaults can be disabled for benchmarks but are required for tests
 default = ["cgmath", "nalgebra"]
 
+ultraviolet_f32x4 = ["ultraviolet"]
+ultraviolet_f32x8 = ["ultraviolet"]
+ultraviolet_wide = ["ultraviolet_sse", "ultraviolet_avx"]
+
+nalgebra_f32x4 = ["nalgebra", "simba"]
+nalgebra_f32x8 = ["nalgebra", "simba"]
+nalgebra_wide = ["nalgebra_sse", "nalgebra_avx"]
+
 [dependencies]
 mint = "0.5.5"
 rand = "0.7.2"
@@ -22,6 +30,11 @@ features = ["mint", "rand", "debug-glam-assert"]
 [dependencies.nalgebra]
 version = "0.22.0"
 features = ["mint"]
+optional = true
+
+[dependencies.simba]
+version = "0.2"
+features = ["packed_simd"]
 optional = true
 
 [dependencies.cgmath]
@@ -46,10 +59,11 @@ optional = true
 version = "0.1.6"
 optional = true
 
-# Note tha ultraviolet is inlucded here for build timings only
-# I want to add benchmarks for SoA types before fully supporting ultraviolet.
 [dependencies.ultraviolet]
-version = "0.5.1"
+# version = "0.5.1"
+git = "https://github.com/termhn/ultraviolet"
+branch = "master"
+features = ["mint"]
 optional = true
 
 [dev-dependencies]
@@ -63,6 +77,10 @@ bench = false
 
 [[bench]]
 name = "eulerbench"
+harness = false
+
+[[bench]]
+name = "ray_sphere_intersect"
 harness = false
 
 [[bench]]
@@ -98,7 +116,6 @@ name = "vector3"
 harness = false
 
 [profile.bench]
-debug = true
 # codegen-units = 1
 # lto = true
 

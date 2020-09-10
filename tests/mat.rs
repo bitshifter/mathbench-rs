@@ -28,6 +28,10 @@ fn mat2_mul_vec2_compare() {
     let gv: glam::Vec2 = mv.into();
     let gmv = gm * gv;
 
+    let um: ultraviolet::Mat2 = mm.into();
+    let uv: ultraviolet::Vec2 = mv.into();
+    let umv: mint::Vector2<f32> = (um * uv).into();
+
     let nm: nalgebra::Matrix2<f32> = mm.into();
     let nv: nalgebra::Vector2<f32> = mv.into();
     let nmv = nm * nv;
@@ -41,6 +45,7 @@ fn mat2_mul_vec2_compare() {
 
     assert_ulps_eq!(cmv, mmv.into());
     assert_ulps_eq!(gmv, mmv.into());
+    assert_ulps_eq!(umv, mmv, epsilon = 0.0005);
 }
 
 fn mat3_mul_vec3_compare() {
@@ -51,6 +56,10 @@ fn mat3_mul_vec3_compare() {
     let gm: glam::Mat3 = mm.into();
     let gv: glam::Vec3 = mv.into();
     let gmv = gm * gv;
+
+    let um: ultraviolet::Mat3 = mm.into();
+    let uv: ultraviolet::Vec3 = mv.into();
+    let umv: mint::Vector3<f32> = (um * uv).into();
 
     let nm: nalgebra::Matrix3<f32> = mm.into();
     let nv: nalgebra::Vector3<f32> = mv.into();
@@ -65,6 +74,7 @@ fn mat3_mul_vec3_compare() {
 
     assert_ulps_eq!(cmv, mmv.into());
     assert_ulps_eq!(gmv, mmv.into());
+    assert_ulps_eq!(umv, mmv, epsilon = 0.0005);
 }
 
 fn mat4_mul_vec4_compare() {
@@ -75,6 +85,10 @@ fn mat4_mul_vec4_compare() {
     let gm: glam::Mat4 = mm.into();
     let gv: glam::Vec4 = mv.into();
     let gmv = gm * gv;
+
+    let um: ultraviolet::Mat4 = mm.into();
+    let uv: ultraviolet::Vec4 = mv.into();
+    let umv: mint::Vector4<f32> = (um * uv).into();
 
     let nm: nalgebra::Matrix4<f32> = mm.into();
     let nv: nalgebra::Vector4<f32> = mv.into();
@@ -89,6 +103,7 @@ fn mat4_mul_vec4_compare() {
 
     assert_ulps_eq!(cmv, mmv.into());
     assert_ulps_eq!(gmv, mmv.into());
+    assert_ulps_eq!(umv, mmv, epsilon = 0.0005);
 }
 
 fn mat2_mul_mat2_compare() {
@@ -99,6 +114,10 @@ fn mat2_mul_mat2_compare() {
     let gm1: glam::Mat2 = mm1.into();
     let gm2: glam::Mat2 = mm2.into();
     let gm3 = gm1 * gm2;
+
+    let um1: ultraviolet::Mat2 = mm1.into();
+    let um2: ultraviolet::Mat2 = mm2.into();
+    let um3: mint::ColumnMatrix2<f32> = (um1 * um2).into();
 
     let nm1: nalgebra::Matrix2<f32> = mm1.into();
     let nm2: nalgebra::Matrix2<f32> = mm2.into();
@@ -113,6 +132,7 @@ fn mat2_mul_mat2_compare() {
 
     assert_ulps_eq!(cm3, mm3.into());
     assert_ulps_eq!(gm3, mm3.into());
+    assert_ulps_eq!(um3, mm3, epsilon = 0.0005);
 }
 
 fn mat3_mul_mat3_compare() {
@@ -123,6 +143,10 @@ fn mat3_mul_mat3_compare() {
     let gm1: glam::Mat3 = mm1.into();
     let gm2: glam::Mat3 = mm2.into();
     let gm3 = gm1 * gm2;
+
+    let um1: ultraviolet::Mat3 = mm1.into();
+    let um2: ultraviolet::Mat3 = mm2.into();
+    let um3: mint::ColumnMatrix3<f32> = (um1 * um2).into();
 
     let nm1: nalgebra::Matrix3<f32> = mm1.into();
     let nm2: nalgebra::Matrix3<f32> = mm2.into();
@@ -137,6 +161,7 @@ fn mat3_mul_mat3_compare() {
 
     assert_ulps_eq!(cm3, mm3.into());
     assert_ulps_eq!(gm3, mm3.into());
+    assert_ulps_eq!(um3, mm3, epsilon = 0.0005);
 }
 
 fn mat4_mul_mat4_compare() {
@@ -147,6 +172,10 @@ fn mat4_mul_mat4_compare() {
     let gm1: glam::Mat4 = mm1.into();
     let gm2: glam::Mat4 = mm2.into();
     let gm3 = gm1 * gm2;
+
+    let um1: ultraviolet::Mat4 = mm1.into();
+    let um2: ultraviolet::Mat4 = mm2.into();
+    let um3: mint::ColumnMatrix4<f32> = (um1 * um2).into();
 
     let nm1: nalgebra::Matrix4<f32> = mm1.into();
     let nm2: nalgebra::Matrix4<f32> = mm2.into();
@@ -161,6 +190,7 @@ fn mat4_mul_mat4_compare() {
 
     assert_ulps_eq!(cm3, mm3.into());
     assert_ulps_eq!(gm3, mm3.into());
+    assert_ulps_eq!(um3, mm3, epsilon = 0.0005);
 }
 
 fn mat2_det_compare() {
@@ -172,6 +202,9 @@ fn mat2_det_compare() {
     let gm1: glam::Mat2 = mm1.into();
     let gmd = gm1.determinant();
 
+    let um1: ultraviolet::Mat2 = mm1.into();
+    let umd = um1.determinant();
+
     let nm1: nalgebra::Matrix2<f32> = mm1.into();
     let nmd = nm1.determinant();
 
@@ -181,6 +214,7 @@ fn mat2_det_compare() {
     // use nalgebra as assumed correct answer
     assert_ulps_eq!(cmd, nmd);
     assert_ulps_eq!(gmd, nmd);
+    assert_ulps_eq!(umd, nmd, epsilon = 0.0005);
 }
 
 fn mat2_inv_compare() {
@@ -192,9 +226,13 @@ fn mat2_inv_compare() {
     let gm1: glam::Mat2 = mm1.into();
     let gmi = gm1.inverse();
 
+    let um1: ultraviolet::Mat2 = mm1.into();
+    let umi: mint::ColumnMatrix2<f32> = um1.inversed().into();
+
     let nm1: nalgebra::Matrix2<f32> = mm1.into();
     let nmi = nm1.try_inverse();
     assert!(nmi.is_some());
+    let nmn = nmi.unwrap().norm();
 
     let cm1: cgmath::Matrix2<f32> = mm1.into();
     let cmi = cm1.invert();
@@ -206,6 +244,8 @@ fn mat2_inv_compare() {
     assert_ulps_eq!(cmi.unwrap(), mmi.into());
     // TODO: actually make a ulps test
     assert_ulps_eq!(gmi, mmi.into(), epsilon = 1e-2);
+    // necessary because ultraviolet uses FMAs which eat less rounding error especially for large numbers
+    assert_ulps_eq!(umi, mmi, epsilon = 0.0005f32.max(0.0001 * nmn));
 }
 
 fn mat3_inv_compare() {
@@ -216,6 +256,9 @@ fn mat3_inv_compare() {
 
     let gm1: glam::Mat3 = mm1.into();
     let gmi = gm1.inverse();
+
+    let um1: ultraviolet::Mat3 = mm1.into();
+    let umi: mint::ColumnMatrix3<f32> = um1.inversed().into();
 
     let nm1: nalgebra::Matrix3<f32> = mm1.into();
     let nmi = nm1.try_inverse();
@@ -230,6 +273,7 @@ fn mat3_inv_compare() {
 
     assert_ulps_eq!(cmi.unwrap(), mmi.into());
     assert_ulps_eq!(gmi, mmi.into(), epsilon = 0.0001);
+    assert_ulps_eq!(umi, mmi, epsilon = 0.0005);
 }
 
 fn mat4_inv_compare() {
@@ -240,6 +284,9 @@ fn mat4_inv_compare() {
 
     let gm1: glam::Mat4 = mm1.into();
     let gmi = gm1.inverse();
+
+    let um1: ultraviolet::Mat4 = mm1.into();
+    let umi: mint::ColumnMatrix4<f32> = um1.inversed().into();
 
     let nm1: nalgebra::Matrix4<f32> = mm1.into();
     let nmi = nm1.try_inverse();
@@ -254,6 +301,7 @@ fn mat4_inv_compare() {
 
     assert_ulps_eq!(cmi.unwrap(), mmi.into(), epsilon = 0.0001);
     assert_ulps_eq!(gmi, mmi.into(), epsilon = 0.0001);
+    assert_ulps_eq!(umi, mmi, epsilon = 0.0005);
 }
 
 #[test]

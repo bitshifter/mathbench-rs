@@ -15,6 +15,9 @@ fn vec2_normalize_compare() {
     let gv: glam::Vec2 = mv.into();
     let gvn = gv.normalize();
 
+    let uv: ultraviolet::Vec2 = mv.into();
+    let uvn: mint::Vector2<f32> = uv.normalized().into();
+
     let nv: nalgebra::Vector2<f32> = mv.into();
     let nvn = nv.normalize();
 
@@ -26,6 +29,7 @@ fn vec2_normalize_compare() {
 
     assert_ulps_eq!(cvn, mvn.into(), epsilon = 1e-6);
     assert_ulps_eq!(gvn, mvn.into(), epsilon = 1e-6);
+    assert_ulps_eq!(uvn, mvn, epsilon = 1e-6);
 }
 
 fn vec3_dot_compare() {
@@ -36,6 +40,10 @@ fn vec3_dot_compare() {
     let gv1: glam::Vec3 = mv1.into();
     let gv2: glam::Vec3 = mv2.into();
     let gd = gv1.dot(gv2);
+
+    let uv1: ultraviolet::Vec3 = mv1.into();
+    let uv2: ultraviolet::Vec3 = mv2.into();
+    let ud = uv1.dot(uv2);
 
     let nv1: nalgebra::Vector3<f32> = mv1.into();
     let nv2: nalgebra::Vector3<f32> = mv2.into();
@@ -48,6 +56,7 @@ fn vec3_dot_compare() {
     // use nalgebra as assumed correct answer
     assert_ulps_eq!(cd, nd, epsilon = 1e-6);
     assert_ulps_eq!(gd, nd, epsilon = 1e-6);
+    assert_ulps_eq!(ud, nd, epsilon = 1e-6);
 }
 
 fn vec3_cross_compare() {
@@ -58,6 +67,10 @@ fn vec3_cross_compare() {
     let gv1: glam::Vec3 = mv1.into();
     let gv2: glam::Vec3 = mv2.into();
     let gc = gv1.cross(gv2);
+
+    let uv1: ultraviolet::Vec3 = mv1.into();
+    let uv2: ultraviolet::Vec3 = mv2.into();
+    let uc: mint::Vector3<f32> = uv1.cross(uv2).into();
 
     let nv1: nalgebra::Vector3<f32> = mv1.into();
     let nv2: nalgebra::Vector3<f32> = mv2.into();
@@ -72,6 +85,7 @@ fn vec3_cross_compare() {
 
     assert_ulps_eq!(cc, mc.into(), epsilon = 1e-6);
     assert_ulps_eq!(gc, mc.into(), epsilon = 1e-6);
+    assert_ulps_eq!(uc, mc, epsilon = 1e-6);
 }
 
 fn vec3_normalize_compare() {
@@ -80,6 +94,9 @@ fn vec3_normalize_compare() {
 
     let gv: glam::Vec3 = mv.into();
     let gvn = gv.normalize();
+
+    let uv: ultraviolet::Vec3 = mv.into();
+    let uvn: mint::Vector3<f32> = uv.normalized().into();
 
     let nv: nalgebra::Vector3<f32> = mv.into();
     let nvn = nv.normalize();
@@ -92,6 +109,7 @@ fn vec3_normalize_compare() {
 
     assert_ulps_eq!(cvn, mvn.into(), epsilon = 1e-6);
     assert_ulps_eq!(gvn, mvn.into(), epsilon = 1e-6);
+    assert_ulps_eq!(uvn, mvn, epsilon = 1e-6);
 }
 
 fn vec4_dot_compare() {
@@ -102,6 +120,10 @@ fn vec4_dot_compare() {
     let gv1: glam::Vec4 = mv1.into();
     let gv2: glam::Vec4 = mv2.into();
     let gd = gv1.dot(gv2);
+
+    let uv1: ultraviolet::Vec4 = mv1.into();
+    let uv2: ultraviolet::Vec4 = mv2.into();
+    let ud = uv1.dot(uv2);
 
     let nv1: nalgebra::Vector4<f32> = mv1.into();
     let nv2: nalgebra::Vector4<f32> = mv2.into();
@@ -114,6 +136,7 @@ fn vec4_dot_compare() {
     // use nalgebra as assumed correct answer
     assert_ulps_eq!(cd, nd, epsilon = 1e-6);
     assert_ulps_eq!(gd, nd, epsilon = 1e-6);
+    assert_ulps_eq!(ud, nd, epsilon = 1e-6);
 }
 
 fn vec4_normalize_compare() {
@@ -122,6 +145,9 @@ fn vec4_normalize_compare() {
 
     let gv: glam::Vec4 = mv.into();
     let gvn = gv.normalize();
+
+    let uv: ultraviolet::Vec4 = mv.into();
+    let uvn: mint::Vector4<f32> = uv.normalized().into();
 
     let nv: nalgebra::Vector4<f32> = mv.into();
     let nvn = nv.normalize();
@@ -134,6 +160,7 @@ fn vec4_normalize_compare() {
 
     assert_ulps_eq!(cvn, mvn.into(), epsilon = 1e-6);
     assert_ulps_eq!(gvn, mvn.into(), epsilon = 1e-6);
+    assert_ulps_eq!(uvn, mvn, epsilon = 1e-6);
 }
 
 #[test]

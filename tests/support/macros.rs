@@ -7,7 +7,7 @@ macro_rules! assert_ulps_eq {
         assert!(
             a.approx_eq(b, eps),
             "assertion failed: `(left !== right)` \
-             (left: `{:?}`, right: `{:?}`, expect diff: `{:?}`, real diff: `{:?}`)",
+             (left: `{:#?}`, \nright: `{:#?}`, \nexpect diff: `{:#?}`, \nreal diff: `{:#?}`)",
             *a,
             *b,
             eps,
@@ -21,7 +21,7 @@ macro_rules! assert_ulps_eq {
         assert!(
             a.approx_eq(b, $eps),
             "assertion failed: `(left !== right)` \
-             (left: `{:?}`, right: `{:?}`, expect diff: `{:?}`, real diff: `{:?}`)",
+             (left: `{:#?}`, \nright: `{:#?}`, \nexpect diff: `{:#?}`, \nreal diff: `{:#?}`)",
             *a,
             *b,
             eps,
