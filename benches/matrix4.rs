@@ -258,7 +258,7 @@ fn bench_matrix4_mul_matrix4(c: &mut Criterion) {
 fn bench_matrix4_mul_matrix4_wide(c: &mut Criterion) {
     use std::ops::Mul;
     let mut group = c.benchmark_group("wide matrix4 mul matrix4");
-    for size in [16, 1024].iter() {
+    for size in [16, 256].iter() {
         group.throughput(criterion::Throughput::Elements(*size as u64));
         bench_glam!(group, |b| {
             use glam::Mat4;
@@ -323,7 +323,7 @@ fn bench_matrix4_mul_vector4(c: &mut Criterion) {
 fn bench_matrix4_mul_vector4_wide(c: &mut Criterion) {
     use std::ops::Mul;
     let mut group = c.benchmark_group("wide matrix4 mul vector3");
-    for size in [16, 1024].iter() {
+    for size in [16, 256].iter() {
         group.throughput(criterion::Throughput::Elements(*size as u64));
         bench_glam!(group, |b| {
             use glam::{Mat4, Vec4};

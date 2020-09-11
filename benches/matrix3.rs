@@ -241,7 +241,7 @@ fn bench_matrix3_mul_matrix3(c: &mut Criterion) {
 fn bench_matrix3_mul_matrix3_wide(c: &mut Criterion) {
     use std::ops::Mul;
     let mut group = c.benchmark_group("wide matrix3 mul matrix3");
-    for size in [16, 1024].iter() {
+    for size in [16, 256].iter() {
         group.throughput(criterion::Throughput::Elements(*size as u64));
         bench_glam!(group, |b| {
             use glam::Mat3;
@@ -306,7 +306,7 @@ fn bench_matrix3_mul_vector3(c: &mut Criterion) {
 fn bench_matrix3_mul_vector3_wide(c: &mut Criterion) {
     use std::ops::Mul;
     let mut group = c.benchmark_group("wide matrix3 mul vector3");
-    for size in [16, 1024].iter() {
+    for size in [16, 256].iter() {
         group.throughput(criterion::Throughput::Elements(*size as u64));
         bench_glam!(group, |b| {
             use glam::{Mat3, Vec3};
