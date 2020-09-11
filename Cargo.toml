@@ -6,7 +6,7 @@ edition = "2018"
 
 [features]
 # defaults can be disabled for benchmarks but are required for tests
-default = ["cgmath", "nalgebra"]
+default = ["cgmath", "nalgebra","ultraviolet"]
 
 ultraviolet_f32x4 = ["ultraviolet"]
 ultraviolet_f32x8 = ["ultraviolet"]

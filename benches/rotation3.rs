@@ -176,7 +176,7 @@ fn bench_rotation3_mul_rotation3_wide(c: &mut Criterion) {
 
 fn bench_rotation3_mul_vector3(c: &mut Criterion) {
     use std::ops::Mul;
-    let mut group = c.benchmark_group("rotation3 mul vector3");
+    let mut group = c.benchmark_group("scalar rotation3 mul vector3");
     for size in [1, 100].iter() {
         group.throughput(criterion::Throughput::Elements(*size as u64));
         bench_glam!(group, |b| {
