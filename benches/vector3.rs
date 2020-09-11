@@ -289,7 +289,7 @@ fn bench_vector3_cross_wide(c: &mut Criterion) {
     });
     bench_ultraviolet_f32x8!(group, |b| {
         use ultraviolet::Vec3x8;
-        bench_binop_wide!(b, width => 4, op => cross, ty1 => Vec3x8, ty2 => Vec3x8)
+        bench_binop_wide!(b, width => 8, op => cross, ty1 => Vec3x8, ty2 => Vec3x8)
     });
     bench_nalgebra_f32x8!(group, |b| {
         use nalgebra::Vector3;

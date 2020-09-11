@@ -10,11 +10,11 @@ default = ["cgmath", "nalgebra"]
 
 ultraviolet_f32x4 = ["ultraviolet"]
 ultraviolet_f32x8 = ["ultraviolet"]
-ultraviolet_wide = ["ultraviolet_sse", "ultraviolet_avx"]
+ultraviolet_wide = ["ultraviolet_f32x4", "ultraviolet_f32x8"]
 
 nalgebra_f32x4 = ["nalgebra", "simba"]
 nalgebra_f32x8 = ["nalgebra", "simba"]
-nalgebra_wide = ["nalgebra_sse", "nalgebra_avx"]
+nalgebra_wide = ["nalgebra_f32x4", "nalgebra_f32x8"]
 
 [dependencies]
 mint = "0.5.5"
@@ -116,7 +116,7 @@ name = "vector3"
 harness = false
 
 [profile.bench]
-# codegen-units = 1
+codegen-units = 1
 # lto = true
 
 [workspace]
