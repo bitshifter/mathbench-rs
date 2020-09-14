@@ -400,6 +400,7 @@ pub mod static_math_support {
     use static_math::vector2::V2;
     use static_math::vector3::V3;
     use static_math::vector4::V4;
+    use static_math::quaternion::Quaternion;
 
     fn random_nonzero_f32<R>(rng: &mut R) -> f32
     where
@@ -482,6 +483,16 @@ pub mod static_math_support {
             let c = random_nonzero_f32(rng);
             let d = random_nonzero_f32(rng);
             V4::new([a, b, c, d])
+        }
+    }
+
+    impl BenchValue for Quaternion<f32> {
+        fn random_value<R: Rng>(rng: &mut R) -> Self {
+            let q0 = random_nonzero_f32(rng);
+            let q1 = random_nonzero_f32(rng);
+            let q2 = random_nonzero_f32(rng);
+            let q3 = random_nonzero_f32(rng);
+            Quaternion::new_from(q0, q1, q2, q3)
         }
     }
 }

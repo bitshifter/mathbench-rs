@@ -389,7 +389,7 @@ dependencies = [
  "pathfinder_geometry 0.5.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "rand 0.7.3 (registry+https://github.com/rust-lang/crates.io-index)",
  "rand_pcg 0.2.1 (registry+https://github.com/rust-lang/crates.io-index)",
- "static-math 0.1.6 (registry+https://github.com/rust-lang/crates.io-index)",
+ "static-math 0.1.7 (registry+https://github.com/rust-lang/crates.io-index)",
  "ultraviolet 0.5.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "vek 0.12.0 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
@@ -960,7 +960,7 @@ dependencies = [
 
 [[package]]
 name = "static-math"
-version = "0.1.6"
+version = "0.1.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
  "num 0.3.0 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -1298,7 +1298,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 "checksum serde_derive 1.0.115 (registry+https://github.com/rust-lang/crates.io-index)" = "609feed1d0a73cc36a0182a840a9b37b4a82f0b1150369f0536a9e3f2a31dc48"
 "checksum serde_json 1.0.57 (registry+https://github.com/rust-lang/crates.io-index)" = "164eacbdb13512ec2745fb09d51fd5b22b0d65ed294a1dcf7285a360c80a675c"
 "checksum simba 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)" = "1585d831b5c904e42c4df7a4fcfa03e4b56a8cfa445aff0a04f4effe397ecac9"
-"checksum static-math 0.1.6 (registry+https://github.com/rust-lang/crates.io-index)" = "e9aa308e9c839c7d04aa0fbb7990d4b148d01752797270a28e9c69864df1d654"
+"checksum static-math 0.1.7 (registry+https://github.com/rust-lang/crates.io-index)" = "16d255174fcfd7d03c460e3ab1eaffa7e1fd794ac9c9fc6353438e2dea645ff8"
 "checksum static_assertions 1.1.0 (registry+https://github.com/rust-lang/crates.io-index)" = "a2eb9349b6444b326872e140eb1cf5e7c522154d69e7a0ffb0fb81c06b37543f"
 "checksum syn 1.0.39 (registry+https://github.com/rust-lang/crates.io-index)" = "891d8d6567fe7c7f8835a3a98af4208f3846fba258c1bc3c31d6e506239f11f9"
 "checksum tempfile 3.1.0 (registry+https://github.com/rust-lang/crates.io-index)" = "7a6e24d9338a0a5be79593e2fa15a648add6138caa803e2d5bc782c371732ca9"
