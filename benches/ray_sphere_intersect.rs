@@ -1,10 +1,11 @@
-#![feature(stmt_expr_attributes)]
+#![cfg_attr(feature = "unstable", feature(stmt_expr_attributes))]
 #[path = "support/macros.rs"]
 #[macro_use]
 mod macros;
 
 use criterion::{criterion_group, criterion_main, Criterion, Throughput};
 
+#[cfg(any(feature = "ultraviolet_f32x4", feature = "ultraviolet_f32x8",))]
 macro_rules! bench_intersection_wide_uv {
     ($b: ident, $size:expr, ty => $t: ty, wt => $wt: ident, zero_vec => $zero: expr, max => $max: expr) => {{
         struct TestData {
@@ -27,8 +28,7 @@ macro_rules! bench_intersection_wide_uv {
         let sphere_r_sq = $wt::splat(100.0);
         let miss = $wt::splat($max);
 
-        let do_inner = #[inline(never)]
-        |ray_d: &$t, result: &mut $wt| {
+        let do_inner = never_inline_closure!(|ray_d: &$t, result: &mut $wt| {
             let oc: $t = ray_o - sphere_o;
             let b = oc.dot(*ray_d);
             let c = oc.mag_sq() - sphere_r_sq;
@@ -49,7 +49,7 @@ macro_rules! bench_intersection_wide_uv {
             let t = t1_valid.blend(t1, t);
 
             *result = t;
-        };
+        });
         $b.iter(|| {
             for (ray_d, result) in data.ray_d.iter().zip(&mut data.result) {
                 do_inner(ray_d, result);
@@ -58,6 +58,7 @@ macro_rules! bench_intersection_wide_uv {
     }};
 }
 
+#[cfg(any(feature = "nalgebra_f32x4", feature = "nalgebra_f32x8",))]
 macro_rules! bench_intersection_wide_na {
     ($b: ident, $size:expr, ty => $t: ty, wt => $wt: ident, zero_vec => $zero: expr, max => $max: expr) => {{
         struct TestData {
@@ -80,8 +81,7 @@ macro_rules! bench_intersection_wide_na {
         let sphere_r_sq = $wt::splat(100.0);
         let miss = $wt::splat($max);
 
-        let do_inner = #[inline(never)]
-        |ray_d: &$t, result: &mut $wt| {
+        let do_inner = never_inline_closure!(|ray_d: &$t, result: &mut $wt| {
             let oc: $t = ray_o - sphere_o;
             let b = oc.dot(ray_d);
             let c = oc.norm_squared() - sphere_r_sq;
@@ -102,7 +102,7 @@ macro_rules! bench_intersection_wide_na {
             let t = t1_valid.select(t1.0, t);
 
             *result = simba::simd::Simd(t);
-        };
+        });
         $b.iter(|| {
             for (ray_d, result) in data.ray_d.iter().zip(&mut data.result) {
                 do_inner(ray_d, result);
@@ -132,8 +132,7 @@ macro_rules! bench_intersection_scalar {
         let sphere_r_sq = 100.0;
         let ray_o = <$t>::new(0.0, 0.0, -11.0);
 
-        let do_inner = #[inline(never)]
-        |ray_d: &$t, result: &mut f32| {
+        let do_inner = never_inline_closure!(|ray_d: &$t, result: &mut f32| {
             let oc: $t = ray_o - sphere_o;
             let b = oc.dot($param!(ray_d));
             let c = oc.$mag_sq() - sphere_r_sq;
@@ -156,7 +155,7 @@ macro_rules! bench_intersection_scalar {
             } else {
                 f32::MAX
             };
-        };
+        });
 
         $b.iter(|| {
             for (ray_d, result) in data.ray_d.iter().zip(&mut data.result) {

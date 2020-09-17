@@ -16,6 +16,12 @@ nalgebra_f32x4 = ["nalgebra", "simba"]
 nalgebra_f32x8 = ["nalgebra", "simba"]
 nalgebra_wide = ["nalgebra_f32x4", "nalgebra_f32x8"]
 
+wide = ["ultraviolet_wide", "nalgebra_wide"]
+
+all = ["wide", "euclid", "vek", "pathfinder_geometry", "static-math"]
+
+unstable = []
+
 [dependencies]
 mint = "0.5.5"
 rand = "0.7.2"

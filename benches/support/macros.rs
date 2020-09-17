@@ -398,3 +398,23 @@ macro_rules! bench_binop_wide {
         bench_binop_wide!($b, &16, width => $width, op => $binop, ty1 => $ty1, ty2 => $ty2, param => by_value)
     }};
 }
+
+// necessary because this macro isn't used in every benchmark
+#[allow(unused_macros)]
+macro_rules! never_inline_closure {
+    (
+        |$($arg:ident: $argt:ty),*| $body:tt
+     ) => {{
+        #[cfg(not(feature = "unstable"))]
+        let closure = |$($arg: $argt),*| {
+            $body
+        };
+
+        #[cfg(feature = "unstable")]
+        let closure = #[inline(never)] |$($arg: $argt),*| {
+            $body
+        };
+
+        closure
+    }};
+}
