@@ -216,7 +216,7 @@ fn bench_vector3_dot_wide(c: &mut Criterion) {
     let mut group = c.benchmark_group("wide vector3 dot");
     bench_glam!(group, |b| {
         use glam::Vec3A;
-        bench_binop_wide!(b, op => dot, ty1 => Vec3A, ty2 => Vec3A)
+        bench_binop_wide!(b, width => 1, op => dot, ty1 => Vec3A, ty2 => Vec3A)
     });
     bench_ultraviolet_f32x4!(group, |b| {
         use ultraviolet::Vec3x4;
@@ -276,7 +276,7 @@ fn bench_vector3_cross_wide(c: &mut Criterion) {
     let mut group = c.benchmark_group("wide vector3 cross");
     bench_glam!(group, |b| {
         use glam::Vec3A;
-        bench_binop_wide!(b, op => dot, ty1 => Vec3A, ty2 => Vec3A)
+        bench_binop_wide!(b, width => 1, op => cross, ty1 => Vec3A, ty2 => Vec3A)
     });
     bench_ultraviolet_f32x4!(group, |b| {
         use ultraviolet::Vec3x4;

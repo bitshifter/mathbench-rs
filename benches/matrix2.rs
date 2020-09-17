@@ -161,7 +161,7 @@ fn bench_matrix2_determinant_wide(c: &mut Criterion) {
     let mut group = c.benchmark_group("wide matrix2 determinant");
     bench_glam!(group, |b| {
         use glam::Mat2;
-        bench_unop!(b, op => determinant, ty => Mat2)
+        bench_unop_wide!(b, op => determinant, ty => Mat2)
     });
     bench_ultraviolet_f32x4!(group, |b| {
         use ultraviolet::Mat2x4;
@@ -262,7 +262,7 @@ fn bench_matrix2_mul_matrix2_wide(c: &mut Criterion) {
         group.throughput(criterion::Throughput::Elements(*size as u64));
         bench_glam!(group, |b| {
             use glam::Mat2;
-            bench_binop_wide!(b, size, op => mul, ty1 => Mat2, ty2 => Mat2)
+            bench_binop_wide!(b, size, width => 1, op => mul, ty1 => Mat2, ty2 => Mat2)
         });
         bench_ultraviolet_f32x4!(group, |b| {
             use ultraviolet::Mat2x4;
@@ -331,7 +331,7 @@ fn bench_matrix2_mul_vector2_wide(c: &mut Criterion) {
         group.throughput(criterion::Throughput::Elements(*size as u64));
         bench_glam!(group, |b| {
             use glam::{Mat2, Vec2};
-            bench_binop_wide!(b, size, op => mul, ty1 => Mat2, ty2 => Vec2)
+            bench_binop_wide!(b, size, width => 1, op => mul, ty1 => Mat2, ty2 => Vec2)
         });
         bench_ultraviolet_f32x4!(group, |b| {
             use ultraviolet::{Mat2x4, Vec2x4};

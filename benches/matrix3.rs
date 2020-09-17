@@ -245,7 +245,7 @@ fn bench_matrix3_mul_matrix3_wide(c: &mut Criterion) {
         group.throughput(criterion::Throughput::Elements(*size as u64));
         bench_glam!(group, |b| {
             use glam::Mat3;
-            bench_binop_wide!(b, size, op => mul, ty1 => Mat3, ty2 => Mat3)
+            bench_binop_wide!(b, size, width => 1, op => mul, ty1 => Mat3, ty2 => Mat3)
         });
         bench_ultraviolet_f32x4!(group, |b| {
             use ultraviolet::Mat3x4;
@@ -310,7 +310,7 @@ fn bench_matrix3_mul_vector3_wide(c: &mut Criterion) {
         group.throughput(criterion::Throughput::Elements(*size as u64));
         bench_glam!(group, |b| {
             use glam::{Mat3, Vec3};
-            bench_binop_wide!(b, size, op => mul, ty1 => Mat3, ty2 => Vec3)
+            bench_binop_wide!(b, size, width => 1, op => mul, ty1 => Mat3, ty2 => Vec3)
         });
         bench_ultraviolet_f32x4!(group, |b| {
             use ultraviolet::{Mat3x4, Vec3x4};

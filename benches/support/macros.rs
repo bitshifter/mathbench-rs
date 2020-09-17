@@ -355,11 +355,8 @@ macro_rules! bench_binop {
 #[macro_export]
 macro_rules! bench_binop_wide {
     ($b: ident, $size:expr, width => $width: expr, op => $binop: ident, ty1 => $t1:ty, ty2 => $t2:ty, param => $param:tt) => {{
-        let size = if *$size == 1usize {
-            16
-        } else {
-            *$size
-        };
+        assert!(*$size >= 16);
+        let size = *$size;
 
         let batch_size = (size as f32 / $width as f32).ceil() as usize;
         const SIZE: usize = 1 << 13;
@@ -391,31 +388,13 @@ macro_rules! bench_binop_wide {
             }
         })
     }};
-    ($b: ident, $size:expr, op => $binop: ident, ty1 => $t1:ty, ty2 => $t2:ty, param => $param:tt) => {{
-        bench_binop_wide!($b, $size, width => 1, op => $binop, ty1 => $t1, ty2 => $t2, param => $param)
-    }};
-    ($b: ident, op => $binop: ident, ty1 => $t1:ty, ty2 => $t2:ty, param => $param:tt) => {{
-        bench_binop_wide!($b, &1, width => 1, op => $binop, ty1 => $t1, ty2 => $t2, param => $param)
-    }};
     ($b: ident, width => $width: expr, op => $binop: ident, ty1 => $t1:ty, ty2 => $t2:ty, param => $param:tt) => {{
-        bench_binop_wide!($b, &1, width => $width, op => $binop, ty1 => $t1, ty2 => $t2, param => $param)
+        bench_binop_wide!($b, &16, width => $width, op => $binop, ty1 => $t1, ty2 => $t2, param => $param)
     }};
     ($b: ident, $size:expr, width => $width: expr, op => $binop: ident, ty1 => $ty1:ty, ty2 => $ty2:ty) => {{
         bench_binop_wide!($b, $size, width => $width, op => $binop, ty1 => $ty1, ty2 => $ty2, param => by_value)
     }};
-    ($b: ident, $size: expr, op => $binop: ident, ty1 => $ty1:ty, ty2 => $ty2:ty) => {{
-        bench_binop_wide!($b, $size, width => 1, op => $binop, ty1 => $ty1, ty2 => $ty2, param => by_value)
-    }};
     ($b: ident, width => $width: expr, op => $binop: ident, ty1 => $ty1:ty, ty2 => $ty2:ty) => {{
-        bench_binop_wide!($b, &1, width => $width, op => $binop, ty1 => $ty1, ty2 => $ty2, param => by_value)
-    }};
-    ($b: ident, op => $binop: ident, ty1 => $ty1:ty, ty2 => $ty2:ty) => {{
-        bench_binop_wide!($b, op => $binop, ty1 => $ty1, ty2 => $ty2, param => by_value)
-    }};
-    ($b: ident, $size:expr, op => $binop: ident, ty => $ty:ty, param => $param:tt) => {{
-        bench_binop_wide!($b, $size, op => $binop, ty1 => $ty, ty2 => $ty, param => $param)
-    }};
-    ($b: ident, op => $binop: ident, ty => $ty:ty, param => $param:tt) => {{
-        bench_binop_wide!($b, op => $binop, ty1 => $ty, ty2 => $ty, param => $param)
+        bench_binop_wide!($b, &16, width => $width, op => $binop, ty1 => $ty1, ty2 => $ty2, param => by_value)
     }};
 }

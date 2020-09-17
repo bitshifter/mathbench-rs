@@ -262,7 +262,7 @@ fn bench_matrix4_mul_matrix4_wide(c: &mut Criterion) {
         group.throughput(criterion::Throughput::Elements(*size as u64));
         bench_glam!(group, |b| {
             use glam::Mat4;
-            bench_binop_wide!(b, size, op => mul, ty1 => Mat4, ty2 => Mat4)
+            bench_binop_wide!(b, size, width => 1, op => mul, ty1 => Mat4, ty2 => Mat4)
         });
         bench_ultraviolet_f32x4!(group, |b| {
             use ultraviolet::Mat4x4;
@@ -327,7 +327,7 @@ fn bench_matrix4_mul_vector4_wide(c: &mut Criterion) {
         group.throughput(criterion::Throughput::Elements(*size as u64));
         bench_glam!(group, |b| {
             use glam::{Mat4, Vec4};
-            bench_binop_wide!(b, size, op => mul, ty1 => Mat4, ty2 => Vec4)
+            bench_binop_wide!(b, size, width => 1, op => mul, ty1 => Mat4, ty2 => Vec4)
         });
         bench_ultraviolet_f32x4!(group, |b| {
             use ultraviolet::{Mat4x4, Vec4x4};

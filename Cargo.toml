@@ -60,10 +60,7 @@ version = "0.1.6"
 optional = true
 
 [dependencies.ultraviolet]
-# version = "0.5.1"
-git = "https://github.com/termhn/ultraviolet"
-branch = "master"
-features = ["mint"]
+version = "0.6.1"
 optional = true
 
 [dev-dependencies]
