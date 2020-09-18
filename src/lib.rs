@@ -308,65 +308,66 @@ pub mod nalgebra_support {
     impl_bench_value!(nalgebra::Transform2<f32>, random_na_transform2);
     impl_bench_value!(nalgebra::Transform3<f32>, random_na_transform3);
     impl_bench_value!(nalgebra::UnitQuaternion<f32>, random_na_quat);
+    impl_bench_value!(nalgebra::UnitComplex<f32>, random_na_cplx);
     impl_bench_value!(nalgebra::Vector2<f32>, random_na_vec2);
     impl_bench_value!(nalgebra::Vector3<f32>, random_na_vec3);
     impl_bench_value!(nalgebra::Vector4<f32>, random_na_vec4);
+    impl_bench_value!(nalgebra::Isometry2<f32>, random_na_iso2);
+    impl_bench_value!(nalgebra::Isometry3<f32>, random_na_iso3);
+    impl_bench_value!(nalgebra::Vector3<f64>, random_na_dvec3);
 
     // nalgebra random functions --------------------------------------------------
-    fn random_na_quat<R>(rng: &mut R) -> nalgebra::UnitQuaternion<f32>
-    where
-        R: Rng,
-    {
+    fn random_na_cplx<R: Rng>(rng: &mut R) -> nalgebra::UnitComplex<f32> {
+        let angle = crate::glam_support::random_angle_radians(rng);
+        nalgebra::UnitComplex::new(angle)
+    }
+
+    fn random_na_quat<R: Rng>(rng: &mut R) -> nalgebra::UnitQuaternion<f32> {
         nalgebra::UnitQuaternion::from_quaternion(random_mint_quat(rng).into())
     }
 
-    fn random_na_transform2<R>(rng: &mut R) -> nalgebra::Transform2<f32>
-    where
-        R: Rng,
-    {
+    fn random_na_iso2<R: Rng>(rng: &mut R) -> nalgebra::Isometry2<f32> {
+        let rot = nalgebra::UnitComplex::random_value(rng);
+        let tra = nalgebra::Vector2::random_value(rng);
+        nalgebra::Isometry2::from_parts(tra.into(), rot)
+    }
+
+    fn random_na_iso3<R: Rng>(rng: &mut R) -> nalgebra::Isometry3<f32> {
+        let rot = nalgebra::UnitQuaternion::random_value(rng);
+        let tra = nalgebra::Vector3::random_value(rng);
+        nalgebra::Isometry3::from_parts(tra.into(), rot)
+    }
+
+    fn random_na_transform2<R: Rng>(rng: &mut R) -> nalgebra::Transform2<f32> {
         nalgebra::Transform2::from_matrix_unchecked(random_mint_homogeneous_mat3(rng).into())
     }
 
-    fn random_na_transform3<R>(rng: &mut R) -> nalgebra::Transform3<f32>
-    where
-        R: Rng,
-    {
+    fn random_na_transform3<R: Rng>(rng: &mut R) -> nalgebra::Transform3<f32> {
         nalgebra::Transform3::from_matrix_unchecked(random_mint_homogeneous_mat4(rng).into())
     }
 
-    fn random_na_point2<R>(rng: &mut R) -> nalgebra::Point2<f32>
-    where
-        R: Rng,
-    {
+    fn random_na_point2<R: Rng>(rng: &mut R) -> nalgebra::Point2<f32> {
         rng.gen::<[f32; 2]>().into()
     }
 
-    fn random_na_point3<R>(rng: &mut R) -> nalgebra::Point3<f32>
-    where
-        R: Rng,
-    {
+    fn random_na_point3<R: Rng>(rng: &mut R) -> nalgebra::Point3<f32> {
         rng.gen::<[f32; 3]>().into()
     }
 
-    fn random_na_vec2<R>(rng: &mut R) -> nalgebra::Vector2<f32>
-    where
-        R: Rng,
-    {
+    fn random_na_vec2<R: Rng>(rng: &mut R) -> nalgebra::Vector2<f32> {
         rng.gen::<[f32; 2]>().into()
     }
 
-    fn random_na_vec3<R>(rng: &mut R) -> nalgebra::Vector3<f32>
-    where
-        R: Rng,
-    {
+    fn random_na_vec3<R: Rng>(rng: &mut R) -> nalgebra::Vector3<f32> {
         rng.gen::<[f32; 3]>().into()
     }
 
-    fn random_na_vec4<R>(rng: &mut R) -> nalgebra::Vector4<f32>
-    where
-        R: Rng,
-    {
+    fn random_na_vec4<R: Rng>(rng: &mut R) -> nalgebra::Vector4<f32> {
         rng.gen::<[f32; 4]>().into()
+    }
+
+    fn random_na_dvec3<R: Rng>(rng: &mut R) -> nalgebra::Vector3<f64> {
+        rng.gen::<[f64; 3]>().into()
     }
 
     pub fn nalgebra_mat4_det(m: &nalgebra::Matrix4<f32>) -> f32 {
@@ -386,6 +387,350 @@ pub mod nalgebra_support {
         rhs: &nalgebra::Matrix4<f32>,
     ) -> nalgebra::Matrix4<f32> {
         lhs * rhs
+    }
+}
+
+#[cfg(feature = "simba")]
+pub mod nalgebra_support_wide {
+    use super::mint_support::*;
+    use super::BenchValue;
+    use rand::Rng;
+    use simba::simd::{f32x16, f32x4, f32x8, f64x2, f64x4, f64x8};
+    impl_bench_value!(nalgebra::Point2<f32x4>, random_na_point2x4);
+    impl_bench_value!(nalgebra::Point3<f32x4>, random_na_point3x4);
+    impl_bench_value!(nalgebra::Point2<f32x8>, random_na_point2x8);
+    impl_bench_value!(nalgebra::Point3<f32x8>, random_na_point3x8);
+    impl_bench_value!(nalgebra::Point2<f32x16>, random_na_point2x16);
+    impl_bench_value!(nalgebra::Point3<f32x16>, random_na_point3x16);
+    impl_bench_value!(nalgebra::UnitQuaternion<f32x4>, random_na_quat4);
+    impl_bench_value!(nalgebra::UnitQuaternion<f32x8>, random_na_quat8);
+    impl_bench_value!(nalgebra::UnitQuaternion<f32x16>, random_na_quat16);
+    impl_bench_value!(nalgebra::UnitComplex<f32x4>, random_na_cplx4);
+    impl_bench_value!(nalgebra::UnitComplex<f32x8>, random_na_cplx8);
+    impl_bench_value!(nalgebra::UnitComplex<f32x16>, random_na_cplx16);
+    impl_bench_value!(nalgebra::Vector2<f32x4>, random_na_vec2x4);
+    impl_bench_value!(nalgebra::Vector3<f32x4>, random_na_vec3x4);
+    impl_bench_value!(nalgebra::Vector4<f32x4>, random_na_vec4x4);
+    impl_bench_value!(nalgebra::Vector2<f32x8>, random_na_vec2x8);
+    impl_bench_value!(nalgebra::Vector3<f32x8>, random_na_vec3x8);
+    impl_bench_value!(nalgebra::Vector4<f32x8>, random_na_vec4x8);
+    impl_bench_value!(nalgebra::Vector2<f32x16>, random_na_vec2x16);
+    impl_bench_value!(nalgebra::Vector3<f32x16>, random_na_vec3x16);
+    impl_bench_value!(nalgebra::Vector4<f32x16>, random_na_vec4x16);
+    impl_bench_value!(nalgebra::Vector2<f64x2>, random_na_dvec2x2);
+    impl_bench_value!(nalgebra::Vector2<f64x4>, random_na_dvec2x4);
+    impl_bench_value!(nalgebra::Vector2<f64x8>, random_na_dvec2x8);
+    impl_bench_value!(nalgebra::Vector3<f64x2>, random_na_dvec3x2);
+    impl_bench_value!(nalgebra::Vector3<f64x4>, random_na_dvec3x4);
+    impl_bench_value!(nalgebra::Vector3<f64x8>, random_na_dvec3x8);
+    impl_bench_value!(nalgebra::Matrix2<f32x4>, random_na_mat2x4);
+    impl_bench_value!(nalgebra::Matrix3<f32x4>, random_na_mat3x4);
+    impl_bench_value!(nalgebra::Matrix4<f32x4>, random_na_mat4x4);
+    impl_bench_value!(nalgebra::Matrix2<f32x8>, random_na_mat2x8);
+    impl_bench_value!(nalgebra::Matrix3<f32x8>, random_na_mat3x8);
+    impl_bench_value!(nalgebra::Matrix4<f32x8>, random_na_mat4x8);
+    impl_bench_value!(nalgebra::Matrix2<f32x16>, random_na_mat2x16);
+    impl_bench_value!(nalgebra::Matrix3<f32x16>, random_na_mat3x16);
+    impl_bench_value!(nalgebra::Matrix4<f32x16>, random_na_mat4x16);
+    impl_bench_value!(nalgebra::Isometry2<f32x4>, random_na_iso2x4);
+    impl_bench_value!(nalgebra::Isometry3<f32x4>, random_na_iso3x4);
+    impl_bench_value!(nalgebra::Isometry2<f32x8>, random_na_iso2x8);
+    impl_bench_value!(nalgebra::Isometry3<f32x8>, random_na_iso3x8);
+    impl_bench_value!(nalgebra::Isometry2<f32x16>, random_na_iso2x16);
+    impl_bench_value!(nalgebra::Isometry3<f32x16>, random_na_iso3x16);
+
+    // nalgebra random functions --------------------------------------------------
+    fn random_na_cplx4<R: Rng>(rng: &mut R) -> nalgebra::UnitComplex<f32x4> {
+        [
+            nalgebra::UnitComplex::new(crate::glam_support::random_angle_radians(rng)),
+            nalgebra::UnitComplex::new(crate::glam_support::random_angle_radians(rng)),
+            nalgebra::UnitComplex::new(crate::glam_support::random_angle_radians(rng)),
+            nalgebra::UnitComplex::new(crate::glam_support::random_angle_radians(rng)),
+        ]
+        .into()
+    }
+
+    fn random_na_cplx8<R: Rng>(rng: &mut R) -> nalgebra::UnitComplex<f32x8> {
+        [
+            nalgebra::UnitComplex::new(crate::glam_support::random_angle_radians(rng)),
+            nalgebra::UnitComplex::new(crate::glam_support::random_angle_radians(rng)),
+            nalgebra::UnitComplex::new(crate::glam_support::random_angle_radians(rng)),
+            nalgebra::UnitComplex::new(crate::glam_support::random_angle_radians(rng)),
+            nalgebra::UnitComplex::new(crate::glam_support::random_angle_radians(rng)),
+            nalgebra::UnitComplex::new(crate::glam_support::random_angle_radians(rng)),
+            nalgebra::UnitComplex::new(crate::glam_support::random_angle_radians(rng)),
+            nalgebra::UnitComplex::new(crate::glam_support::random_angle_radians(rng)),
+        ]
+        .into()
+    }
+
+    fn random_na_cplx16<R: Rng>(rng: &mut R) -> nalgebra::UnitComplex<f32x16> {
+        [
+            nalgebra::UnitComplex::new(crate::glam_support::random_angle_radians(rng)),
+            nalgebra::UnitComplex::new(crate::glam_support::random_angle_radians(rng)),
+            nalgebra::UnitComplex::new(crate::glam_support::random_angle_radians(rng)),
+            nalgebra::UnitComplex::new(crate::glam_support::random_angle_radians(rng)),
+            nalgebra::UnitComplex::new(crate::glam_support::random_angle_radians(rng)),
+            nalgebra::UnitComplex::new(crate::glam_support::random_angle_radians(rng)),
+            nalgebra::UnitComplex::new(crate::glam_support::random_angle_radians(rng)),
+            nalgebra::UnitComplex::new(crate::glam_support::random_angle_radians(rng)),
+            nalgebra::UnitComplex::new(crate::glam_support::random_angle_radians(rng)),
+            nalgebra::UnitComplex::new(crate::glam_support::random_angle_radians(rng)),
+            nalgebra::UnitComplex::new(crate::glam_support::random_angle_radians(rng)),
+            nalgebra::UnitComplex::new(crate::glam_support::random_angle_radians(rng)),
+            nalgebra::UnitComplex::new(crate::glam_support::random_angle_radians(rng)),
+            nalgebra::UnitComplex::new(crate::glam_support::random_angle_radians(rng)),
+            nalgebra::UnitComplex::new(crate::glam_support::random_angle_radians(rng)),
+            nalgebra::UnitComplex::new(crate::glam_support::random_angle_radians(rng)),
+        ]
+        .into()
+    }
+
+    fn random_na_quat4<R: Rng>(rng: &mut R) -> nalgebra::UnitQuaternion<f32x4> {
+        [
+            nalgebra::UnitQuaternion::from_quaternion(random_mint_quat(rng).into()),
+            nalgebra::UnitQuaternion::from_quaternion(random_mint_quat(rng).into()),
+            nalgebra::UnitQuaternion::from_quaternion(random_mint_quat(rng).into()),
+            nalgebra::UnitQuaternion::from_quaternion(random_mint_quat(rng).into()),
+        ]
+        .into()
+    }
+
+    fn random_na_quat8<R: Rng>(rng: &mut R) -> nalgebra::UnitQuaternion<f32x8> {
+        [
+            nalgebra::UnitQuaternion::from_quaternion(random_mint_quat(rng).into()),
+            nalgebra::UnitQuaternion::from_quaternion(random_mint_quat(rng).into()),
+            nalgebra::UnitQuaternion::from_quaternion(random_mint_quat(rng).into()),
+            nalgebra::UnitQuaternion::from_quaternion(random_mint_quat(rng).into()),
+            nalgebra::UnitQuaternion::from_quaternion(random_mint_quat(rng).into()),
+            nalgebra::UnitQuaternion::from_quaternion(random_mint_quat(rng).into()),
+            nalgebra::UnitQuaternion::from_quaternion(random_mint_quat(rng).into()),
+            nalgebra::UnitQuaternion::from_quaternion(random_mint_quat(rng).into()),
+        ]
+        .into()
+    }
+
+    fn random_na_quat16<R: Rng>(rng: &mut R) -> nalgebra::UnitQuaternion<f32x16> {
+        [
+            nalgebra::UnitQuaternion::from_quaternion(random_mint_quat(rng).into()),
+            nalgebra::UnitQuaternion::from_quaternion(random_mint_quat(rng).into()),
+            nalgebra::UnitQuaternion::from_quaternion(random_mint_quat(rng).into()),
+            nalgebra::UnitQuaternion::from_quaternion(random_mint_quat(rng).into()),
+            nalgebra::UnitQuaternion::from_quaternion(random_mint_quat(rng).into()),
+            nalgebra::UnitQuaternion::from_quaternion(random_mint_quat(rng).into()),
+            nalgebra::UnitQuaternion::from_quaternion(random_mint_quat(rng).into()),
+            nalgebra::UnitQuaternion::from_quaternion(random_mint_quat(rng).into()),
+            nalgebra::UnitQuaternion::from_quaternion(random_mint_quat(rng).into()),
+            nalgebra::UnitQuaternion::from_quaternion(random_mint_quat(rng).into()),
+            nalgebra::UnitQuaternion::from_quaternion(random_mint_quat(rng).into()),
+            nalgebra::UnitQuaternion::from_quaternion(random_mint_quat(rng).into()),
+            nalgebra::UnitQuaternion::from_quaternion(random_mint_quat(rng).into()),
+            nalgebra::UnitQuaternion::from_quaternion(random_mint_quat(rng).into()),
+            nalgebra::UnitQuaternion::from_quaternion(random_mint_quat(rng).into()),
+            nalgebra::UnitQuaternion::from_quaternion(random_mint_quat(rng).into()),
+        ]
+        .into()
+    }
+
+    fn random_na_iso2x4<R: Rng>(rng: &mut R) -> nalgebra::Isometry2<f32x4> {
+        let rot = nalgebra::UnitComplex::random_value(rng);
+        let tra = nalgebra::Vector2::random_value(rng);
+        nalgebra::Isometry2::from_parts(tra.into(), rot)
+    }
+
+    fn random_na_iso2x8<R: Rng>(rng: &mut R) -> nalgebra::Isometry2<f32x8> {
+        let rot = nalgebra::UnitComplex::random_value(rng);
+        let tra = nalgebra::Vector2::random_value(rng);
+        nalgebra::Isometry2::from_parts(tra.into(), rot)
+    }
+
+    fn random_na_iso2x16<R>(rng: &mut R) -> nalgebra::Isometry2<f32x16>
+    where
+        R: Rng,
+    {
+        let rot = nalgebra::UnitComplex::random_value(rng);
+        let tra = nalgebra::Vector2::random_value(rng);
+        nalgebra::Isometry2::from_parts(tra.into(), rot)
+    }
+
+    fn random_na_iso3x4<R: Rng>(rng: &mut R) -> nalgebra::Isometry3<f32x4> {
+        let rot = nalgebra::UnitQuaternion::random_value(rng);
+        let tra = nalgebra::Vector3::random_value(rng);
+        nalgebra::Isometry3::from_parts(tra.into(), rot)
+    }
+
+    fn random_na_iso3x8<R: Rng>(rng: &mut R) -> nalgebra::Isometry3<f32x8> {
+        let rot = nalgebra::UnitQuaternion::random_value(rng);
+        let tra = nalgebra::Vector3::random_value(rng);
+        nalgebra::Isometry3::from_parts(tra.into(), rot)
+    }
+
+    fn random_na_iso3x16<R: Rng>(rng: &mut R) -> nalgebra::Isometry3<f32x16> {
+        let rot = nalgebra::UnitQuaternion::random_value(rng);
+        let tra = nalgebra::Vector3::random_value(rng);
+        nalgebra::Isometry3::from_parts(tra.into(), rot)
+    }
+
+    fn random_na_point2x4<R: Rng>(rng: &mut R) -> nalgebra::Point2<f32x4> {
+        random_na_vec2x4(rng).into()
+    }
+
+    fn random_na_point3x4<R: Rng>(rng: &mut R) -> nalgebra::Point3<f32x4> {
+        random_na_vec3x4(rng).into()
+    }
+
+    fn random_na_point2x8<R: Rng>(rng: &mut R) -> nalgebra::Point2<f32x8> {
+        random_na_vec2x8(rng).into()
+    }
+
+    fn random_na_point3x8<R: Rng>(rng: &mut R) -> nalgebra::Point3<f32x8> {
+        random_na_vec3x8(rng).into()
+    }
+
+    fn random_na_point2x16<R: Rng>(rng: &mut R) -> nalgebra::Point2<f32x16> {
+        random_na_vec2x16(rng).into()
+    }
+
+    fn random_na_point3x16<R: Rng>(rng: &mut R) -> nalgebra::Point3<f32x16> {
+        random_na_vec3x16(rng).into()
+    }
+
+    fn random_na_vec2x4<R: Rng>(rng: &mut R) -> nalgebra::Vector2<f32x4> {
+        [random_f32x4(rng), random_f32x4(rng)].into()
+    }
+
+    fn random_na_vec3x4<R: Rng>(rng: &mut R) -> nalgebra::Vector3<f32x4> {
+        [random_f32x4(rng), random_f32x4(rng), random_f32x4(rng)].into()
+    }
+
+    fn random_na_vec4x4<R: Rng>(rng: &mut R) -> nalgebra::Vector4<f32x4> {
+        [
+            random_f32x4(rng),
+            random_f32x4(rng),
+            random_f32x4(rng),
+            random_f32x4(rng),
+        ]
+        .into()
+    }
+
+    fn random_na_vec2x8<R: Rng>(rng: &mut R) -> nalgebra::Vector2<f32x8> {
+        [random_f32x8(rng), random_f32x8(rng)].into()
+    }
+
+    fn random_na_vec3x8<R: Rng>(rng: &mut R) -> nalgebra::Vector3<f32x8> {
+        [random_f32x8(rng), random_f32x8(rng), random_f32x8(rng)].into()
+    }
+
+    fn random_na_vec4x8<R: Rng>(rng: &mut R) -> nalgebra::Vector4<f32x8> {
+        [
+            random_f32x8(rng),
+            random_f32x8(rng),
+            random_f32x8(rng),
+            random_f32x8(rng),
+        ]
+        .into()
+    }
+
+    fn random_na_vec2x16<R: Rng>(rng: &mut R) -> nalgebra::Vector2<f32x16> {
+        [random_f32x16(rng), random_f32x16(rng)].into()
+    }
+
+    fn random_na_vec3x16<R: Rng>(rng: &mut R) -> nalgebra::Vector3<f32x16> {
+        [random_f32x16(rng), random_f32x16(rng), random_f32x16(rng)].into()
+    }
+
+    fn random_na_vec4x16<R: Rng>(rng: &mut R) -> nalgebra::Vector4<f32x16> {
+        [
+            random_f32x16(rng),
+            random_f32x16(rng),
+            random_f32x16(rng),
+            random_f32x16(rng),
+        ]
+        .into()
+    }
+
+    fn random_na_dvec2x2<R: Rng>(rng: &mut R) -> nalgebra::Vector2<f64x2> {
+        [random_f64x2(rng), random_f64x2(rng)].into()
+    }
+
+    fn random_na_dvec2x4<R: Rng>(rng: &mut R) -> nalgebra::Vector2<f64x4> {
+        [random_f64x4(rng), random_f64x4(rng)].into()
+    }
+
+    fn random_na_dvec2x8<R: Rng>(rng: &mut R) -> nalgebra::Vector2<f64x8> {
+        [random_f64x8(rng), random_f64x8(rng)].into()
+    }
+
+    fn random_na_dvec3x2<R: Rng>(rng: &mut R) -> nalgebra::Vector3<f64x2> {
+        [random_f64x2(rng), random_f64x2(rng), random_f64x2(rng)].into()
+    }
+
+    fn random_na_dvec3x4<R: Rng>(rng: &mut R) -> nalgebra::Vector3<f64x4> {
+        [random_f64x4(rng), random_f64x4(rng), random_f64x4(rng)].into()
+    }
+
+    fn random_na_dvec3x8<R: Rng>(rng: &mut R) -> nalgebra::Vector3<f64x8> {
+        [random_f64x8(rng), random_f64x8(rng), random_f64x8(rng)].into()
+    }
+
+    fn random_na_mat2x4<R: Rng>(rng: &mut R) -> nalgebra::Matrix2<f32x4> {
+        nalgebra::Matrix2::from_fn(|_, _| random_f32x4(rng))
+    }
+
+    fn random_na_mat3x4<R: Rng>(rng: &mut R) -> nalgebra::Matrix3<f32x4> {
+        nalgebra::Matrix3::from_fn(|_, _| random_f32x4(rng))
+    }
+
+    fn random_na_mat4x4<R: Rng>(rng: &mut R) -> nalgebra::Matrix4<f32x4> {
+        nalgebra::Matrix4::from_fn(|_, _| random_f32x4(rng))
+    }
+
+    fn random_na_mat2x8<R: Rng>(rng: &mut R) -> nalgebra::Matrix2<f32x8> {
+        nalgebra::Matrix2::from_fn(|_, _| random_f32x8(rng))
+    }
+
+    fn random_na_mat3x8<R: Rng>(rng: &mut R) -> nalgebra::Matrix3<f32x8> {
+        nalgebra::Matrix3::from_fn(|_, _| random_f32x8(rng))
+    }
+
+    fn random_na_mat4x8<R: Rng>(rng: &mut R) -> nalgebra::Matrix4<f32x8> {
+        nalgebra::Matrix4::from_fn(|_, _| random_f32x8(rng))
+    }
+
+    fn random_na_mat2x16<R: Rng>(rng: &mut R) -> nalgebra::Matrix2<f32x16> {
+        nalgebra::Matrix2::from_fn(|_, _| random_f32x16(rng))
+    }
+
+    fn random_na_mat3x16<R: Rng>(rng: &mut R) -> nalgebra::Matrix3<f32x16> {
+        nalgebra::Matrix3::from_fn(|_, _| random_f32x16(rng))
+    }
+
+    fn random_na_mat4x16<R: Rng>(rng: &mut R) -> nalgebra::Matrix4<f32x16> {
+        nalgebra::Matrix4::from_fn(|_, _| random_f32x16(rng))
+    }
+
+    fn random_f32x4<R: Rng>(rng: &mut R) -> f32x4 {
+        rng.gen::<[f32; 4]>().into()
+    }
+
+    fn random_f32x8<R: Rng>(rng: &mut R) -> f32x8 {
+        rng.gen::<[f32; 8]>().into()
+    }
+
+    fn random_f32x16<R: Rng>(rng: &mut R) -> f32x16 {
+        rng.gen::<[f32; 16]>().into()
+    }
+
+    fn random_f64x2<R: Rng>(rng: &mut R) -> f64x2 {
+        rng.gen::<[f64; 2]>().into()
+    }
+
+    fn random_f64x4<R: Rng>(rng: &mut R) -> f64x4 {
+        rng.gen::<[f64; 4]>().into()
+    }
+
+    fn random_f64x8<R: Rng>(rng: &mut R) -> f64x8 {
+        rng.gen::<[f64; 8]>().into()
     }
 }
 
@@ -491,18 +836,27 @@ pub mod ultraviolet_support {
     use super::BenchValue;
     use ultraviolet::*;
 
-    impl BenchValue for Wec2 {
+    impl BenchValue for Vec2x4 {
         fn random_value<R: rand::Rng>(rng: &mut R) -> Self {
-            Wec2::new(
+            Vec2x4::new(
                 ultraviolet::f32x4::from(rng.gen::<[f32; 4]>()),
                 ultraviolet::f32x4::from(rng.gen::<[f32; 4]>()),
             )
         }
     }
 
-    impl BenchValue for Wec3 {
+    impl BenchValue for Vec2x8 {
         fn random_value<R: rand::Rng>(rng: &mut R) -> Self {
-            Wec3::new(
+            Vec2x8::new(
+                ultraviolet::f32x8::from(rng.gen::<[f32; 8]>()),
+                ultraviolet::f32x8::from(rng.gen::<[f32; 8]>()),
+            )
+        }
+    }
+
+    impl BenchValue for Vec3x4 {
+        fn random_value<R: rand::Rng>(rng: &mut R) -> Self {
+            Vec3x4::new(
                 ultraviolet::f32x4::from(rng.gen::<[f32; 4]>()),
                 ultraviolet::f32x4::from(rng.gen::<[f32; 4]>()),
                 ultraviolet::f32x4::from(rng.gen::<[f32; 4]>()),
@@ -510,9 +864,19 @@ pub mod ultraviolet_support {
         }
     }
 
-    impl BenchValue for Wec4 {
+    impl BenchValue for Vec3x8 {
         fn random_value<R: rand::Rng>(rng: &mut R) -> Self {
-            Wec4::new(
+            Vec3x8::new(
+                ultraviolet::f32x8::from(rng.gen::<[f32; 8]>()),
+                ultraviolet::f32x8::from(rng.gen::<[f32; 8]>()),
+                ultraviolet::f32x8::from(rng.gen::<[f32; 8]>()),
+            )
+        }
+    }
+
+    impl BenchValue for Vec4x4 {
+        fn random_value<R: rand::Rng>(rng: &mut R) -> Self {
+            Vec4x4::new(
                 ultraviolet::f32x4::from(rng.gen::<[f32; 4]>()),
                 ultraviolet::f32x4::from(rng.gen::<[f32; 4]>()),
                 ultraviolet::f32x4::from(rng.gen::<[f32; 4]>()),
@@ -521,82 +885,188 @@ pub mod ultraviolet_support {
         }
     }
 
-    impl BenchValue for Wat2 {
+    impl BenchValue for Vec4x8 {
         fn random_value<R: rand::Rng>(rng: &mut R) -> Self {
-            Wat2::new(Wec2::random_value(rng), Wec2::random_value(rng))
-        }
-    }
-
-    impl BenchValue for Wat3 {
-        fn random_value<R: rand::Rng>(rng: &mut R) -> Self {
-            Wat3::new(
-                Wec3::random_value(rng),
-                Wec3::random_value(rng),
-                Wec3::random_value(rng),
+            Vec4x8::new(
+                ultraviolet::f32x8::from(rng.gen::<[f32; 8]>()),
+                ultraviolet::f32x8::from(rng.gen::<[f32; 8]>()),
+                ultraviolet::f32x8::from(rng.gen::<[f32; 8]>()),
+                ultraviolet::f32x8::from(rng.gen::<[f32; 8]>()),
             )
         }
     }
 
-    impl BenchValue for Wat4 {
+    impl BenchValue for Mat2x4 {
         fn random_value<R: rand::Rng>(rng: &mut R) -> Self {
-            Wat4::new(
-                Wec4::random_value(rng),
-                Wec4::random_value(rng),
-                Wec4::random_value(rng),
-                Wec4::random_value(rng),
+            Mat2x4::new(Vec2x4::random_value(rng), Vec2x4::random_value(rng))
+        }
+    }
+
+    impl BenchValue for Mat2x8 {
+        fn random_value<R: rand::Rng>(rng: &mut R) -> Self {
+            Mat2x8::new(Vec2x8::random_value(rng), Vec2x8::random_value(rng))
+        }
+    }
+
+    impl BenchValue for Mat3x4 {
+        fn random_value<R: rand::Rng>(rng: &mut R) -> Self {
+            Mat3x4::new(
+                Vec3x4::random_value(rng),
+                Vec3x4::random_value(rng),
+                Vec3x4::random_value(rng),
             )
         }
     }
 
-    impl BenchValue for WRotor2 {
+    impl BenchValue for Mat3x8 {
+        fn random_value<R: rand::Rng>(rng: &mut R) -> Self {
+            Mat3x8::new(
+                Vec3x8::random_value(rng),
+                Vec3x8::random_value(rng),
+                Vec3x8::random_value(rng),
+            )
+        }
+    }
+
+    impl BenchValue for Mat4x4 {
+        fn random_value<R: rand::Rng>(rng: &mut R) -> Self {
+            Mat4x4::new(
+                Vec4x4::random_value(rng),
+                Vec4x4::random_value(rng),
+                Vec4x4::random_value(rng),
+                Vec4x4::random_value(rng),
+            )
+        }
+    }
+
+    impl BenchValue for Mat4x8 {
+        fn random_value<R: rand::Rng>(rng: &mut R) -> Self {
+            Mat4x8::new(
+                Vec4x8::random_value(rng),
+                Vec4x8::random_value(rng),
+                Vec4x8::random_value(rng),
+                Vec4x8::random_value(rng),
+            )
+        }
+    }
+
+    impl BenchValue for Rotor2x4 {
         fn random_value<R: rand::Rng>(rng: &mut R) -> Self {
             let angle = f32x4::from([
-                super::glam_support::random_angle_radians(rng),
-                super::glam_support::random_angle_radians(rng),
-                super::glam_support::random_angle_radians(rng),
-                super::glam_support::random_angle_radians(rng),
+                crate::glam_support::random_angle_radians(rng),
+                crate::glam_support::random_angle_radians(rng),
+                crate::glam_support::random_angle_radians(rng),
+                crate::glam_support::random_angle_radians(rng),
             ]);
-            WRotor2::from_angle(angle)
+            Rotor2x4::from_angle(angle)
         }
     }
 
-    impl BenchValue for WRotor3 {
+    impl BenchValue for Rotor2x8 {
+        fn random_value<R: rand::Rng>(rng: &mut R) -> Self {
+            let angle = f32x8::from([
+                crate::glam_support::random_angle_radians(rng),
+                crate::glam_support::random_angle_radians(rng),
+                crate::glam_support::random_angle_radians(rng),
+                crate::glam_support::random_angle_radians(rng),
+                crate::glam_support::random_angle_radians(rng),
+                crate::glam_support::random_angle_radians(rng),
+                crate::glam_support::random_angle_radians(rng),
+                crate::glam_support::random_angle_radians(rng),
+            ]);
+            Rotor2x8::from_angle(angle)
+        }
+    }
+
+    impl BenchValue for Rotor3x4 {
         fn random_value<R: rand::Rng>(rng: &mut R) -> Self {
             let yaw = f32x4::from([
-                super::glam_support::random_angle_radians(rng),
-                super::glam_support::random_angle_radians(rng),
-                super::glam_support::random_angle_radians(rng),
-                super::glam_support::random_angle_radians(rng),
+                crate::glam_support::random_angle_radians(rng),
+                crate::glam_support::random_angle_radians(rng),
+                crate::glam_support::random_angle_radians(rng),
+                crate::glam_support::random_angle_radians(rng),
             ]);
             let pitch = f32x4::from([
-                super::glam_support::random_angle_radians(rng),
-                super::glam_support::random_angle_radians(rng),
-                super::glam_support::random_angle_radians(rng),
-                super::glam_support::random_angle_radians(rng),
+                crate::glam_support::random_angle_radians(rng),
+                crate::glam_support::random_angle_radians(rng),
+                crate::glam_support::random_angle_radians(rng),
+                crate::glam_support::random_angle_radians(rng),
             ]);
             let roll = f32x4::from([
-                super::glam_support::random_angle_radians(rng),
-                super::glam_support::random_angle_radians(rng),
-                super::glam_support::random_angle_radians(rng),
-                super::glam_support::random_angle_radians(rng),
+                crate::glam_support::random_angle_radians(rng),
+                crate::glam_support::random_angle_radians(rng),
+                crate::glam_support::random_angle_radians(rng),
+                crate::glam_support::random_angle_radians(rng),
             ]);
-            WRotor3::from_euler_angles(yaw, pitch, roll)
+            Rotor3x4::from_euler_angles(yaw, pitch, roll)
         }
     }
 
-    impl BenchValue for WIsometry2 {
+    impl BenchValue for Rotor3x8 {
         fn random_value<R: rand::Rng>(rng: &mut R) -> Self {
-            let tra = Wec2::random_value(rng);
-            let rot = WRotor2::random_value(rng);
-            WIsometry2::new(tra, rot)
+            let yaw = f32x8::from([
+                crate::glam_support::random_angle_radians(rng),
+                crate::glam_support::random_angle_radians(rng),
+                crate::glam_support::random_angle_radians(rng),
+                crate::glam_support::random_angle_radians(rng),
+                crate::glam_support::random_angle_radians(rng),
+                crate::glam_support::random_angle_radians(rng),
+                crate::glam_support::random_angle_radians(rng),
+                crate::glam_support::random_angle_radians(rng),
+            ]);
+            let pitch = f32x8::from([
+                crate::glam_support::random_angle_radians(rng),
+                crate::glam_support::random_angle_radians(rng),
+                crate::glam_support::random_angle_radians(rng),
+                crate::glam_support::random_angle_radians(rng),
+                crate::glam_support::random_angle_radians(rng),
+                crate::glam_support::random_angle_radians(rng),
+                crate::glam_support::random_angle_radians(rng),
+                crate::glam_support::random_angle_radians(rng),
+            ]);
+            let roll = f32x8::from([
+                crate::glam_support::random_angle_radians(rng),
+                crate::glam_support::random_angle_radians(rng),
+                crate::glam_support::random_angle_radians(rng),
+                crate::glam_support::random_angle_radians(rng),
+                crate::glam_support::random_angle_radians(rng),
+                crate::glam_support::random_angle_radians(rng),
+                crate::glam_support::random_angle_radians(rng),
+                crate::glam_support::random_angle_radians(rng),
+            ]);
+            Rotor3x8::from_euler_angles(yaw, pitch, roll)
         }
     }
 
-    impl BenchValue for WIsometry3 {
+    impl BenchValue for Isometry2x4 {
         fn random_value<R: rand::Rng>(rng: &mut R) -> Self {
-            let tra = Wec3::random_value(rng);
-            let rot = WRotor3::random_value(rng);
-            WIsometry3::new(tra, rot)
+            let tra = Vec2x4::random_value(rng);
+            let rot = Rotor2x4::random_value(rng);
+            Isometry2x4::new(tra, rot)
+        }
+    }
+
+    impl BenchValue for Isometry2x8 {
+        fn random_value<R: rand::Rng>(rng: &mut R) -> Self {
+            let tra = Vec2x8::random_value(rng);
+            let rot = Rotor2x8::random_value(rng);
+            Isometry2x8::new(tra, rot)
+        }
+    }
+
+    impl BenchValue for Isometry3x4 {
+        fn random_value<R: rand::Rng>(rng: &mut R) -> Self {
+            let tra = Vec3x4::random_value(rng);
+            let rot = Rotor3x4::random_value(rng);
+            Isometry3x4::new(tra, rot)
+        }
+    }
+
+    impl BenchValue for Isometry3x8 {
+        fn random_value<R: rand::Rng>(rng: &mut R) -> Self {
+            let tra = Vec3x8::random_value(rng);
+            let rot = Rotor3x8::random_value(rng);
+            Isometry3x8::new(tra, rot)
         }
     }
 

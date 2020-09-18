@@ -6,7 +6,7 @@ use criterion::{criterion_group, criterion_main, Criterion};
 // returns self to check overhead of benchmark
 fn bench_matrix2_ret_self(c: &mut Criterion) {
     use mathbench::BenchValue;
-    let mut group = c.benchmark_group("matrix2 return self");
+    let mut group = c.benchmark_group("scalar matrix2 return self");
     bench_glam!(group, |b| {
         use glam::Mat2;
         bench_unop!(b, op => ret_self, ty => Mat2)
@@ -38,8 +38,36 @@ fn bench_matrix2_ret_self(c: &mut Criterion) {
     group.finish();
 }
 
+fn bench_matrix2_ret_self_wide(c: &mut Criterion) {
+    use mathbench::BenchValue;
+    let mut group = c.benchmark_group("wide matrix2 return self");
+    bench_glam!(group, |b| {
+        use glam::Mat2;
+        bench_unop_wide!(b, op => ret_self, ty => Mat2)
+    });
+    bench_ultraviolet_f32x4!(group, |b| {
+        use ultraviolet::Mat2x4;
+        bench_unop_wide!(b, width => 4, op => ret_self, ty => Mat2x4)
+    });
+    bench_nalgebra_f32x4!(group, |b| {
+        use nalgebra::Matrix2;
+        use simba::simd::f32x4;
+        bench_unop_wide!(b, width => 4, op => ret_self, ty => Matrix2<f32x4>)
+    });
+    bench_ultraviolet_f32x8!(group, |b| {
+        use ultraviolet::Mat2x8;
+        bench_unop_wide!(b, width => 8, op => ret_self, ty => Mat2x8)
+    });
+    bench_nalgebra_f32x8!(group, |b| {
+        use nalgebra::Matrix2;
+        use simba::simd::f32x8;
+        bench_unop_wide!(b, width => 8, op => ret_self, ty => Matrix2<f32x8>)
+    });
+    group.finish();
+}
+
 fn bench_matrix2_transpose(c: &mut Criterion) {
-    let mut group = c.benchmark_group("matrix2 transpose");
+    let mut group = c.benchmark_group("scalar matrix2 transpose");
     bench_glam!(group, |b| {
         use glam::Mat2;
         bench_unop!(b, op => transpose, ty => Mat2)
@@ -47,6 +75,10 @@ fn bench_matrix2_transpose(c: &mut Criterion) {
     bench_cgmath!(group, |b| {
         use cgmath::{prelude::*, Matrix2};
         bench_unop!(b, op => transpose, ty => Matrix2<f32>)
+    });
+    bench_ultraviolet!(group, |b| {
+        use ultraviolet::Mat2;
+        bench_unop!(b, op => transposed, ty => Mat2)
     });
     bench_nalgebra!(group, |b| {
         use nalgebra::Matrix2;
@@ -64,8 +96,35 @@ fn bench_matrix2_transpose(c: &mut Criterion) {
     group.finish();
 }
 
+fn bench_matrix2_transpose_wide(c: &mut Criterion) {
+    let mut group = c.benchmark_group("wide matrix2 transpose");
+    bench_glam!(group, |b| {
+        use glam::Mat2;
+        bench_unop_wide!(b, op => transpose, ty => Mat2)
+    });
+    bench_ultraviolet_f32x4!(group, |b| {
+        use ultraviolet::Mat2x4;
+        bench_unop_wide!(b, width => 4, op => transposed, ty => Mat2x4)
+    });
+    bench_nalgebra_f32x4!(group, |b| {
+        use nalgebra::Matrix2;
+        use simba::simd::f32x4;
+        bench_unop_wide!(b, width => 4, op => transpose, ty => Matrix2<f32x4>)
+    });
+    bench_ultraviolet_f32x8!(group, |b| {
+        use ultraviolet::Mat2x8;
+        bench_unop_wide!(b, width => 8, op => transposed, ty => Mat2x8)
+    });
+    bench_nalgebra_f32x8!(group, |b| {
+        use nalgebra::Matrix2;
+        use simba::simd::f32x8;
+        bench_unop_wide!(b, width => 8, op => transpose, ty => Matrix2<f32x8>)
+    });
+    group.finish();
+}
+
 fn bench_matrix2_determinant(c: &mut Criterion) {
-    let mut group = c.benchmark_group("matrix2 determinant");
+    let mut group = c.benchmark_group("scalar matrix2 determinant");
     bench_glam!(group, |b| {
         use glam::Mat2;
         bench_unop!(b, op => determinant, ty => Mat2)
@@ -73,6 +132,10 @@ fn bench_matrix2_determinant(c: &mut Criterion) {
     bench_cgmath!(group, |b| {
         use cgmath::{prelude::*, Matrix2};
         bench_unop!(b, op => determinant, ty => Matrix2<f32>)
+    });
+    bench_ultraviolet!(group, |b| {
+        use ultraviolet::Mat2;
+        bench_unop!(b, op => determinant, ty => Mat2)
     });
     bench_nalgebra!(group, |b| {
         use nalgebra::Matrix2;
@@ -94,8 +157,25 @@ fn bench_matrix2_determinant(c: &mut Criterion) {
     group.finish();
 }
 
+fn bench_matrix2_determinant_wide(c: &mut Criterion) {
+    let mut group = c.benchmark_group("wide matrix2 determinant");
+    bench_glam!(group, |b| {
+        use glam::Mat2;
+        bench_unop_wide!(b, op => determinant, ty => Mat2)
+    });
+    bench_ultraviolet_f32x4!(group, |b| {
+        use ultraviolet::Mat2x4;
+        bench_unop_wide!(b, width => 4, op => determinant, ty => Mat2x4)
+    });
+    bench_ultraviolet_f32x8!(group, |b| {
+        use ultraviolet::Mat2x8;
+        bench_unop_wide!(b, width => 8, op => determinant, ty => Mat2x8)
+    });
+    group.finish();
+}
+
 fn bench_matrix2_inverse(c: &mut Criterion) {
-    let mut group = c.benchmark_group("matrix2 inverse");
+    let mut group = c.benchmark_group("scalar matrix2 inverse");
     bench_glam!(group, |b| {
         use glam::Mat2;
         bench_unop!(b, op => inverse, ty => Mat2)
@@ -103,6 +183,10 @@ fn bench_matrix2_inverse(c: &mut Criterion) {
     bench_cgmath!(group, |b| {
         use cgmath::{prelude::*, Matrix2};
         bench_unop!(b, op => invert, ty => Matrix2<f32>)
+    });
+    bench_ultraviolet!(group, |b| {
+        use ultraviolet::Mat2;
+        bench_unop!(b, op => inversed, ty => Mat2)
     });
     bench_nalgebra!(group, |b| {
         use nalgebra::Matrix2;
@@ -120,9 +204,26 @@ fn bench_matrix2_inverse(c: &mut Criterion) {
     group.finish();
 }
 
+fn bench_matrix2_inverse_wide(c: &mut Criterion) {
+    let mut group = c.benchmark_group("wide matrix2 inverse");
+    bench_glam!(group, |b| {
+        use glam::Mat2;
+        bench_unop_wide!(b, op => inverse, ty => Mat2)
+    });
+    bench_ultraviolet_f32x4!(group, |b| {
+        use ultraviolet::Mat2x4;
+        bench_unop_wide!(b, width => 4, op => inversed, ty => Mat2x4)
+    });
+    bench_ultraviolet_f32x8!(group, |b| {
+        use ultraviolet::Mat2x8;
+        bench_unop_wide!(b, width => 8, op => inversed, ty => Mat2x8)
+    });
+    group.finish();
+}
+
 fn bench_matrix2_mul_matrix2(c: &mut Criterion) {
     use std::ops::Mul;
-    let mut group = c.benchmark_group("matrix2 mul matrix2");
+    let mut group = c.benchmark_group("scalar matrix2 mul matrix2");
     bench_glam!(group, |b| {
         use glam::Mat2;
         bench_binop!(b, op => mul, ty1 => Mat2, ty2 => Mat2)
@@ -154,9 +255,40 @@ fn bench_matrix2_mul_matrix2(c: &mut Criterion) {
     group.finish();
 }
 
+fn bench_matrix2_mul_matrix2_wide(c: &mut Criterion) {
+    use std::ops::Mul;
+    let mut group = c.benchmark_group("wide matrix2 mul matrix2");
+    for size in [16, 256].iter() {
+        group.throughput(criterion::Throughput::Elements(*size as u64));
+        bench_glam!(group, |b| {
+            use glam::Mat2;
+            bench_binop_wide!(b, size, width => 1, op => mul, ty1 => Mat2, ty2 => Mat2)
+        });
+        bench_ultraviolet_f32x4!(group, |b| {
+            use ultraviolet::Mat2x4;
+            bench_binop_wide!(b, size, width => 4, op => mul, ty1 => Mat2x4, ty2 => Mat2x4)
+        });
+        bench_nalgebra_f32x4!(group, |b| {
+            use nalgebra::Matrix2;
+            use simba::simd::f32x4;
+            bench_binop_wide!(b, size, width => 4, op => mul, ty1 => Matrix2<f32x4>, ty2 => Matrix2<f32x4>)
+        });
+        bench_ultraviolet_f32x8!(group, |b| {
+            use ultraviolet::Mat2x8;
+            bench_binop_wide!(b, size, width => 8, op => mul, ty1 => Mat2x8, ty2 => Mat2x8)
+        });
+        bench_nalgebra_f32x8!(group, |b| {
+            use nalgebra::Matrix2;
+            use simba::simd::f32x8;
+            bench_binop_wide!(b, size, width => 8, op => mul, ty1 => Matrix2<f32x8>, ty2 => Matrix2<f32x8>)
+        });
+    }
+    group.finish();
+}
+
 fn bench_matrix2_mul_vector2(c: &mut Criterion) {
     use std::ops::Mul;
-    let mut group = c.benchmark_group("matrix2 mul vector2");
+    let mut group = c.benchmark_group("scalar matrix2 mul vector2");
     for size in [1, 100].iter() {
         group.throughput(criterion::Throughput::Elements(*size as u64));
         bench_glam!(group, size, |b, size| {
@@ -192,13 +324,50 @@ fn bench_matrix2_mul_vector2(c: &mut Criterion) {
     group.finish();
 }
 
+fn bench_matrix2_mul_vector2_wide(c: &mut Criterion) {
+    use std::ops::Mul;
+    let mut group = c.benchmark_group("wide matrix2 mul vector2");
+    for size in [16, 256].iter() {
+        group.throughput(criterion::Throughput::Elements(*size as u64));
+        bench_glam!(group, |b| {
+            use glam::{Mat2, Vec2};
+            bench_binop_wide!(b, size, width => 1, op => mul, ty1 => Mat2, ty2 => Vec2)
+        });
+        bench_ultraviolet_f32x4!(group, |b| {
+            use ultraviolet::{Mat2x4, Vec2x4};
+            bench_binop_wide!(b, size, width => 4, op => mul, ty1 => Mat2x4, ty2 => Vec2x4)
+        });
+        bench_nalgebra_f32x4!(group, |b| {
+            use nalgebra::{Matrix2, Vector2};
+            use simba::simd::f32x4;
+            bench_binop_wide!(b, size, width => 4, op => mul, ty1 => Matrix2<f32x4>, ty2 => Vector2<f32x4>)
+        });
+        bench_ultraviolet_f32x8!(group, |b| {
+            use ultraviolet::{Mat2x8, Vec2x8};
+            bench_binop_wide!(b, size, width => 8, op => mul, ty1 => Mat2x8, ty2 => Vec2x8)
+        });
+        bench_nalgebra_f32x8!(group, |b| {
+            use nalgebra::{Matrix2, Vector2};
+            use simba::simd::f32x8;
+            bench_binop_wide!(b, size, width => 8, op => mul, ty1 => Matrix2<f32x8>, ty2 => Vector2<f32x8>)
+        });
+    }
+    group.finish();
+}
+
 criterion_group!(
     matrix2_benches,
     bench_matrix2_ret_self,
+    bench_matrix2_ret_self_wide,
     bench_matrix2_transpose,
+    bench_matrix2_transpose_wide,
     bench_matrix2_determinant,
+    bench_matrix2_determinant_wide,
     bench_matrix2_inverse,
+    bench_matrix2_inverse_wide,
     bench_matrix2_mul_matrix2,
+    bench_matrix2_mul_matrix2_wide,
     bench_matrix2_mul_vector2,
+    bench_matrix2_mul_vector2_wide,
 );
 criterion_main!(matrix2_benches);

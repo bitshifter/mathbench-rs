@@ -6,10 +6,13 @@ import os
 import sys
 import prettytable
 
-
 DEFAULT = ['glam', 'cgmath', 'nalgebra']
 OPTIONAL = ['euclid', 'vek', 'pathfinder', 'static-math', 'ultraviolet']
-CHOICES = DEFAULT + OPTIONAL
+SCALAR = DEFAULT + OPTIONAL
+
+WIDE = ['glam', 'ultraviolet_f32x4', 'nalgebra_f32x4', 'ultraviolet_f32x8', 'nalgebra_f32x8']
+
+CHOICES = SCALAR + WIDE
 
 class DefaultListAction(argparse.Action):
     def __call__(self, parser, namespace, values, option_string=None):
@@ -59,6 +62,8 @@ def parse_bench(json_dir, benches):
 def main():
     default_libs = DEFAULT
     parser = argparse.ArgumentParser()
+    parser.add_argument('-w', '--wide', action='store_true', help='include all wide libraries')
+    parser.add_argument('-s', '--scalar', action='store_true', help='include all scalar libraries')
     parser.add_argument('-a', '--all', action='store_true', help='include all libraries')
     parser.add_argument('-t', '--threshold', type=float, default=2.5, help='percent of minimum value to highlight')
     parser.add_argument('libs', nargs='*', action=DefaultListAction,
@@ -66,10 +71,16 @@ def main():
                         help='choose from {0}'.format(CHOICES))
     args = parser.parse_args()
 
-    if args.all:
-        libs = CHOICES
+    if args.wide or args.scalar or args.all:
+        if args.wide:
+            libs = WIDE
+        if args.scalar:
+            libs = SCALAR
+        if args.all:
+            libs = CHOICES
     else:
         libs = list(dict.fromkeys(args.libs))
+
     threshold = 1.0 + args.threshold / 100.0
 
     root_dir = os.path.normpath(os.path.join(os.path.dirname(__file__), '..'))
@@ -105,6 +116,13 @@ def main():
 
     pt = prettytable.PrettyTable(['benchmark'] + [f'  {x:}  ' for x in libs])
     for bench_name in benches:
+        if args.wide:
+            if "wide" not in bench_name:
+                continue
+        else:
+            if "wide" in bench_name:
+                continue
+
         bench = benches[bench_name]
         values = [bench[x] for x in libs if x in bench]
         max_value = max(values)

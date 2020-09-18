@@ -104,16 +104,39 @@ Most libraries provide quaternions for performing rotations except for
 
 ### Wide benchmarks
 
-The mathbench benchmarks are currently only benchmarking f32 scalar operations.
-The `ultraviolet` and `nalgebra` libraries both support wide types which are
-able to better utililise SIMD instructions to get a higher throughput. The
-caveat being that your program's data must be organised into an array of
-structure of arrays format to take advantage of it. Until support for
-benchmarking wide types is added to mathbench the author of `nalgebra` has his
-own fork of mathbench and a [blog post] with benchmark results from
-`nalgebra` and `ultraviolet`.
+All benchmarks are gated as either "wide" or "scalar". This division allows us to
+more fairly compare these different styles of libraries. 
 
-[blog post]: https://www.rustsim.org/blog/2020/03/23/simd-aosoa-in-nalgebra/
+"scalar" benchmarks operate on standard scalar `f32` values, doing calculations
+on one piece of data at a time (or in the case of a "horizontal" SIMD library
+like `glam`, one `Vec3`/`Vec4` at a time). 
+
+"wide" benchmarks operate in a "vertical" AoSoA (Array-of-Struct-of-Arrays)
+fashion, which is a programming model that allows the potential to more fully 
+use the advantages of SIMD operations. However, it has the cost of
+making algorithm design harder, as scalar algorithms cannot be directly used
+by "wide" architectures. Because of this difference in algorithms, we also can't
+really *directly* compare the performance of "scalar" vs "wide" types because
+they don't *quite* do the same thing (wide types operate on multiple pieces
+of data at the same time).
+
+The "wide" benchmarks still include `glam`, a scalar-only library, as a
+comparison. Even though the comparison is somewhat apples-to-oranges, in each of
+these cases, when running "wide" benchmark variants, 
+`glam` is configured to do the exact same *amount* of final work,
+producing the same outputs that the "wide" versions would. The purpose is to
+give an idea of the possible throughput benefits of "wide" types compared to
+writing the same algorithms with a scalar type, at the cost of extra care
+being needed to write the algorithm.
+
+To learn more about AoSoA architecture, see 
+[this blog post](https://www.rustsim.org/blog/2020/03/23/simd-aosoa-in-nalgebra/)
+by the author of `nalgebra` which goes more in depth to how AoSoA works and
+its possible benefits. Also take a look at the
+["Examples" section](https://github.com/termhn/ultraviolet#examples) of
+`ultraviolet`'s README, which contains a discussion of how to port scalar
+algorithms to wide ones, with the examples of the Euler integration and
+ray-sphere intersection benchmarks from `mathbench`.
 
 ## Build settings
 
@@ -218,7 +241,9 @@ cargo bench
 ```
 
 For the best results close other applications on the machine you are using to
-benchmark!
+benchmark! Also, when running "wide" benchmarks, make sure you compile with
+`RUSTFLAGS="-C target-cpu=native"`, or with appropriate `target-feature`s
+(`sse`,`sse2`, `avx`, `avx2`, `fma`) for best results.
 
 There is a script in `scripts/summary.py` to summarize the results in a nice
 fashion. It requires Python 3 and the `prettytable` Python module, then can
@@ -227,7 +252,8 @@ be run to generate an ASCII output.
 ## Default and optional features
 
 All libraries except for `glam` are optional for running benchmarks. The default
-features include `cgmath`, `euclid` and `nalgebra`. These can be disabled with:
+features include `cgmath`, `ultraviolet` and `nalgebra`. These can be disabled 
+with:
 
 ```sh
 cargo bench --no-default-features
@@ -239,12 +265,43 @@ To selectively enable a specific default feature again use:
 cargo bench --no-default-features --features nalgebra
 ```
 
-Note that you can run individual benchmarks without needing to diable them at
-compile time. For example to only run the "vec3 length" benchmark for `glam` use:
+Note that you can filter which benchmarks to run at runtime by using
+Criterion's filtering feature. For example, to only run scalar benchmarks
+and not wide ones, use:
 
 ```sh
-cargo bench "vec3 length/glam"
+cargo bench "scalar"
 ```
+
+You can also get more granular. For example to only run wide matrix2 benchmarks,
+use:
+
+```sh
+cargo bench "wide matrix2"
+```
+
+or to only run the scalar "vec3 length" benchmark for `glam`, use:
+
+```sh
+cargo bench "scalar vec3 length/glam"
+```
+
+### Crate features
+There are a few extra features in addition to the direct features referring to
+each benchmarked library.
+
+* `ultraviolet_f32x4`, `ultraviolet_f32x8`, `nalgebra_f32x4`, `nalgebra_f32x8` - these each enable benchmarking specific wide types from each of `ultraviolet` or `nalgebra`.
+* `ultraviolet_wide`, `nalgebra_wide` - these enable benchmarking all wide types from `ultraviolet` or `nalgebra` respectively.
+* `wide` - enables all "wide" type benchmarks
+* `all` - enables all supported libraries, including wide and scalar ones.
+* `unstable` - see next section
+
+#### `unstable` feature
+
+The `unstable` feature requires a nightly compiler, and it allows us to tell
+rustc not to inline certain functions within hot benchmark loops. This is used
+in the ray-sphere intersection benchmark in order to simulate situations where
+the autovectorizer would not be able to properly vectorize your code.
 
 ## Running the tests
 

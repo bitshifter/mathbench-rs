@@ -6,7 +6,7 @@ use criterion::{criterion_group, criterion_main, Criterion};
 // returns self to check overhead of benchmark
 fn bench_vector3_ret_self(c: &mut Criterion) {
     use mathbench::BenchValue;
-    let mut group = c.benchmark_group("vector3 return self");
+    let mut group = c.benchmark_group("scalar vector3 return self");
     bench_glam!(group, |b| {
         use glam::Vec3A;
         bench_unop!(b, op => ret_self, ty => Vec3A)
@@ -34,8 +34,36 @@ fn bench_vector3_ret_self(c: &mut Criterion) {
     group.finish();
 }
 
+fn bench_vector3_ret_self_wide(c: &mut Criterion) {
+    use mathbench::BenchValue;
+    let mut group = c.benchmark_group("wide vector3 return self");
+    bench_glam!(group, |b| {
+        use glam::Vec3A;
+        bench_unop_wide!(b, op => ret_self, ty => Vec3A)
+    });
+    bench_ultraviolet_f32x4!(group, |b| {
+        use ultraviolet::Vec3x4;
+        bench_unop_wide!(b, width => 4, op => ret_self, ty => Vec3x4)
+    });
+    bench_nalgebra_f32x4!(group, |b| {
+        use nalgebra::Vector3;
+        use simba::simd::f32x4;
+        bench_unop_wide!(b, width => 4, op => ret_self, ty => Vector3<f32x4>)
+    });
+    bench_ultraviolet_f32x8!(group, |b| {
+        use ultraviolet::Vec3x8;
+        bench_unop_wide!(b, width => 8, op => ret_self, ty => Vec3x8)
+    });
+    bench_nalgebra_f32x8!(group, |b| {
+        use nalgebra::Vector3;
+        use simba::simd::f32x8;
+        bench_unop_wide!(b, width => 8, op => ret_self, ty => Vector3<f32x8>)
+    });
+    group.finish();
+}
+
 fn bench_vector3_length(c: &mut Criterion) {
-    let mut group = c.benchmark_group("vector3 length");
+    let mut group = c.benchmark_group("scalar vector3 length");
     bench_glam!(group, |b| {
         use glam::Vec3;
         bench_unop!(b, op => length, ty => Vec3)
@@ -67,8 +95,35 @@ fn bench_vector3_length(c: &mut Criterion) {
     group.finish();
 }
 
+fn bench_vector3_length_wide(c: &mut Criterion) {
+    let mut group = c.benchmark_group("wide vector3 length");
+    bench_glam!(group, |b| {
+        use glam::Vec3A;
+        bench_unop_wide!(b, op => length, ty => Vec3A)
+    });
+    bench_ultraviolet_f32x4!(group, |b| {
+        use ultraviolet::Vec3x4;
+        bench_unop_wide!(b, width => 4, op => mag, ty => Vec3x4)
+    });
+    bench_nalgebra_f32x4!(group, |b| {
+        use nalgebra::Vector3;
+        use simba::simd::f32x4;
+        bench_unop_wide!(b, width => 4, op => norm, ty => Vector3<f32x4>)
+    });
+    bench_ultraviolet_f32x8!(group, |b| {
+        use ultraviolet::Vec3x8;
+        bench_unop_wide!(b, width => 8, op => mag, ty => Vec3x8)
+    });
+    bench_nalgebra_f32x8!(group, |b| {
+        use nalgebra::Vector3;
+        use simba::simd::f32x8;
+        bench_unop_wide!(b, width => 8, op => norm, ty => Vector3<f32x8>)
+    });
+    group.finish();
+}
+
 fn bench_vector3_normalize(c: &mut Criterion) {
-    let mut group = c.benchmark_group("vector3 normalize");
+    let mut group = c.benchmark_group("scalar vector3 normalize");
     bench_glam!(group, |b| {
         use glam::Vec3A;
         bench_unop!(b, op => normalize, ty => Vec3A)
@@ -96,8 +151,35 @@ fn bench_vector3_normalize(c: &mut Criterion) {
     group.finish();
 }
 
+fn bench_vector3_normalize_wide(c: &mut Criterion) {
+    let mut group = c.benchmark_group("wide vector3 normalize");
+    bench_glam!(group, |b| {
+        use glam::Vec3A;
+        bench_unop_wide!(b, op => normalize, ty => Vec3A)
+    });
+    bench_ultraviolet_f32x4!(group, |b| {
+        use ultraviolet::Vec3x4;
+        bench_unop_wide!(b, width => 4, op => normalized, ty => Vec3x4)
+    });
+    bench_nalgebra_f32x4!(group, |b| {
+        use nalgebra::Vector3;
+        use simba::simd::f32x4;
+        bench_unop_wide!(b, width => 4, op => normalize, ty => Vector3<f32x4>)
+    });
+    bench_ultraviolet_f32x8!(group, |b| {
+        use ultraviolet::Vec3x8;
+        bench_unop_wide!(b, width => 8, op => normalized, ty => Vec3x8)
+    });
+    bench_nalgebra_f32x8!(group, |b| {
+        use nalgebra::Vector3;
+        use simba::simd::f32x8;
+        bench_unop_wide!(b, width => 8, op => normalize, ty => Vector3<f32x8>)
+    });
+    group.finish();
+}
+
 fn bench_vector3_dot(c: &mut Criterion) {
-    let mut group = c.benchmark_group("vector3 dot");
+    let mut group = c.benchmark_group("scalar vector3 dot");
     bench_glam!(group, |b| {
         use glam::Vec3A;
         bench_binop!(b, op => dot, ty1 => Vec3A, ty2 => Vec3A)
@@ -130,8 +212,35 @@ fn bench_vector3_dot(c: &mut Criterion) {
     group.finish();
 }
 
+fn bench_vector3_dot_wide(c: &mut Criterion) {
+    let mut group = c.benchmark_group("wide vector3 dot");
+    bench_glam!(group, |b| {
+        use glam::Vec3A;
+        bench_binop_wide!(b, width => 1, op => dot, ty1 => Vec3A, ty2 => Vec3A)
+    });
+    bench_ultraviolet_f32x4!(group, |b| {
+        use ultraviolet::Vec3x4;
+        bench_binop_wide!(b, width => 4, op => dot, ty1 => Vec3x4, ty2 => Vec3x4)
+    });
+    bench_nalgebra_f32x4!(group, |b| {
+        use nalgebra::Vector3;
+        use simba::simd::f32x4;
+        bench_binop_wide!(b, width => 4, op => dot, ty1 => Vector3<f32x4>, ty2 => Vector3<f32x4>, param => by_ref)
+    });
+    bench_ultraviolet_f32x8!(group, |b| {
+        use ultraviolet::Vec3x8;
+        bench_binop_wide!(b, width => 8, op => dot, ty1 => Vec3x8, ty2 => Vec3x8)
+    });
+    bench_nalgebra_f32x8!(group, |b| {
+        use nalgebra::Vector3;
+        use simba::simd::f32x8;
+        bench_binop_wide!(b, width => 8, op => dot, ty1 => Vector3<f32x8>, ty2 => Vector3<f32x8>, param => by_ref)
+    });
+    group.finish();
+}
+
 fn bench_vector3_cross(c: &mut Criterion) {
-    let mut group = c.benchmark_group("vector3 cross");
+    let mut group = c.benchmark_group("scalar vector3 cross");
     bench_glam!(group, |b| {
         use glam::Vec3A;
         bench_binop!(b, op => cross, ty1 => Vec3A, ty2 => Vec3A)
@@ -163,12 +272,44 @@ fn bench_vector3_cross(c: &mut Criterion) {
     group.finish();
 }
 
+fn bench_vector3_cross_wide(c: &mut Criterion) {
+    let mut group = c.benchmark_group("wide vector3 cross");
+    bench_glam!(group, |b| {
+        use glam::Vec3A;
+        bench_binop_wide!(b, width => 1, op => cross, ty1 => Vec3A, ty2 => Vec3A)
+    });
+    bench_ultraviolet_f32x4!(group, |b| {
+        use ultraviolet::Vec3x4;
+        bench_binop_wide!(b, width => 4, op => cross, ty1 => Vec3x4, ty2 => Vec3x4)
+    });
+    bench_nalgebra_f32x4!(group, |b| {
+        use nalgebra::Vector3;
+        use simba::simd::f32x4;
+        bench_binop_wide!(b, width => 4, op => cross, ty1 => Vector3<f32x4>, ty2 => Vector3<f32x4>, param => by_ref)
+    });
+    bench_ultraviolet_f32x8!(group, |b| {
+        use ultraviolet::Vec3x8;
+        bench_binop_wide!(b, width => 8, op => cross, ty1 => Vec3x8, ty2 => Vec3x8)
+    });
+    bench_nalgebra_f32x8!(group, |b| {
+        use nalgebra::Vector3;
+        use simba::simd::f32x8;
+        bench_binop_wide!(b, width => 8, op => cross, ty1 => Vector3<f32x8>, ty2 => Vector3<f32x8>, param => by_ref)
+    });
+    group.finish();
+}
+
 criterion_group!(
     vector3_benches,
     bench_vector3_ret_self,
+    bench_vector3_ret_self_wide,
     bench_vector3_length,
+    bench_vector3_length_wide,
     bench_vector3_normalize,
+    bench_vector3_normalize_wide,
     bench_vector3_dot,
-    bench_vector3_cross
+    bench_vector3_dot_wide,
+    bench_vector3_cross,
+    bench_vector3_cross_wide,
 );
 criterion_main!(vector3_benches);
