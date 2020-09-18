@@ -1193,6 +1193,7 @@ version = "0.6.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ad1fece4dbee533fd94cb9905aeb50e8733e2a177347330386def9f5ea1b36ec"
 dependencies = [
+ "mint",
  "wide",
 ]
 

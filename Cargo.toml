@@ -67,6 +67,7 @@ optional = true
 
 [dependencies.ultraviolet]
 version = "0.6.1"
+features = ["mint"]
 optional = true
 
 [dev-dependencies]
