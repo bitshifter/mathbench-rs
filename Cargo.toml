@@ -62,7 +62,7 @@ version = "0.5.1"
 optional = true
 
 [dependencies.static-math]
-version = "0.1.6"
+version = "0.1.7"
 optional = true
 
 [dependencies.ultraviolet]

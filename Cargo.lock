@@ -1091,9 +1091,9 @@ dependencies = [
 
 [[package]]
 name = "static-math"
-version = "0.1.6"
+version = "0.1.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e9aa308e9c839c7d04aa0fbb7990d4b148d01752797270a28e9c69864df1d654"
+checksum = "16d255174fcfd7d03c460e3ab1eaffa7e1fd794ac9c9fc6353438e2dea645ff8"
 dependencies = [
  "num",
 ]

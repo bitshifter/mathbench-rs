@@ -23,6 +23,10 @@ fn bench_rotation3_nop(c: &mut Criterion) {
         use nalgebra::UnitQuaternion;
         bench_unop!(b, op => ret_self, ty => UnitQuaternion<f32>)
     });
+    bench_static_math!(group, |b| {
+        use static_math::quaternion::Quaternion;
+        bench_unop!(b, op => ret_self, ty => Quaternion<f32>)
+    });
     bench_vek!(group, |b| {
         use vek::Quaternion;
         bench_unop!(b, op => ret_self, ty => Quaternion<f32>)
@@ -76,6 +80,10 @@ fn bench_rotation3_inverse(c: &mut Criterion) {
     bench_nalgebra!(group, |b| {
         use nalgebra::UnitQuaternion;
         bench_unop!(b, op => conjugate, ty => UnitQuaternion<f32>)
+    });
+    bench_static_math!(group, |b| {
+        use static_math::quaternion::Quaternion;
+        bench_unop!(b, op => conj, ty => Quaternion<f32>)
     });
     bench_euclid!(group, |b| {
         use euclid::{Rotation3D, UnknownUnit};
@@ -134,6 +142,10 @@ fn bench_rotation3_mul_rotation3(c: &mut Criterion) {
     bench_nalgebra!(group, |b| {
         use nalgebra::UnitQuaternion;
         bench_binop!(b, op => mul, ty1 => UnitQuaternion<f32>, ty2 => UnitQuaternion<f32>)
+    });
+    bench_static_math!(group, |b| {
+        use static_math::quaternion::Quaternion;
+        bench_binop!(b, op => mul, ty1 => Quaternion<f32>, ty2 => Quaternion<f32>)
     });
     bench_euclid!(group, |b| {
         use euclid::{Rotation3D, UnknownUnit};
@@ -194,6 +206,11 @@ fn bench_rotation3_mul_vector3(c: &mut Criterion) {
         bench_nalgebra!(group, |b| {
             use nalgebra::{UnitQuaternion, Vector3};
             bench_binop!(b, size, op => mul, ty1 => UnitQuaternion<f32>, ty2 => Vector3<f32>)
+        });
+        bench_static_math!(group, |b| {
+            use static_math::quaternion::Quaternion;
+            use static_math::vector3::V3;
+            bench_binop!(b, size, op => mul, ty1 => Quaternion<f32>, ty2 => V3<f32>)
         });
         bench_euclid!(group, |b| {
             use euclid::{Point3D, Rotation3D, UnknownUnit};
