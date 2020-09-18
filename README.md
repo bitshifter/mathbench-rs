@@ -222,7 +222,7 @@ The versions of the libraries tested were:
 * `glam` - `0.9.4`
 * `nalgebra` - `0.22.0`
 * `pathfinder_geometry` - `0.5.1`
-* `static-math` - `0.1.6`
+* `static-math` - `0.1.7`
 * `ultraviolet` - `0.5.1`
 * `vek` - `0.12.0` (`repr_c` types)
 
