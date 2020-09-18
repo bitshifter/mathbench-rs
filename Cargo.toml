@@ -1,6 +1,6 @@
 [package]
 name = "mathbench"
-version = "0.3.2"
+version = "0.4.0"
 authors = ["Cameron Hart <cameron.hart@gmail.com>"]
 edition = "2018"
 
@@ -16,9 +16,10 @@ nalgebra_f32x4 = ["nalgebra", "simba"]
 nalgebra_f32x8 = ["nalgebra", "simba"]
 nalgebra_wide = ["nalgebra_f32x4", "nalgebra_f32x8"]
 
+scalar = ["cgmath", "nalgebra", "ultraviolet", "euclid", "vek", "pathfinder_geometry", "static-math"]
 wide = ["ultraviolet_wide", "nalgebra_wide"]
 
-all = ["wide", "euclid", "vek", "pathfinder_geometry", "static-math"]
+all = ["scalar", "wide"]
 
 unstable = []
 
@@ -120,7 +121,7 @@ name = "vector3"
 harness = false
 
 [profile.bench]
-codegen-units = 1
+# codegen-units = 1
 # lto = true
 
 [workspace]

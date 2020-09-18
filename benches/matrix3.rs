@@ -207,11 +207,11 @@ fn bench_matrix3_inverse_wide(c: &mut Criterion) {
     });
     bench_ultraviolet_f32x4!(group, |b| {
         use ultraviolet::Mat3x4;
-        bench_unop_wide!(b, width => 4, op => inversed, ty => Mat3x4)
+        bench_unop_wide!(b, size, width => 4, op => inversed, ty => Mat3x4)
     });
     bench_ultraviolet_f32x8!(group, |b| {
         use ultraviolet::Mat3x8;
-        bench_unop_wide!(b, width => 8, op => inversed, ty => Mat3x8)
+        bench_unop_wide!(b, size, width => 8, op => inversed, ty => Mat3x8)
     });
     group.finish();
 }
