@@ -201,7 +201,7 @@ fn bench_ray_sphere_intersect_wide(c: &mut Criterion) {
     let mut group = c.benchmark_group("wide ray-sphere intersection");
     for size in [80000].iter() {
         group.throughput(Throughput::Elements(*size as u64));
-        bench_glam!(group, size, |b, size| {
+        bench_glam_f32x1!(group, size, |b, size| {
             use glam::Vec3;
             bench_intersection_scalar!(b, size, ty => Vec3, zero => Vec3::zero(), norm => normalize, mag_sq => length_squared, param => by_value);
         });

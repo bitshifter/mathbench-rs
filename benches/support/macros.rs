@@ -1,3 +1,6 @@
+#[allow(dead_code)]
+pub const MIN_WIDE_BENCH_SIZE: u64 = 16;
+
 #[macro_export]
 macro_rules! bench_lib {
     ($libname:literal, $group:ident, $size:expr, $closure:expr) => {
@@ -23,6 +26,16 @@ macro_rules! bench_glam {
     ($group:ident, $size:expr, $closure:expr) => {
         // bench_lib!("glam", $group, $size, $closure)
         $group.bench_with_input(criterion::BenchmarkId::new("glam", $size), $size, $closure)
+    };
+}
+
+#[macro_export]
+macro_rules! bench_glam_f32x1 {
+    ($group:ident, $closure:expr) => {
+        $group.bench_function("glam_f32x1", $closure)
+    };
+    ($group:ident, $size:expr, $closure:expr) => {
+        $group.bench_with_input(criterion::BenchmarkId::new("glam_f32x1", $size), $size, $closure)
     };
 }
 
@@ -247,9 +260,10 @@ macro_rules! bench_unop {
 
 #[macro_export]
 macro_rules! bench_unop_wide {
-    ($b: ident, width => $width: expr, op => $unop: ident, ty => $t:ty) => {{
+    ($b: ident, $size: expr, width => $width: expr, op => $unop: ident, ty => $t:ty) => {{
         const SIZE: usize = 1 << 13;
-        let batch_size = (16.0 / $width as f32).ceil() as usize;
+        let size = *$size as f32;
+        let batch_size = (size / $width as f32).ceil() as usize;
         let total_size = SIZE * batch_size;
 
         let mut rng = rand_pcg::Pcg64Mcg::new(rand::random());
@@ -273,9 +287,6 @@ macro_rules! bench_unop_wide {
             }
         });
         criterion::black_box(outputs);
-    }};
-    ($b: ident, op => $unop: ident, ty => $t:ty) => {{
-        bench_unop_wide!($b, width => 1, op => $unop, ty => $t)
     }};
 }
 
@@ -356,7 +367,7 @@ macro_rules! bench_binop {
 macro_rules! bench_binop_wide {
     ($b: ident, $size:expr, width => $width: expr, op => $binop: ident, ty1 => $t1:ty, ty2 => $t2:ty, param => $param:tt) => {{
         assert!(*$size >= 16);
-        let size = *$size;
+        let size = *$size as usize;
 
         let batch_size = (size as f32 / $width as f32).ceil() as usize;
         const SIZE: usize = 1 << 13;
@@ -388,14 +399,8 @@ macro_rules! bench_binop_wide {
             }
         })
     }};
-    ($b: ident, width => $width: expr, op => $binop: ident, ty1 => $t1:ty, ty2 => $t2:ty, param => $param:tt) => {{
-        bench_binop_wide!($b, &16, width => $width, op => $binop, ty1 => $t1, ty2 => $t2, param => $param)
-    }};
     ($b: ident, $size:expr, width => $width: expr, op => $binop: ident, ty1 => $ty1:ty, ty2 => $ty2:ty) => {{
         bench_binop_wide!($b, $size, width => $width, op => $binop, ty1 => $ty1, ty2 => $ty2, param => by_value)
-    }};
-    ($b: ident, width => $width: expr, op => $binop: ident, ty1 => $ty1:ty, ty2 => $ty2:ty) => {{
-        bench_binop_wide!($b, &16, width => $width, op => $binop, ty1 => $ty1, ty2 => $ty2, param => by_value)
     }};
 }
 
