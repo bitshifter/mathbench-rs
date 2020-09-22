@@ -14,6 +14,9 @@ WIDE = ['glam_f32x1', 'ultraviolet_f32x4', 'nalgebra_f32x4', 'ultraviolet_f32x8'
 
 CHOICES = SCALAR + WIDE
 
+SCALAR_PREFIX = 'scalar '
+WIDE_PREFIX = 'wide '
+
 class DefaultListAction(argparse.Action):
     def __call__(self, parser, namespace, values, option_string=None):
         if values:
@@ -45,6 +48,7 @@ def parse_bench(json_dir, benches):
             benchmarks = json.load(f)
             bench_name = benchmarks['group_id']
             input_size = benchmarks['value_str']
+
             try:
                 if input_size is not None:
                     bench_name = '{} x{}'.format(bench_name, input_size)
@@ -117,10 +121,10 @@ def main():
     pt = prettytable.PrettyTable(['benchmark'] + [f'  {x:}  ' for x in libs])
     for bench_name in benches:
         if args.wide:
-            if "wide" not in bench_name:
+            if WIDE_PREFIX not in bench_name:
                 continue
         else:
-            if "wide" in bench_name:
+            if WIDE_PREFIX in bench_name:
                 continue
 
         bench = benches[bench_name]
@@ -131,6 +135,13 @@ def main():
         if len(libs) == 1:
             min_value = max_value + 1
         value_strs = [fmt_bench(bench.get(x, None), max_value, min_value, threshold) for x in libs]
+
+        # strip prefix off the bench name for display
+        if bench_name.startswith(SCALAR_PREFIX):
+            bench_name = bench_name[len(SCALAR_PREFIX):]
+        elif bench_name.startswith(WIDE_PREFIX):
+            bench_name = bench_name[len(WIDE_PREFIX):]
+
         pt.add_row([bench_name] + value_strs)
     pt.sortby = 'benchmark'
     pt.align = 'r'
