@@ -742,10 +742,10 @@ pub mod static_math_support {
     use static_math::matrix2x2::M22;
     use static_math::matrix3x3::M33;
     use static_math::matrix4x4::M44;
+    use static_math::quaternion::Quaternion;
     use static_math::vector2::V2;
     use static_math::vector3::V3;
     use static_math::vector4::V4;
-    use static_math::quaternion::Quaternion;
 
     fn random_nonzero_f32<R>(rng: &mut R) -> f32
     where
