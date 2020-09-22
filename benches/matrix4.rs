@@ -211,7 +211,7 @@ fn bench_matrix4_inverse(c: &mut Criterion) {
 }
 
 fn bench_matrix4_inverse_wide(c: &mut Criterion) {
-    let mut group = c.benchmark_group("scalar wide matrix4 inverse");
+    let mut group = c.benchmark_group("wide matrix4 inverse");
     let size = &macros::MIN_WIDE_BENCH_SIZE;
     group.throughput(criterion::Throughput::Elements(*size));
     bench_glam_f32x1!(group, |b| {
