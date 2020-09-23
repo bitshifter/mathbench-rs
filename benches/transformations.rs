@@ -39,7 +39,7 @@ fn bench_transform_vector3_wide(c: &mut Criterion) {
     let mut group = c.benchmark_group("wide transform vector3");
     for size in [16, 256].iter() {
         group.throughput(criterion::Throughput::Elements(*size as u64));
-        bench_glam!(group, size, |b, size| {
+        bench_glam_f32x1!(group, size, |b, size| {
             use glam::{Mat4, Vec3};
             bench_binop_wide!(b, size, width => 1, op => transform_vector3, ty1 => Mat4, ty2 => Vec3)
         });
@@ -97,7 +97,7 @@ fn bench_transform_point3_wide(c: &mut Criterion) {
     let mut group = c.benchmark_group("wide transform point3");
     for size in [16, 256].iter() {
         group.throughput(criterion::Throughput::Elements(*size as u64));
-        bench_glam!(group, size, |b, size| {
+        bench_glam_f32x1!(group, size, |b, size| {
             use glam::{Mat4, Vec3};
             bench_binop_wide!(b, size, width => 1, op => transform_point3, ty1 => Mat4, ty2 => Vec3)
         });
@@ -155,7 +155,7 @@ fn bench_transform_point2_wide(c: &mut Criterion) {
     let mut group = c.benchmark_group("wide transform point2");
     for size in [16, 256].iter() {
         group.throughput(criterion::Throughput::Elements(*size as u64));
-        bench_glam!(group, size, |b, size| {
+        bench_glam_f32x1!(group, size, |b, size| {
             use glam::{Mat3, Vec2};
             bench_binop_wide!(b, size, width => 1, op => transform_point2, ty1 => Mat3, ty2 => Vec2)
         });
@@ -208,7 +208,7 @@ fn bench_transform_vector2_wide(c: &mut Criterion) {
     let mut group = c.benchmark_group("wide transform vector2");
     for size in [16, 256].iter() {
         group.throughput(criterion::Throughput::Elements(*size as u64));
-        bench_glam!(group, size, |b, size| {
+        bench_glam_f32x1!(group, size, |b, size| {
             use glam::{Mat3, Vec2};
             bench_binop_wide!(b, size, width => 1, op => transform_vector2, ty1 => Mat3, ty2 => Vec2)
         });

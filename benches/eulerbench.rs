@@ -77,7 +77,7 @@ fn bench_euler_3d_wide(c: &mut Criterion) {
     let mut group = c.benchmark_group("wide euler 3d");
     for size in [80000].iter() {
         group.throughput(Throughput::Elements(*size as u64));
-        bench_glam!(group, size, |b, size| {
+        bench_glam_f32x1!(group, size, |b, size| {
             use glam::Vec3A;
             bench_euler!(b, size, ty => Vec3A, zero => Vec3A::zero(), dt => Vec3A::splat(UPDATE_RATE))
         });
@@ -151,7 +151,7 @@ fn bench_euler_2d_wide(c: &mut Criterion) {
     let mut group = c.benchmark_group("wide euler 2d");
     for size in [80000].iter() {
         group.throughput(Throughput::Elements(*size as u64));
-        bench_glam!(group, size, |b, size| {
+        bench_glam_f32x1!(group, size, |b, size| {
             use glam::Vec2;
             bench_euler!(b, size, ty => Vec2, zero => Vec2::zero(), dt => Vec2::splat(UPDATE_RATE))
         });

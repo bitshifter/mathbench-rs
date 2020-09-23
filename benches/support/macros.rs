@@ -1,3 +1,6 @@
+#[allow(dead_code)]
+pub const MIN_WIDE_BENCH_SIZE: u64 = 16;
+
 #[macro_export]
 macro_rules! bench_lib {
     ($libname:literal, $group:ident, $size:expr, $closure:expr) => {
@@ -27,6 +30,20 @@ macro_rules! bench_glam {
 }
 
 #[macro_export]
+macro_rules! bench_glam_f32x1 {
+    // ($group:ident, $closure:expr) => {
+    //     $group.bench_function("glam_f32x1", $closure)
+    // };
+    ($group:ident, $size:expr, $closure:expr) => {
+        $group.bench_with_input(
+            criterion::BenchmarkId::new("glam_f32x1", $size),
+            $size,
+            $closure,
+        )
+    };
+}
+
+#[macro_export]
 macro_rules! bench_cgmath {
     ($group:ident, $closure:expr) => {
         bench_lib!("cgmath", $group, $closure)
@@ -48,9 +65,9 @@ macro_rules! bench_ultraviolet {
 
 #[macro_export]
 macro_rules! bench_ultraviolet_f32x4 {
-    ($group:ident, $closure:expr) => {
-        bench_lib!("ultraviolet_f32x4", $group, $closure)
-    };
+    // ($group:ident, $closure:expr) => {
+    //     bench_lib!("ultraviolet_f32x4", $group, $closure)
+    // };
     ($group:ident, $size:expr, $closure:expr) => {
         bench_lib!("ultraviolet_f32x4", $group, $size, $closure)
     };
@@ -58,9 +75,9 @@ macro_rules! bench_ultraviolet_f32x4 {
 
 #[macro_export]
 macro_rules! bench_ultraviolet_f32x8 {
-    ($group:ident, $closure:expr) => {
-        bench_lib!("ultraviolet_f32x8", $group, $closure)
-    };
+    // ($group:ident, $closure:expr) => {
+    //     bench_lib!("ultraviolet_f32x8", $group, $closure)
+    // };
     ($group:ident, $size:expr, $closure:expr) => {
         bench_lib!("ultraviolet_f32x8", $group, $size, $closure)
     };
@@ -68,9 +85,9 @@ macro_rules! bench_ultraviolet_f32x8 {
 
 #[macro_export]
 macro_rules! bench_ultraviolet_f64 {
-    ($group:ident, $closure:expr) => {
-        bench_lib!("ultraviolet_f64", $group, $closure)
-    };
+    // ($group:ident, $closure:expr) => {
+    //     bench_lib!("ultraviolet_f64", $group, $closure)
+    // };
     ($group:ident, $size:expr, $closure:expr) => {
         bench_lib!("ultraviolet_f64", $group, $size, $closure)
     };
@@ -78,9 +95,9 @@ macro_rules! bench_ultraviolet_f64 {
 
 #[macro_export]
 macro_rules! bench_ultraviolet_f64x2 {
-    ($group:ident, $closure:expr) => {
-        bench_lib!("ultraviolet_f64x2", $group, $closure)
-    };
+    // ($group:ident, $closure:expr) => {
+    //     bench_lib!("ultraviolet_f64x2", $group, $closure)
+    // };
     ($group:ident, $size:expr, $closure:expr) => {
         bench_lib!("ultraviolet_f64x2", $group, $size, $closure)
     };
@@ -88,9 +105,9 @@ macro_rules! bench_ultraviolet_f64x2 {
 
 #[macro_export]
 macro_rules! bench_ultraviolet_f64x4 {
-    ($group:ident, $closure:expr) => {
-        bench_lib!("ultraviolet_f64x4", $group, $closure)
-    };
+    // ($group:ident, $closure:expr) => {
+    //     bench_lib!("ultraviolet_f64x4", $group, $closure)
+    // };
     ($group:ident, $size:expr, $closure:expr) => {
         bench_lib!("ultraviolet_f64x4", $group, $size, $closure)
     };
@@ -108,9 +125,9 @@ macro_rules! bench_nalgebra {
 
 #[macro_export]
 macro_rules! bench_nalgebra_f32x4 {
-    ($group:ident, $closure:expr) => {
-        bench_lib!("nalgebra_f32x4", $group, $closure)
-    };
+    // ($group:ident, $closure:expr) => {
+    //     bench_lib!("nalgebra_f32x4", $group, $closure)
+    // };
     ($group:ident, $size:expr, $closure:expr) => {
         bench_lib!("nalgebra_f32x4", $group, $size, $closure)
     };
@@ -118,9 +135,9 @@ macro_rules! bench_nalgebra_f32x4 {
 
 #[macro_export]
 macro_rules! bench_nalgebra_f32x8 {
-    ($group:ident, $closure:expr) => {
-        bench_lib!("nalgebra_f32x8", $group, $closure)
-    };
+    // ($group:ident, $closure:expr) => {
+    //     bench_lib!("nalgebra_f32x8", $group, $closure)
+    // };
     ($group:ident, $size:expr, $closure:expr) => {
         bench_lib!("nalgebra_f32x8", $group, $size, $closure)
     };
@@ -128,9 +145,9 @@ macro_rules! bench_nalgebra_f32x8 {
 
 #[macro_export]
 macro_rules! bench_nalgebra_f32x16 {
-    ($group:ident, $closure:expr) => {
-        bench_lib!("nalgebra_f32x16", $group, $closure)
-    };
+    // ($group:ident, $closure:expr) => {
+    //     bench_lib!("nalgebra_f32x16", $group, $closure)
+    // };
     ($group:ident, $size:expr, $closure:expr) => {
         bench_lib!("nalgebra_f32x16", $group, $size, $closure)
     };
@@ -148,9 +165,9 @@ macro_rules! bench_nalgebra_f64 {
 
 #[macro_export]
 macro_rules! bench_nalgebra_f64x2 {
-    ($group:ident, $closure:expr) => {
-        bench_lib!("nalgebra_f64x2", $group, $closure)
-    };
+    // ($group:ident, $closure:expr) => {
+    //     bench_lib!("nalgebra_f64x2", $group, $closure)
+    // };
     ($group:ident, $size:expr, $closure:expr) => {
         bench_lib!("nalgebra_f64x2", $group, $size, $closure)
     };
@@ -158,9 +175,9 @@ macro_rules! bench_nalgebra_f64x2 {
 
 #[macro_export]
 macro_rules! bench_nalgebra_f64x4 {
-    ($group:ident, $closure:expr) => {
-        bench_lib!("nalgebra_f64x4", $group, $closure)
-    };
+    // ($group:ident, $closure:expr) => {
+    //     bench_lib!("nalgebra_f64x4", $group, $closure)
+    // };
     ($group:ident, $size:expr, $closure:expr) => {
         bench_lib!("nalgebra_f64x4", $group, $size, $closure)
     };
@@ -168,9 +185,9 @@ macro_rules! bench_nalgebra_f64x4 {
 
 #[macro_export]
 macro_rules! bench_nalgebra_f64x8 {
-    ($group:ident, $closure:expr) => {
-        bench_lib!("nalgebra_f64x8", $group, $closure)
-    };
+    // ($group:ident, $closure:expr) => {
+    //     bench_lib!("nalgebra_f64x8", $group, $closure)
+    // };
     ($group:ident, $size:expr, $closure:expr) => {
         bench_lib!("nalgebra_f64x8", $group, $size, $closure)
     };
@@ -247,9 +264,10 @@ macro_rules! bench_unop {
 
 #[macro_export]
 macro_rules! bench_unop_wide {
-    ($b: ident, width => $width: expr, op => $unop: ident, ty => $t:ty) => {{
+    ($b: ident, $size: expr, width => $width: expr, op => $unop: ident, ty => $t:ty) => {{
         const SIZE: usize = 1 << 13;
-        let batch_size = (16.0 / $width as f32).ceil() as usize;
+        let size = *$size as f32;
+        let batch_size = (size / $width as f32).ceil() as usize;
         let total_size = SIZE * batch_size;
 
         let mut rng = rand_pcg::Pcg64Mcg::new(rand::random());
@@ -259,7 +277,8 @@ macro_rules! bench_unop_wide {
                 .collect::<Vec<_>>(),
         );
         // pre-fill output vector with some random value
-        let mut outputs = vec![<$t as mathbench::BenchValue>::random_value(&mut rng).$unop(); total_size];
+        let mut outputs =
+            vec![<$t as mathbench::BenchValue>::random_value(&mut rng).$unop(); total_size];
         let mut i = 0;
         $b.iter(|| {
             // minimise overhead of accessing random data using get unchecked
@@ -269,13 +288,12 @@ macro_rules! bench_unop_wide {
             for j in start..end {
                 let res = unsafe { inputs.get_unchecked(j).$unop() };
                 criterion::black_box(res);
-                unsafe { *outputs.get_unchecked_mut(j) = res; }
+                unsafe {
+                    *outputs.get_unchecked_mut(j) = res;
+                }
             }
         });
         criterion::black_box(outputs);
-    }};
-    ($b: ident, op => $unop: ident, ty => $t:ty) => {{
-        bench_unop_wide!($b, width => 1, op => $unop, ty => $t)
     }};
 }
 
@@ -356,7 +374,7 @@ macro_rules! bench_binop {
 macro_rules! bench_binop_wide {
     ($b: ident, $size:expr, width => $width: expr, op => $binop: ident, ty1 => $t1:ty, ty2 => $t2:ty, param => $param:tt) => {{
         assert!(*$size >= 16);
-        let size = *$size;
+        let size = *$size as usize;
 
         let batch_size = (size as f32 / $width as f32).ceil() as usize;
         const SIZE: usize = 1 << 13;
@@ -388,14 +406,8 @@ macro_rules! bench_binop_wide {
             }
         })
     }};
-    ($b: ident, width => $width: expr, op => $binop: ident, ty1 => $t1:ty, ty2 => $t2:ty, param => $param:tt) => {{
-        bench_binop_wide!($b, &16, width => $width, op => $binop, ty1 => $t1, ty2 => $t2, param => $param)
-    }};
     ($b: ident, $size:expr, width => $width: expr, op => $binop: ident, ty1 => $ty1:ty, ty2 => $ty2:ty) => {{
         bench_binop_wide!($b, $size, width => $width, op => $binop, ty1 => $ty1, ty2 => $ty2, param => by_value)
-    }};
-    ($b: ident, width => $width: expr, op => $binop: ident, ty1 => $ty1:ty, ty2 => $ty2:ty) => {{
-        bench_binop_wide!($b, &16, width => $width, op => $binop, ty1 => $ty1, ty2 => $ty2, param => by_value)
     }};
 }
 
