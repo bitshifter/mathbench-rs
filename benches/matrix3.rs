@@ -3,9 +3,10 @@
 mod macros;
 use criterion::{criterion_group, criterion_main, Criterion};
 use macros::MIN_WIDE_BENCH_SIZE;
+use std::ops::Mul;
+use mathbench::BenchValue;
 
 fn bench_matrix3_ret_self(c: &mut Criterion) {
-    use mathbench::BenchValue;
     let mut group = c.benchmark_group("scalar matrix3 return self");
     bench_glam!(group, |b| {
         use glam::Mat3;
@@ -35,7 +36,6 @@ fn bench_matrix3_ret_self(c: &mut Criterion) {
 }
 
 fn bench_matrix3_ret_self_wide(c: &mut Criterion) {
-    use mathbench::BenchValue;
     let size = &MIN_WIDE_BENCH_SIZE;
     let mut group = c.benchmark_group("wide matrix3 return self");
     group.throughput(criterion::Throughput::Elements(*size));
@@ -218,7 +218,6 @@ fn bench_matrix3_inverse_wide(c: &mut Criterion) {
 }
 
 fn bench_matrix3_mul_matrix3(c: &mut Criterion) {
-    use std::ops::Mul;
     let mut group = c.benchmark_group("scalar matrix3 mul matrix3");
     bench_glam!(group, |b| {
         use glam::Mat3;
@@ -248,7 +247,6 @@ fn bench_matrix3_mul_matrix3(c: &mut Criterion) {
 }
 
 fn bench_matrix3_mul_matrix3_wide(c: &mut Criterion) {
-    use std::ops::Mul;
     let mut group = c.benchmark_group("wide matrix3 mul matrix3");
     for size in [16, 256].iter() {
         group.throughput(criterion::Throughput::Elements(*size as u64));
@@ -279,7 +277,6 @@ fn bench_matrix3_mul_matrix3_wide(c: &mut Criterion) {
 }
 
 fn bench_matrix3_mul_vector3(c: &mut Criterion) {
-    use std::ops::Mul;
     let mut group = c.benchmark_group("scalar matrix3 mul vector3");
     for size in [1, 100].iter() {
         group.throughput(criterion::Throughput::Elements(*size as u64));
@@ -313,7 +310,6 @@ fn bench_matrix3_mul_vector3(c: &mut Criterion) {
 }
 
 fn bench_matrix3_mul_vector3_wide(c: &mut Criterion) {
-    use std::ops::Mul;
     let mut group = c.benchmark_group("wide matrix3 mul vector3");
     for size in [16, 256].iter() {
         group.throughput(criterion::Throughput::Elements(*size as u64));

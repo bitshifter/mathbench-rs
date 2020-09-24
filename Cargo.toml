@@ -8,19 +8,24 @@ edition = "2018"
 # defaults can be disabled for benchmarks but are required for tests
 default = ["cgmath", "nalgebra", "ultraviolet"]
 
+# fake glam target for wide comparisons
+glam_f32x1 = []
+
 ultraviolet_f32x4 = ["ultraviolet"]
 ultraviolet_f32x8 = ["ultraviolet"]
 ultraviolet_wide = ["ultraviolet_f32x4", "ultraviolet_f32x8"]
 
+# nalgebra wide types require a nightly compiler
 nalgebra_f32x4 = ["nalgebra", "simba"]
 nalgebra_f32x8 = ["nalgebra", "simba"]
 nalgebra_wide = ["nalgebra_f32x4", "nalgebra_f32x8"]
 
 scalar = ["cgmath", "nalgebra", "ultraviolet", "euclid", "vek", "pathfinder_geometry", "static-math"]
-wide = ["ultraviolet_wide", "nalgebra_wide"]
+wide = ["glam_f32x1", "ultraviolet_wide", "nalgebra_wide"]
 
 all = ["scalar", "wide"]
 
+# enable unstable features
 unstable = []
 
 [dependencies]

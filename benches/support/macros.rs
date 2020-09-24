@@ -31,15 +31,8 @@ macro_rules! bench_glam {
 
 #[macro_export]
 macro_rules! bench_glam_f32x1 {
-    // ($group:ident, $closure:expr) => {
-    //     $group.bench_function("glam_f32x1", $closure)
-    // };
     ($group:ident, $size:expr, $closure:expr) => {
-        $group.bench_with_input(
-            criterion::BenchmarkId::new("glam_f32x1", $size),
-            $size,
-            $closure,
-        )
+        bench_lib!("glam_f32x1", $group, $size, $closure)
     };
 }
 

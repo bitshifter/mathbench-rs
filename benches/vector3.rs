@@ -3,10 +3,10 @@
 mod macros;
 use criterion::{criterion_group, criterion_main, Criterion};
 use macros::MIN_WIDE_BENCH_SIZE;
+use mathbench::BenchValue;
 
 // returns self to check overhead of benchmark
 fn bench_vector3_ret_self(c: &mut Criterion) {
-    use mathbench::BenchValue;
     let mut group = c.benchmark_group("scalar vector3 return self");
     bench_glam!(group, |b| {
         use glam::Vec3A;
@@ -36,7 +36,6 @@ fn bench_vector3_ret_self(c: &mut Criterion) {
 }
 
 fn bench_vector3_ret_self_wide(c: &mut Criterion) {
-    use mathbench::BenchValue;
     let size = &MIN_WIDE_BENCH_SIZE;
     let mut group = c.benchmark_group("wide vector3 return self");
     group.throughput(criterion::Throughput::Elements(*size));

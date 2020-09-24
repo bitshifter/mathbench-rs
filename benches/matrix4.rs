@@ -3,10 +3,11 @@
 mod macros;
 use criterion::{criterion_group, criterion_main, Criterion};
 use macros::MIN_WIDE_BENCH_SIZE;
+use mathbench::BenchValue;
+use std::ops::Mul;
 
 // returns self to check overhead of benchmark
 fn bench_matrix4_ret_self(c: &mut Criterion) {
-    use mathbench::BenchValue;
     let mut group = c.benchmark_group("scalar matrix4 return self");
     bench_glam!(group, |b| {
         use glam::Mat4;
@@ -36,7 +37,6 @@ fn bench_matrix4_ret_self(c: &mut Criterion) {
 }
 
 fn bench_matrix4_ret_self_wide(c: &mut Criterion) {
-    use mathbench::BenchValue;
     let size = &MIN_WIDE_BENCH_SIZE;
     let mut group = c.benchmark_group("wide matrix4 return self");
     group.throughput(criterion::Throughput::Elements(*size as u64));
@@ -231,7 +231,6 @@ fn bench_matrix4_inverse_wide(c: &mut Criterion) {
 }
 
 fn bench_matrix4_mul_matrix4(c: &mut Criterion) {
-    use std::ops::Mul;
     let mut group = c.benchmark_group("matrix4 mul matrix4");
     bench_glam!(group, |b| {
         use glam::Mat4;
@@ -265,7 +264,6 @@ fn bench_matrix4_mul_matrix4(c: &mut Criterion) {
 }
 
 fn bench_matrix4_mul_matrix4_wide(c: &mut Criterion) {
-    use std::ops::Mul;
     let mut group = c.benchmark_group("wide matrix4 mul matrix4");
     for size in [16, 256].iter() {
         group.throughput(criterion::Throughput::Elements(*size as u64));
@@ -296,7 +294,6 @@ fn bench_matrix4_mul_matrix4_wide(c: &mut Criterion) {
 }
 
 fn bench_matrix4_mul_vector4(c: &mut Criterion) {
-    use std::ops::Mul;
     let mut group = c.benchmark_group("scalar matrix4 mul vector4");
     for size in [1, 100].iter() {
         group.throughput(criterion::Throughput::Elements(*size as u64));
@@ -330,7 +327,6 @@ fn bench_matrix4_mul_vector4(c: &mut Criterion) {
 }
 
 fn bench_matrix4_mul_vector4_wide(c: &mut Criterion) {
-    use std::ops::Mul;
     let mut group = c.benchmark_group("wide matrix4 mul vector4");
     for size in [16, 256].iter() {
         group.throughput(criterion::Throughput::Elements(*size as u64));
