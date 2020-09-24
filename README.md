@@ -105,14 +105,14 @@ Most libraries provide quaternions for performing rotations except for
 ### Wide benchmarks
 
 All benchmarks are gated as either "wide" or "scalar". This division allows us to
-more fairly compare these different styles of libraries. 
+more fairly compare these different styles of libraries.
 
 "scalar" benchmarks operate on standard scalar `f32` values, doing calculations
 on one piece of data at a time (or in the case of a "horizontal" SIMD library
-like `glam`, one `Vec3`/`Vec4` at a time). 
+like `glam`, one `Vec3`/`Vec4` at a time).
 
 "wide" benchmarks operate in a "vertical" AoSoA (Array-of-Struct-of-Arrays)
-fashion, which is a programming model that allows the potential to more fully 
+fashion, which is a programming model that allows the potential to more fully
 use the advantages of SIMD operations. However, it has the cost of
 making algorithm design harder, as scalar algorithms cannot be directly used
 by "wide" architectures. Because of this difference in algorithms, we also can't
@@ -122,14 +122,14 @@ of data at the same time).
 
 The "wide" benchmarks still include `glam`, a scalar-only library, as a
 comparison. Even though the comparison is somewhat apples-to-oranges, in each of
-these cases, when running "wide" benchmark variants, 
+these cases, when running "wide" benchmark variants,
 `glam` is configured to do the exact same *amount* of final work,
 producing the same outputs that the "wide" versions would. The purpose is to
 give an idea of the possible throughput benefits of "wide" types compared to
 writing the same algorithms with a scalar type, at the cost of extra care
 being needed to write the algorithm.
 
-To learn more about AoSoA architecture, see 
+To learn more about AoSoA architecture, see
 [this blog post](https://www.rustsim.org/blog/2020/03/23/simd-aosoa-in-nalgebra/)
 by the author of `nalgebra` which goes more in depth to how AoSoA works and
 its possible benefits. Also take a look at the
@@ -137,6 +137,15 @@ its possible benefits. Also take a look at the
 `ultraviolet`'s README, which contains a discussion of how to port scalar
 algorithms to wide ones, with the examples of the Euler integration and
 ray-sphere intersection benchmarks from `mathbench`.
+
+Note that the `nalgebra_f32x4` and `nalgebra_f32x8` benchmarks require a Rust
+nightly compiler as they depend on the unstable `packed_simd` crate. As of
+writing the `packed_simd` crate was broken for nightly builds after
+`nightly-2020-09-14`. If you are interested in benchmarking these libraries I
+recommend using the `nightly-2020-09-14` toolchain.
+
+Additionally the `f32x8` benchmarks will require the `AVX2` instruction set, to
+enable that you will need to build with `RUSTFLAGS='-C target-features=avx2`.
 
 ## Build settings
 
@@ -252,7 +261,7 @@ be run to generate an ASCII output.
 ## Default and optional features
 
 All libraries except for `glam` are optional for running benchmarks. The default
-features include `cgmath`, `ultraviolet` and `nalgebra`. These can be disabled 
+features include `cgmath`, `ultraviolet` and `nalgebra`. These can be disabled
 with:
 
 ```sh
