@@ -4,6 +4,17 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog].
 
+## [0.4.0] - Unreleased
+
+### Added
+
+* Added wide benchmarks for `nalgebra` and `ultraviolet` libraries.
+
+### Changed
+
+* Updated `static-math` to `0.1.7`
+* Updated `ultraviolet` to `0.7.1`
+
 ## [0.3.2] - 2020-09-05
 
 ### Added
@@ -77,7 +88,9 @@ The format is based on [Keep a Changelog].
   benchmarking functions has been silently deprecated in `0.3.0`.
 
 [Keep a Changelog]: https://keepachangelog.com/
-[Unreleased]: https://github.com/bitshifter/mathbench-rs/compare/0.3.1...HEAD
+[Unreleased]: https://github.com/bitshifter/mathbench-rs/compare/0.4.0...HEAD
+[0.4.0]: https://github.com/bitshifter/mathbench-rs/compare/0.3.2...0.4.0
+[0.3.2]: https://github.com/bitshifter/mathbench-rs/compare/0.3.1...0.3.2
 [0.3.1]: https://github.com/bitshifter/mathbench-rs/compare/0.3.0...0.3.1
 [0.3.0]: https://github.com/bitshifter/mathbench-rs/compare/0.2.0...0.3.0
 [0.2.0]: https://github.com/bitshifter/mathbench-rs/compare/0.1.9...0.2.0
