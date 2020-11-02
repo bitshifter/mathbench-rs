@@ -34,18 +34,18 @@ rand = "0.7.2"
 rand_pcg = "0.2.1"
 
 [dependencies.glam]
-version = "0.9.4"
+version = "0.10.0"
 features = ["mint", "rand", "debug-glam-assert"]
 # a lot of random data generation uses glam, so can't be optional yet
 # optional = true
 
 [dependencies.nalgebra]
-version = "0.22.0"
+version = "0.23.0"
 features = ["mint"]
 optional = true
 
 [dependencies.simba]
-version = "0.2"
+version = "0.3"
 features = ["packed_simd"]
 optional = true
 
