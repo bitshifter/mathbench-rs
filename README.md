@@ -69,6 +69,8 @@ salt.
 The benchmarks are currently focused on `f32` types as that is all `glam`
 currently supports.
 
+## Crate differences
+
 Different libraries have different features and different ways of achieving the
 same goal. For the purpose of trying to get a performance comparison sometimes
 `mathbench` compares similar functionality, but sometimes it's not exactly the
@@ -103,7 +105,7 @@ whereas `glam` and `euclid` do not. If a non-invertible matrix is inverted by
 Most libraries provide quaternions for performing rotations except for
 `ultraviolet` which provides rotors.
 
-### Wide benchmarks
+## Wide benchmarks
 
 All benchmarks are gated as either "wide" or "scalar". This division allows us
 to more fairly compare these different styles of libraries.
@@ -114,39 +116,34 @@ like `glam`, one `Vec3`/`Vec4` at a time).
 
 "wide" benchmarks operate in a "vertical" AoSoA (Array-of-Struct-of-Arrays)
 fashion, which is a programming model that allows the potential to more fully
-use the advantages of SIMD operations. However, it has the cost of
-making algorithm design harder, as scalar algorithms cannot be directly used
-by "wide" architectures. Because of this difference in algorithms, we also can't
-really *directly* compare the performance of "scalar" vs "wide" types because
-they don't *quite* do the same thing (wide types operate on multiple pieces
-of data at the same time).
+use the advantages of SIMD operations. However, it has the cost of making
+algorithm design harder, as scalar algorithms cannot be directly used by "wide"
+architectures. Because of this difference in algorithms, we also can't really
+*directly* compare the performance of "scalar" vs "wide" types because they
+don't *quite* do the same thing (wide types operate on multiple pieces of data
+at the same time).
 
 The "wide" benchmarks still include `glam`, a scalar-only library, as a
 comparison. Even though the comparison is somewhat apples-to-oranges, in each of
-these cases, when running "wide" benchmark variants,
-`glam` is configured to do the exact same *amount* of final work,
-producing the same outputs that the "wide" versions would. The purpose is to
-give an idea of the possible throughput benefits of "wide" types compared to
-writing the same algorithms with a scalar type, at the cost of extra care
-being needed to write the algorithm.
+these cases, when running "wide" benchmark variants, `glam` is configured to do
+the exact same *amount* of final work, producing the same outputs that the
+"wide" versions would. The purpose is to give an idea of the possible throughput
+benefits of "wide" types compared to writing the same algorithms with a scalar
+type, at the cost of extra care being needed to write the algorithm.
 
-To learn more about AoSoA architecture, see
-[this blog post](https://www.rustsim.org/blog/2020/03/23/simd-aosoa-in-nalgebra/)
-by the author of `nalgebra` which goes more in depth to how AoSoA works and
-its possible benefits. Also take a look at the
-["Examples" section](https://github.com/termhn/ultraviolet#examples) of
-`ultraviolet`'s README, which contains a discussion of how to port scalar
-algorithms to wide ones, with the examples of the Euler integration and
-ray-sphere intersection benchmarks from `mathbench`.
+To learn more about AoSoA architecture, see [this blog
+post](https://www.rustsim.org/blog/2020/03/23/simd-aosoa-in-nalgebra/) by the
+author of `nalgebra` which goes more in depth to how AoSoA works and its
+possible benefits. Also take a look at the ["Examples"
+section](https://github.com/termhn/ultraviolet#examples) of `ultraviolet`'s
+README, which contains a discussion of how to port scalar algorithms to wide
+ones, with the examples of the Euler integration and ray-sphere intersection
+benchmarks from `mathbench`.
 
 Note that the `nalgebra_f32x4` and `nalgebra_f32x8` benchmarks require a Rust
-nightly compiler as they depend on the unstable `packed_simd` crate. As of
-writing the `packed_simd` crate was broken for nightly builds after
-`nightly-2020-09-14`. If you are interested in benchmarking these libraries I
-recommend using the `nightly-2020-09-14` toolchain.
 
 Additionally the `f32x8` benchmarks will require the `AVX2` instruction set, to
-enable that you will need to build with `RUSTFLAGS='-C target-features=avx2`.
+enable that you will need to build with `RUSTFLAGS='-C target-feature=+avx2`.
 
 ## Build settings
 
@@ -172,7 +169,31 @@ The following is a table of benchmarks produced by `mathbench` comparing `glam`
 performance to `cgmath`, `nalgebra`, `euclid`, `vek`, `pathfinder_geometry`,
 `static-math` and `ultraviolet` on `f32` data.
 
+These benchmarks were performed on an [Intel i7-4710HQ] CPU on Linux. They were
+compiled with the `1.49.0-nightly (ffa2e7ae8 2020-10-24)` Rust compiler. Lower
+(better) numbers are highlighted within a 2.5% range of the minimum for each
+row.
+
+The versions of the libraries tested were:
+
+* `cgmath` - `0.17.0`
+* `euclid` - `0.22.1`
+* `glam` - `0.10.0`
+* `nalgebra` - `0.23.0`
+* `pathfinder_geometry` - `0.5.1`
+* `static-math` - `0.1.7`
+* `ultraviolet` - `0.5.1`
+* `vek` - `0.12.0` (`repr_c` types)
+
+See the full [mathbench report] for more detailed results.
+
 ### Scalar benchmarks
+
+Run with the command:
+
+```sh
+cargo +nightly bench --features scalar scalar
+```
 
 | benchmark                      |          glam   |        cgmath   |      nalgebra   |       euclid   |           vek   |    pathfinder   |   static-math   |   ultraviolet   |
 |:-------------------------------|----------------:|----------------:|----------------:|---------------:|----------------:|----------------:|----------------:|----------------:|
@@ -227,70 +248,58 @@ performance to `cgmath`, `nalgebra`, `euclid`, `vek`, `pathfinder_geometry`,
 
 ### Wide benchmarks
 
+Run with the command:
+
+```sh
+RUSTFLAGS='-C target-feature=+avx2' cargo +nightly bench --features wide wide
+```
+
 | benchmark                      |    glam_f32x1   |   ultraviolet_f32x4   |   nalgebra_f32x4   |   ultraviolet_f32x8   |   nalgebra_f32x8   |
 |:-------------------------------|----------------:|----------------------:|-------------------:|----------------------:|-------------------:|
-| euler 2d x80000                |      133.5 us   |          __63.68 us__ |         75.82 us   |          __63.93 us__ |         73.72 us   |
-| euler 3d x80000                |      138.3 us   |          __96.67 us__ |         110.5 us   |          __94.52 us__ |         109.9 us   |
-| matrix2 determinant x16        |    19.7325 ns   |          12.4998 ns   |          N/A       |        __10.8673 ns__ |          N/A       |
-| matrix2 inverse x16            |    40.9707 ns   |          33.6438 ns   |          N/A       |        __24.3279 ns__ |          N/A       |
-| matrix2 mul matrix2 x16        |   103.2466 ns   |          41.0284 ns   |       47.0096 ns   |        __32.6314 ns__ |       38.6717 ns   |
-| matrix2 mul matrix2 x256       |      1.478 us   |           0.9623 us   |         1.016 us   |           __0.87 us__ |        0.9228 us   |
-| matrix2 mul vector2 x16        |    50.0281 ns   |          18.3303 ns   |       21.3396 ns   |        __17.1759 ns__ |       21.5718 ns   |
-| matrix2 mul vector2 x256       |   849.2077 ns   |         554.9362 ns   |      571.5398 ns   |       __535.6591 ns__ |      567.6641 ns   |
-| matrix2 return self x16        |    39.8191 ns   |          31.7524 ns   |       31.7471 ns   |        __27.2113 ns__ |     __26.8774 ns__ |
-| matrix2 transpose x16          |    32.3365 ns   |          27.3795 ns   |       31.9345 ns   |          55.7745 ns   |     __25.9508 ns__ |
-| matrix3 determinant x16        |    52.8457 ns   |          25.0882 ns   |          N/A       |        __23.9313 ns__ |          N/A       |
-| matrix3 inverse x16            |   279.4261 ns   |        __77.9571 ns__ |          N/A       |          82.9700 ns   |          N/A       |
-| matrix3 mul matrix3 x16        |   208.5786 ns   |       __115.7389 ns__ |      135.5749 ns   |       __118.6089 ns__ |      128.0700 ns   |
-| matrix3 mul matrix3 x256       |       2.71 us   |          __1.968 us__ |         2.221 us   |          __2.014 us__ |         2.165 us   |
-| matrix3 mul vector3 x16        |    89.3290 ns   |        __41.5621 ns__ |       44.4679 ns   |        __41.7183 ns__ |       43.8725 ns   |
-| matrix3 mul vector3 x256       |      1.389 us   |         __0.9802 us__ |         1.008 us   |         __0.9857 us__ |         1.019 us   |
-| matrix3 return self x16        |   116.0774 ns   |          82.6204 ns   |       82.4311 ns   |        __68.0774 ns__ |     __68.1448 ns__ |
-| matrix3 transpose x16          |   117.1991 ns   |        __67.2617 ns__ |       87.8443 ns   |         126.6054 ns   |       71.6610 ns   |
-| matrix4 determinant x16        |   103.9194 ns   |        __56.5354 ns__ |          N/A       |          63.6179 ns   |          N/A       |
-| matrix4 inverse x16            |   283.3458 ns   |       __176.6782 ns__ |          N/A       |         226.4414 ns   |          N/A       |
-| matrix4 mul matrix4 x16        |   239.5631 ns   |       __217.8796 ns__ |      304.7535 ns   |         231.7053 ns   |      260.1331 ns   |
-| matrix4 mul matrix4 x256       |      3.786 us   |          __3.521 us__ |         5.011 us   |            3.824 us   |         4.226 us   |
-| matrix4 mul vector4 x16        |  __91.1392 ns__ |          94.5026 ns   |       96.2576 ns   |          95.2530 ns   |       93.6022 ns   |
-| matrix4 mul vector4 x256       |    __1.564 us__ |          __1.539 us__ |         1.579 us   |          __1.553 us__ |         1.622 us   |
-| matrix4 return self x16        |   188.1169 ns   |       __159.4159 ns__ |    __158.2228 ns__ |         179.8254 ns   |      169.3116 ns   |
-| matrix4 transpose x16          |   166.4591 ns   |       __147.7486 ns__ |      154.9429 ns   |         218.2411 ns   |      166.0922 ns   |
-| ray-sphere intersection x80000 |      128.7 us   |            122.5 us   |         147.1 us   |          __106.3 us__ |         132.3 us   |
-| rotation3 inverse x16          |    32.2141 ns   |          29.3447 ns   |       29.0607 ns   |        __22.6547 ns__ |     __22.8919 ns__ |
-| rotation3 mul rotation3 x16    |    67.2563 ns   |          40.9737 ns   |     __39.9325 ns__ |          41.1718 ns   |     __39.1456 ns__ |
-| rotation3 mul vector3 x16      |   118.3145 ns   |        __37.5709 ns__ |     __36.6649 ns__ |          38.7674 ns   |     __37.4446 ns__ |
-| rotation3 return self x16      |    40.0180 ns   |          34.0464 ns   |       33.3571 ns   |        __27.3316 ns__ |     __27.6126 ns__ |
-| transform point2 x16           |    86.2502 ns   |          32.3730 ns   |          N/A       |        __31.4401 ns__ |          N/A       |
-| transform point2 x256          |      1.406 us   |         __0.8326 us__ |          N/A       |         __0.8356 us__ |          N/A       |
-| transform point3 x16           |    98.2458 ns   |        __77.5992 ns__ |          N/A       |        __77.6793 ns__ |          N/A       |
-| transform point3 x256          |      1.594 us   |          __1.393 us__ |          N/A       |          __1.411 us__ |          N/A       |
-| transform vector2 x16          |    53.6877 ns   |        __29.8658 ns__ |          N/A       |        __30.2374 ns__ |          N/A       |
-| transform vector2 x256         |   958.7514 ns   |       __832.0909 ns__ |          N/A       |       __816.6280 ns__ |          N/A       |
-| transform vector3 x16          |    85.5630 ns   |        __77.8801 ns__ |          N/A       |        __76.4569 ns__ |          N/A       |
-| transform vector3 x256         |      1.513 us   |          __1.392 us__ |          N/A       |          __1.401 us__ |          N/A       |
-| vector3 cross x16              |    43.1677 ns   |          25.9366 ns   |       25.9974 ns   |        __22.5509 ns__ |     __22.2118 ns__ |
-| vector3 dot x16                |    25.8692 ns   |          13.3849 ns   |     __12.6555 ns__ |        __12.6310 ns__ |     __12.8091 ns__ |
-| vector3 length x16             |    32.7727 ns   |           9.9668 ns   |       10.1030 ns   |         __9.7134 ns__ |       10.0952 ns   |
-| vector3 normalize x16          |    65.5558 ns   |          23.9771 ns   |       33.2875 ns   |        __22.9935 ns__ |       33.2660 ns   |
-| vector3 return self x16        |    39.5694 ns   |          24.3430 ns   |       24.1399 ns   |        __21.2372 ns__ |     __21.1930 ns__ |
-
-These benchmarks were performed on an [Intel i7-4710HQ] CPU on Linux. They were
-compiled with the `1.49.0-nightly (ffa2e7ae8 2020-10-24)` Rust compiler. Lower
-(better) numbers are highlighted within a 2.5% range of the minimum for each
-row.
-
-The versions of the libraries tested were:
-
-* `cgmath` - `0.17.0`
-* `euclid` - `0.22.1`
-* `glam` - `0.10.0`
-* `nalgebra` - `0.23.0`
-* `pathfinder_geometry` - `0.5.1`
-* `static-math` - `0.1.7`
-* `ultraviolet` - `0.5.1`
-* `vek` - `0.12.0` (`repr_c` types)
-
-See the full [mathbench report] for more detailed results.
+| euler 2d x80000                |      143.5 us   |           __63.9 us__ |         212.0 us   |             69.2 us   |         70.61 us   |
+| euler 3d x80000                |      134.7 us   |          __95.25 us__ |         234.0 us   |            105.2 us   |         106.6 us   |
+| matrix2 determinant x16        |    18.7044 ns   |          10.6443 ns   |          N/A       |        __10.0458 ns__ |          N/A       |
+| matrix2 inverse x16            |    39.8025 ns   |          29.9882 ns   |          N/A       |        __22.9798 ns__ |          N/A       |
+| matrix2 mul matrix2 x16        |   110.8825 ns   |          36.6508 ns   |       55.7935 ns   |        __31.7618 ns__ |       36.4354 ns   |
+| matrix2 mul matrix2 x256       |      1.556 us   |           0.9449 us   |         1.102 us   |         __0.8686 us__ |        0.9062 us   |
+| matrix2 mul vector2 x16        |    51.8334 ns   |          18.0458 ns   |       39.7479 ns   |        __17.5347 ns__ |       19.1624 ns   |
+| matrix2 mul vector2 x256       |   810.7620 ns   |       __560.2045 ns__ |      743.5690 ns   |       __554.8579 ns__ |    __558.4294 ns__ |
+| matrix2 return self x16        |    40.4023 ns   |          29.3419 ns   |       29.7301 ns   |        __21.2867 ns__ |     __21.5470 ns__ |
+| matrix2 transpose x16          |    32.9701 ns   |          29.4639 ns   |       48.4303 ns   |        __19.7871 ns__ |       21.4183 ns   |
+| matrix3 determinant x16        |    53.1394 ns   |          24.5118 ns   |          N/A       |        __21.1423 ns__ |          N/A       |
+| matrix3 inverse x16            |   306.7033 ns   |          79.1990 ns   |          N/A       |        __70.2207 ns__ |          N/A       |
+| matrix3 mul matrix3 x16        |   204.9730 ns   |       __116.6126 ns__ |      129.6155 ns   |       __116.3397 ns__ |      126.8384 ns   |
+| matrix3 mul matrix3 x256       |      2.841 us   |           __1.97 us__ |         2.167 us   |          __1.957 us__ |         2.101 us   |
+| matrix3 mul vector3 x16        |    89.4383 ns   |        __41.0862 ns__ |       56.6786 ns   |        __42.0856 ns__ |       42.2275 ns   |
+| matrix3 mul vector3 x256       |      1.404 us   |          __0.985 us__ |         1.111 us   |            __1.0 us__ |         1.011 us   |
+| matrix3 return self x16        |   117.4071 ns   |          74.9792 ns   |       75.9878 ns   |        __69.0985 ns__ |     __68.9782 ns__ |
+| matrix3 transpose x16          |   116.2578 ns   |          69.1388 ns   |       83.7164 ns   |        __64.6128 ns__ |     __66.1932 ns__ |
+| matrix4 determinant x16        |    98.5214 ns   |          62.2123 ns   |          N/A       |        __55.0411 ns__ |          N/A       |
+| matrix4 inverse x16            |   285.0211 ns   |       __173.8923 ns__ |          N/A       |       __174.8764 ns__ |          N/A       |
+| matrix4 mul matrix4 x16        |   241.3988 ns   |       __220.6856 ns__ |      254.1750 ns   |       __221.1143 ns__ |      242.1435 ns   |
+| matrix4 mul matrix4 x256       |      3.776 us   |           __3.53 us__ |         4.068 us   |          __3.603 us__ |          3.88 us   |
+| matrix4 mul vector4 x16        |    93.3108 ns   |        __90.8840 ns__ |       93.4190 ns   |          95.3603 ns   |     __91.5837 ns__ |
+| matrix4 mul vector4 x256       |      1.595 us   |          __1.549 us__ |       __1.584 us__ |           __1.58 us__ |       __1.587 us__ |
+| matrix4 return self x16        |   167.5312 ns   |       __159.6082 ns__ |      165.3852 ns   |         168.3952 ns   |      165.7410 ns   |
+| matrix4 transpose x16          |   185.2348 ns   |       __155.0984 ns__ |    __153.7135 ns__ |         161.5637 ns   |    __155.1658 ns__ |
+| ray-sphere intersection x80000 |      82.97 us   |            108.6 us   |         143.0 us   |          __70.35 us__ |         93.03 us   |
+| rotation3 inverse x16          |    32.4653 ns   |          30.8475 ns   |       31.2066 ns   |          22.5417 ns   |     __20.1224 ns__ |
+| rotation3 mul rotation3 x16    |    63.0726 ns   |          41.3994 ns   |       40.2430 ns   |        __33.6170 ns__ |     __33.7655 ns__ |
+| rotation3 mul vector3 x16      |   115.3996 ns   |          36.8573 ns   |       37.9278 ns   |        __25.6498 ns__ |       26.7130 ns   |
+| rotation3 return self x16      |    39.6630 ns   |          29.2236 ns   |       30.9480 ns   |        __21.1458 ns__ |     __20.8969 ns__ |
+| transform point2 x16           |    89.9512 ns   |        __32.8298 ns__ |          N/A       |        __32.1583 ns__ |          N/A       |
+| transform point2 x256          |      1.407 us   |         __0.8573 us__ |          N/A       |         __0.8538 us__ |          N/A       |
+| transform point3 x16           |   103.5212 ns   |        __81.0851 ns__ |          N/A       |        __82.3375 ns__ |          N/A       |
+| transform point3 x256          |      1.674 us   |          __1.409 us__ |          N/A       |           __1.44 us__ |          N/A       |
+| transform vector2 x16          |    53.2552 ns   |        __32.3600 ns__ |          N/A       |          33.1964 ns   |          N/A       |
+| transform vector2 x256         |   958.2088 ns   |       __826.2741 ns__ |          N/A       |         858.3724 ns   |          N/A       |
+| transform vector3 x16          |    90.9893 ns   |        __75.6296 ns__ |          N/A       |          84.0528 ns   |          N/A       |
+| transform vector3 x256         |      1.551 us   |            __1.4 us__ |          N/A       |            1.441 us   |          N/A       |
+| vector3 cross x16              |    42.5796 ns   |          26.8007 ns   |       26.2831 ns   |        __21.8064 ns__ |     __21.8924 ns__ |
+| vector3 dot x16                |    28.8746 ns   |          13.5288 ns   |       12.6610 ns   |        __12.3348 ns__ |     __12.4651 ns__ |
+| vector3 length x16             |    32.5694 ns   |          10.0201 ns   |       10.0544 ns   |         __9.3971 ns__ |      __9.5219 ns__ |
+| vector3 normalize x16          |    66.2781 ns   |          23.6915 ns   |       44.4884 ns   |        __20.0333 ns__ |       37.2278 ns   |
+| vector3 return self x16        |    40.0744 ns   |          36.5467 ns   |       36.5094 ns   |        __17.1831 ns__ |     __17.2817 ns__ |
 
 [Intel i7-4710HQ]: https://ark.intel.com/content/www/us/en/ark/products/78930/intel-core-i7-4710hq-processor-6m-cache-up-to-3-50-ghz.html
 [mathbench report]: https://bitshifter.github.io/mathbench/0.3.2/report/index.html
@@ -305,9 +314,10 @@ cargo bench
 ```
 
 For the best results close other applications on the machine you are using to
-benchmark! Also, when running "wide" benchmarks, make sure you compile with
-`RUSTFLAGS="-C target-cpu=native"`, or with appropriate `target-feature`s
-(`sse`,`sse2`, `avx`, `avx2`, `fma`) for best results.
+benchmark!
+
+When running "wide" benchmarks, be sure you compile with with the appropriate
+`target-feature`s enabled, e.g. `+avx2`, for best results.
 
 There is a script in `scripts/summary.py` to summarize the results in a nice
 fashion. It requires Python 3 and the `prettytable` Python module, then can
@@ -341,7 +351,7 @@ You can also get more granular. For example to only run wide matrix2 benchmarks,
 use:
 
 ```sh
-cargo bench "wide matrix2"
+cargo bench --features wide "wide matrix2"
 ```
 
 or to only run the scalar "vec3 length" benchmark for `glam`, use:
@@ -355,9 +365,9 @@ cargo bench "scalar vec3 length/glam"
 There are a few extra features in addition to the direct features referring to
 each benchmarked library.
 
-* `ultraviolet_f32x4`, `ultraviolet_f32x8`, `nalgebra_f32x4`, `nalgebra_f32x8`
-  - these each enable benchmarking specific wide types from each of
-    `ultraviolet` or `nalgebra`.
+* `ultraviolet_f32x4`, `ultraviolet_f32x8`, `nalgebra_f32x4`,
+  `nalgebra_f32x8` - these each enable benchmarking specific wide types from
+  each of `ultraviolet` or `nalgebra`.
 * `ultraviolet_wide`, `nalgebra_wide` - these enable benchmarking all wide
   types from `ultraviolet` or `nalgebra` respectively.
 * `wide` - enables all "wide" type benchmarks
@@ -412,8 +422,9 @@ Update `CHANGELOG.md`.
 
 ## Build times
 
-`mathbench` also includes a tool for comparing build times in
-`tools/buildbench`.
+`mathbench` also includes a tool for comparing full build times in
+`tools/buildbench`. Incremental build times are not measured as it would be non
+trivial to create a meaningful test across different math crates.
 
 The `buildbench` tool uses the `-Z timings` feature of the nightly build of
 `cargo`, thus you need a nightly build to run it.
