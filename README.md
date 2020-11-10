@@ -302,7 +302,7 @@ RUSTFLAGS='-C target-feature=+avx2' cargo +nightly bench --features wide wide
 | vector3 return self x16        |    40.0744 ns   |          36.5467 ns   |       36.5094 ns   |        __17.1831 ns__ |     __17.2817 ns__ |
 
 [Intel i7-4710HQ]: https://ark.intel.com/content/www/us/en/ark/products/78930/intel-core-i7-4710hq-processor-6m-cache-up-to-3-50-ghz.html
-[mathbench report]: https://bitshifter.github.io/mathbench/0.3.2/report/index.html
+[mathbench report]: https://bitshifter.github.io/mathbench/0.4.0/report/index.html
 
 ## Running the benchmarks
 
