@@ -231,7 +231,7 @@ fn bench_matrix4_inverse_wide(c: &mut Criterion) {
 }
 
 fn bench_matrix4_mul_matrix4(c: &mut Criterion) {
-    let mut group = c.benchmark_group("matrix4 mul matrix4");
+    let mut group = c.benchmark_group("scalar matrix4 mul matrix4");
     bench_glam!(group, |b| {
         use glam::Mat4;
         bench_binop!(b, op => mul, ty1 => Mat4, ty2 => Mat4)
