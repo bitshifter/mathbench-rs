@@ -11,7 +11,7 @@ macro_rules! bench_intersection_wide_uv {
         struct TestData {
             ray_d: Vec<$t>,
             result: Vec<$wt>,
-        };
+        }
 
         let mut rng = rand_pcg::Pcg64Mcg::new(rand::random());
         let ray_d = (0..*$size)
@@ -64,7 +64,7 @@ macro_rules! bench_intersection_wide_na {
         struct TestData {
             ray_d: Vec<$t>,
             result: Vec<$wt>,
-        };
+        }
 
         let mut rng = rand_pcg::Pcg64Mcg::new(rand::random());
         let ray_d = (0..*$size)
@@ -116,7 +116,7 @@ macro_rules! bench_intersection_scalar {
         struct TestData {
             ray_d: Vec<$t>,
             result: Vec<f32>,
-        };
+        }
 
         let mut rng = rand_pcg::Pcg64Mcg::new(rand::random());
         let ray_d = (0..*$size)
