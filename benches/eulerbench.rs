@@ -11,7 +11,7 @@ macro_rules! bench_euler {
             acc: Vec<$t>,
             vel: Vec<$t>,
             pos: Vec<$t>,
-        };
+        }
 
         let mut rng = rand_pcg::Pcg64Mcg::new(rand::random());
         let mut data = TestData {
