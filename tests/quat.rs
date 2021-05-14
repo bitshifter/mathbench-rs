@@ -59,7 +59,7 @@ fn quat_mul_quat_compare() {
 fn test_quat_from_axis_angle() {
     use cgmath::Rotation3;
     let rad = std::f32::consts::FRAC_PI_2;
-    let gx = glam::Vec3::unit_x();
+    let gx = glam::Vec3::X;
     let nx = nalgebra::Vector3::x_axis();
     let mx: mint::Vector3<f32> = nx.into_inner().into();
     assert_eq!(gx, mx.into());
@@ -72,13 +72,13 @@ fn test_quat_from_axis_angle() {
     assert_ulps_eq!(gq, mnq.into());
     assert_ulps_eq!(gq, mcq.into());
 
-    let gqv = gq * glam::Vec3::unit_y();
+    let gqv = gq * glam::Vec3::Y;
     let nqv = nq * nalgebra::Vector3::y_axis();
     let cqv = cq * cgmath::Vector3::unit_y();
     let mnqv: mint::Vector3<f32> = nqv.into_inner().into();
     let mcqv: mint::Vector3<f32> = cqv.into();
-    assert_ulps_eq!(gqv, mnqv.into(), epsilon = 1e-5);
-    assert_ulps_eq!(gqv, mcqv.into(), epsilon = 1e-5);
+    assert_ulps_eq!(gqv, glam::Vec3::from(mnqv), epsilon = 1e-5);
+    assert_ulps_eq!(gqv, glam::Vec3::from(mcqv), epsilon = 1e-5);
 }
 
 #[test]

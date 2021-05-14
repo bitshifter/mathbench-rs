@@ -11,8 +11,8 @@ default = ["cgmath", "nalgebra", "ultraviolet"]
 # fake glam target for wide comparisons
 glam_f32x1 = []
 
-ultraviolet_f32x4 = ["ultraviolet"]
-ultraviolet_f32x8 = ["ultraviolet"]
+ultraviolet_f32x4 = ["ultraviolet", "wide_mathbench"]
+ultraviolet_f32x8 = ["ultraviolet", "wide_mathbench"]
 ultraviolet_wide = ["ultraviolet_f32x4", "ultraviolet_f32x8"]
 
 # nalgebra wide types require a nightly compiler
@@ -21,7 +21,10 @@ nalgebra_f32x8 = ["nalgebra", "simba"]
 nalgebra_wide = ["nalgebra_f32x4", "nalgebra_f32x8"]
 
 scalar = ["cgmath", "nalgebra", "ultraviolet", "euclid", "vek", "pathfinder_geometry", "static-math"]
-wide = ["glam_f32x1", "ultraviolet_wide", "nalgebra_wide"]
+
+# nalgebra_wide fails to build due to packed_simd errors
+# wide = ["glam_f32x1", "ultraviolet_wide", "nalgebra_wide"]
+wide = ["glam_f32x1", "ultraviolet_wide"]
 
 all = ["scalar", "wide"]
 
@@ -29,37 +32,37 @@ all = ["scalar", "wide"]
 unstable = []
 
 [dependencies]
-mint = "0.5.5"
-rand = "0.7.2"
+mint = "0.5.6"
+rand = "0.7.3"
 rand_pcg = "0.2.1"
 
 [dependencies.glam]
-version = "0.10.0"
-features = ["mint", "rand", "debug-glam-assert"]
+version = "0.15.0"
+features = ["mint", "rand"]
 # a lot of random data generation uses glam, so can't be optional yet
 # optional = true
 
 [dependencies.nalgebra]
-version = "0.23.0"
+version = "0.26.2"
 features = ["mint"]
 optional = true
 
 [dependencies.simba]
-version = "0.3"
+version = "0.4"
 features = ["packed_simd"]
 optional = true
 
 [dependencies.cgmath]
-version = "0.17.0"
+version = "0.18.0"
 features = ["mint"]
 optional = true
 
 [dependencies.euclid]
-version = "0.22.1"
+version = "0.22.3"
 optional = true
 
 [dependencies.vek]
-version = "0.12.0"
+version = "0.15.0"
 features = ["mint"]
 optional = true
 
@@ -68,16 +71,21 @@ version = "0.5.1"
 optional = true
 
 [dependencies.static-math]
-version = "0.1.7"
+version = "0.1.8"
 optional = true
 
 [dependencies.ultraviolet]
-version = "0.7.1"
+version = "0.8.0"
 features = ["mint"]
 optional = true
 
+[dependencies.wide_mathbench]
+package = "wide"
+version = "0.6.3"
+optional = true
+
 [dev-dependencies]
-criterion = "0.3.3"
+criterion = "0.3.4"
 
 # [patch.crates-io]
 # glam = { path = "../glam-rs" }

@@ -8,6 +8,7 @@ use criterion::{criterion_group, criterion_main, Criterion, Throughput};
 #[cfg(any(feature = "ultraviolet_f32x4", feature = "ultraviolet_f32x8",))]
 macro_rules! bench_intersection_wide_uv {
     ($b: ident, $size:expr, ty => $t: ty, wt => $wt: ident, zero_vec => $zero: expr, max => $max: expr) => {{
+        use wide_mathbench::CmpGt;
         struct TestData {
             ray_d: Vec<$t>,
             result: Vec<$wt>,
@@ -171,7 +172,7 @@ fn bench_ray_sphere_intersect_scalar(c: &mut Criterion) {
         group.throughput(Throughput::Elements(*size as u64));
         bench_glam!(group, size, |b, size| {
             use glam::Vec3;
-            bench_intersection_scalar!(b, size, ty => Vec3, zero => Vec3::zero(), norm => normalize, mag_sq => length_squared, param => by_value);
+            bench_intersection_scalar!(b, size, ty => Vec3, zero => Vec3::ZERO, norm => normalize, mag_sq => length_squared, param => by_value);
         });
         bench_cgmath!(group, size, |b, size| {
             use cgmath::{prelude::*, Vector3};
@@ -202,8 +203,8 @@ fn bench_ray_sphere_intersect_wide(c: &mut Criterion) {
     for size in [80000].iter() {
         group.throughput(Throughput::Elements(*size as u64));
         bench_glam_f32x1!(group, size, |b, size| {
-            use glam::Vec3;
-            bench_intersection_scalar!(b, size, ty => Vec3, zero => Vec3::zero(), norm => normalize, mag_sq => length_squared, param => by_value);
+            use glam::Vec3A;
+            bench_intersection_scalar!(b, size, ty => Vec3A, zero => Vec3A::ZERO, norm => normalize, mag_sq => length_squared, param => by_value);
         });
 
         // sse

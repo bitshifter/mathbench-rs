@@ -196,7 +196,7 @@ pub mod glam_support {
         let yaw = random_angle_radians(rng);
         let pitch = random_angle_radians(rng);
         let roll = random_angle_radians(rng);
-        glam::Quat::from_rotation_ypr(yaw, pitch, roll)
+        glam::Quat::from_euler(glam::EulerRot::YXZ, yaw, pitch, roll)
     }
 
     // public non-inlined functions for cargo asm

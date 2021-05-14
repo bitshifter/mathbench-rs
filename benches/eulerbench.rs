@@ -39,7 +39,7 @@ fn bench_euler_3d(c: &mut Criterion) {
         group.throughput(Throughput::Elements(*size as u64));
         bench_glam!(group, size, |b, size| {
             use glam::Vec3A;
-            bench_euler!(b, size, ty => Vec3A, zero => Vec3A::zero(), dt => Vec3A::splat(UPDATE_RATE))
+            bench_euler!(b, size, ty => Vec3A, zero => Vec3A::ZERO, dt => Vec3A::splat(UPDATE_RATE))
         });
         bench_cgmath!(group, size, |b, size| {
             use cgmath::{prelude::*, Vector3};
@@ -79,7 +79,7 @@ fn bench_euler_3d_wide(c: &mut Criterion) {
         group.throughput(Throughput::Elements(*size as u64));
         bench_glam_f32x1!(group, size, |b, size| {
             use glam::Vec3A;
-            bench_euler!(b, size, ty => Vec3A, zero => Vec3A::zero(), dt => Vec3A::splat(UPDATE_RATE))
+            bench_euler!(b, size, ty => Vec3A, zero => Vec3A::ZERO, dt => Vec3A::splat(UPDATE_RATE))
         });
 
         // sse
@@ -113,7 +113,7 @@ fn bench_euler_2d(c: &mut Criterion) {
         group.throughput(Throughput::Elements(*size as u64));
         bench_glam!(group, size, |b, size| {
             use glam::Vec2;
-            bench_euler!(b, size, ty => Vec2, zero => Vec2::zero(), dt => Vec2::splat(UPDATE_RATE))
+            bench_euler!(b, size, ty => Vec2, zero => Vec2::ZERO, dt => Vec2::splat(UPDATE_RATE))
         });
         bench_cgmath!(group, size, |b, size| {
             use cgmath::{prelude::*, Vector2};
@@ -153,7 +153,7 @@ fn bench_euler_2d_wide(c: &mut Criterion) {
         group.throughput(Throughput::Elements(*size as u64));
         bench_glam_f32x1!(group, size, |b, size| {
             use glam::Vec2;
-            bench_euler!(b, size, ty => Vec2, zero => Vec2::zero(), dt => Vec2::splat(UPDATE_RATE))
+            bench_euler!(b, size, ty => Vec2, zero => Vec2::ZERO, dt => Vec2::splat(UPDATE_RATE))
         });
 
         // sse
