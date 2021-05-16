@@ -8,8 +8,8 @@ fn bench_transform_vector3(c: &mut Criterion) {
     for size in [1, 100].iter() {
         group.throughput(criterion::Throughput::Elements(*size as u64));
         bench_glam!(group, size, |b, size| {
-            use glam::{Mat4, Vec3};
-            bench_binop!(b, size, op => transform_vector3, ty1 => Mat4, ty2 => Vec3)
+            use glam::{Affine3A, Vec3A};
+            bench_binop!(b, size, op => transform_vector3a, ty1 => Affine3A, ty2 => Vec3A)
         });
         bench_ultraviolet!(group, size, |b, size| {
             use ultraviolet::{Mat4, Vec3};
@@ -40,8 +40,8 @@ fn bench_transform_vector3_wide(c: &mut Criterion) {
     for size in [16, 256].iter() {
         group.throughput(criterion::Throughput::Elements(*size as u64));
         bench_glam_f32x1!(group, size, |b, size| {
-            use glam::{Mat4, Vec3};
-            bench_binop_wide!(b, size, width => 1, op => transform_vector3, ty1 => Mat4, ty2 => Vec3)
+            use glam::{Affine3A, Vec3A};
+            bench_binop_wide!(b, size, width => 1, op => transform_vector3a, ty1 => Affine3A, ty2 => Vec3A)
         });
         bench_ultraviolet_f32x4!(group, size, |b, size| {
             use ultraviolet::{Mat4x4, Vec3x4};
@@ -60,8 +60,8 @@ fn bench_transform_point3(c: &mut Criterion) {
     for size in [1, 100].iter() {
         group.throughput(criterion::Throughput::Elements(*size as u64));
         bench_glam!(group, size, |b, size| {
-            use glam::{Mat4, Vec3};
-            bench_binop!(b, size, op => transform_point3, ty1 => Mat4, ty2 => Vec3)
+            use glam::{Affine3A, Vec3A};
+            bench_binop!(b, size, op => transform_point3a, ty1 => Affine3A, ty2 => Vec3A)
         });
         bench_ultraviolet!(group, size, |b, size| {
             use ultraviolet::{Mat4, Vec3};
@@ -98,8 +98,8 @@ fn bench_transform_point3_wide(c: &mut Criterion) {
     for size in [16, 256].iter() {
         group.throughput(criterion::Throughput::Elements(*size as u64));
         bench_glam_f32x1!(group, size, |b, size| {
-            use glam::{Mat4, Vec3};
-            bench_binop_wide!(b, size, width => 1, op => transform_point3, ty1 => Mat4, ty2 => Vec3)
+            use glam::{Affine3A, Vec3A};
+            bench_binop_wide!(b, size, width => 1, op => transform_point3a, ty1 => Affine3A, ty2 => Vec3A)
         });
         bench_ultraviolet_f32x4!(group, size, |b, size| {
             use ultraviolet::{Mat4x4, Vec3x4};
@@ -118,8 +118,8 @@ fn bench_transform_point2(c: &mut Criterion) {
     for size in [1, 100].iter() {
         group.throughput(criterion::Throughput::Elements(*size as u64));
         bench_glam!(group, size, |b, size| {
-            use glam::{Mat3, Vec2};
-            bench_binop!(b, size, op => transform_point2, ty1 => Mat3, ty2 => Vec2)
+            use glam::{Affine2, Vec2};
+            bench_binop!(b, size, op => transform_point2, ty1 => Affine2, ty2 => Vec2)
         });
         bench_ultraviolet!(group, size, |b, size| {
             use ultraviolet::{Mat3, Vec2};
@@ -156,8 +156,8 @@ fn bench_transform_point2_wide(c: &mut Criterion) {
     for size in [16, 256].iter() {
         group.throughput(criterion::Throughput::Elements(*size as u64));
         bench_glam_f32x1!(group, size, |b, size| {
-            use glam::{Mat3, Vec2};
-            bench_binop_wide!(b, size, width => 1, op => transform_point2, ty1 => Mat3, ty2 => Vec2)
+            use glam::{Affine2, Vec2};
+            bench_binop_wide!(b, size, width => 1, op => transform_point2, ty1 => Affine2, ty2 => Vec2)
         });
         bench_ultraviolet_f32x4!(group, size, |b, size| {
             use ultraviolet::{Mat3x4, Vec2x4};
@@ -176,8 +176,8 @@ fn bench_transform_vector2(c: &mut Criterion) {
     for size in [1, 100].iter() {
         group.throughput(criterion::Throughput::Elements(*size as u64));
         bench_glam!(group, size, |b, size| {
-            use glam::{Mat3, Vec2};
-            bench_binop!(b, size, op => transform_vector2, ty1 => Mat3, ty2 => Vec2)
+            use glam::{Affine2, Vec2};
+            bench_binop!(b, size, op => transform_vector2, ty1 => Affine2, ty2 => Vec2)
         });
         bench_ultraviolet!(group, size, |b, size| {
             use ultraviolet::{Mat3, Vec2};
@@ -209,8 +209,8 @@ fn bench_transform_vector2_wide(c: &mut Criterion) {
     for size in [16, 256].iter() {
         group.throughput(criterion::Throughput::Elements(*size as u64));
         bench_glam_f32x1!(group, size, |b, size| {
-            use glam::{Mat3, Vec2};
-            bench_binop_wide!(b, size, width => 1, op => transform_vector2, ty1 => Mat3, ty2 => Vec2)
+            use glam::{Affine2, Vec2};
+            bench_binop_wide!(b, size, width => 1, op => transform_vector2, ty1 => Affine2, ty2 => Vec2)
         });
         bench_ultraviolet_f32x4!(group, size, |b, size| {
             use ultraviolet::{Mat3x4, Vec2x4};

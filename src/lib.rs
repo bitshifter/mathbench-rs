@@ -29,7 +29,6 @@ macro_rules! impl_bench_value {
 
 pub mod mint_support {
     use super::glam_support::*;
-    use mint;
     use rand::Rng;
 
     // mint random functions  -----------------------------------------------------
@@ -130,7 +129,6 @@ pub mod mint_support {
 pub mod glam_support {
     use super::mint_support::*;
     use super::BenchValue;
-    use glam;
     use rand::Rng;
     impl_bench_value!(glam::Mat2, random_mint_invertible_mat2);
     impl_bench_value!(glam::Mat3, random_mint_homogeneous_mat3);
@@ -140,6 +138,8 @@ pub mod glam_support {
     impl_bench_value!(glam::Vec3, random_mint_vec3);
     impl_bench_value!(glam::Vec3A, random_mint_vec3);
     impl_bench_value!(glam::Vec4, random_mint_vec4);
+    impl_bench_value!(glam::Affine2, random_glam_affine2);
+    impl_bench_value!(glam::Affine3A, random_glam_affine3a);
 
     // f32 random functions  ------------------------------------------------------
     fn random_nonzero_f32<R>(rng: &mut R) -> f32
@@ -197,6 +197,28 @@ pub mod glam_support {
         let pitch = random_angle_radians(rng);
         let roll = random_angle_radians(rng);
         glam::Quat::from_euler(glam::EulerRot::YXZ, yaw, pitch, roll)
+    }
+
+    pub fn random_glam_affine2<R>(rng: &mut R) -> glam::Affine2
+    where
+        R: Rng,
+    {
+        glam::Affine2::from_scale_angle_translation(
+            random_nonzero_glam_vec2(rng),
+            random_angle_radians(rng),
+            random_glam_vec2(rng),
+        )
+    }
+
+    pub fn random_glam_affine3a<R>(rng: &mut R) -> glam::Affine3A
+    where
+        R: Rng,
+    {
+        glam::Affine3A::from_scale_rotation_translation(
+            random_glam_nonzero_vec3(rng),
+            random_glam_quat(rng),
+            random_glam_vec3(rng),
+        )
     }
 
     // public non-inlined functions for cargo asm

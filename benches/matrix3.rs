@@ -3,8 +3,8 @@
 mod macros;
 use criterion::{criterion_group, criterion_main, Criterion};
 use macros::MIN_WIDE_BENCH_SIZE;
-use std::ops::Mul;
 use mathbench::BenchValue;
+use std::ops::Mul;
 
 fn bench_matrix3_ret_self(c: &mut Criterion) {
     let mut group = c.benchmark_group("scalar matrix3 return self");

@@ -7,6 +7,10 @@ use criterion::{criterion_group, criterion_main, Criterion};
 fn bench_transform3_ret_self(c: &mut Criterion) {
     use mathbench::BenchValue;
     let mut group = c.benchmark_group("scalar transform3 return self");
+    bench_glam!(group, |b| {
+        use glam::Affine3A;
+        bench_unop!(b, op => ret_self, ty => Affine3A)
+    });
     bench_nalgebra!(group, |b| {
         use nalgebra::Transform3;
         bench_unop!(b, op => ret_self, ty => Transform3<f32>)
@@ -24,6 +28,10 @@ fn bench_transform3_ret_self(c: &mut Criterion) {
 
 fn bench_transform3_inverse(c: &mut Criterion) {
     let mut group = c.benchmark_group("scalar transform3 inverse");
+    bench_glam!(group, |b| {
+        use glam::Affine3A;
+        bench_unop!(b, op => inverse, ty => Affine3A)
+    });
     bench_nalgebra!(group, |b| {
         use nalgebra::Transform3;
         bench_unop!(b, op => try_inverse, ty => Transform3<f32>)
@@ -42,6 +50,10 @@ fn bench_transform3_inverse(c: &mut Criterion) {
 fn bench_transform3_mul_transform3(c: &mut Criterion) {
     use std::ops::Mul;
     let mut group = c.benchmark_group("scalar transform3 mul transform3d");
+    bench_glam!(group, |b| {
+        use glam::Affine3A;
+        bench_binop!(b, op => mul, ty1 => Affine3A, ty2 => Affine3A)
+    });
     bench_nalgebra!(group, |b| {
         use nalgebra::Transform3;
         bench_binop!(b, op => mul, ty1 => Transform3<f32>, ty2 => Transform3<f32>, param => by_ref)
