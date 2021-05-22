@@ -37,7 +37,7 @@ rand = "0.7.3"
 rand_pcg = "0.2.1"
 
 [dependencies.glam]
-version = "0.15.0"
+version = "0.15.2"
 features = ["mint", "rand"]
 # a lot of random data generation uses glam, so can't be optional yet
 # optional = true
@@ -58,11 +58,11 @@ features = ["mint"]
 optional = true
 
 [dependencies.euclid]
-version = "0.22.3"
+version = "0.22.4"
 optional = true
 
 [dependencies.vek]
-version = "0.15.0"
+version = "0.15.1"
 features = ["mint"]
 optional = true
 
@@ -75,7 +75,7 @@ version = "0.1.8"
 optional = true
 
 [dependencies.ultraviolet]
-version = "0.8.0"
+version = "0.8.1"
 features = ["mint"]
 optional = true
 
