@@ -37,18 +37,18 @@ rand = "0.7.3"
 rand_pcg = "0.2.1"
 
 [dependencies.glam]
-version = "0.15.2"
+version = "0.20.1"
 features = ["mint", "rand"]
 # a lot of random data generation uses glam, so can't be optional yet
 # optional = true
 
 [dependencies.nalgebra]
-version = "0.26.2"
+version = "0.29.0"
 features = ["mint"]
 optional = true
 
 [dependencies.simba]
-version = "0.4"
+version = "0.6"
 features = ["packed_simd"]
 optional = true
 
@@ -58,11 +58,11 @@ features = ["mint"]
 optional = true
 
 [dependencies.euclid]
-version = "0.22.4"
+version = "0.22.6"
 optional = true
 
 [dependencies.vek]
-version = "0.15.1"
+version = "0.15.3"
 features = ["mint"]
 optional = true
 
@@ -71,7 +71,7 @@ version = "0.5.1"
 optional = true
 
 [dependencies.static-math]
-version = "0.1.8"
+version = "0.2.3"
 optional = true
 
 [dependencies.ultraviolet]
@@ -81,11 +81,11 @@ optional = true
 
 [dependencies.wide_mathbench]
 package = "wide"
-version = "0.6.3"
+version = "0.7.1"
 optional = true
 
 [dev-dependencies]
-criterion = "0.3.4"
+criterion = "0.3.5"
 
 # [patch.crates-io]
 # glam = { path = "../glam-rs" }
