@@ -81,7 +81,7 @@ optional = true
 
 [dependencies.wide_mathbench]
 package = "wide"
-version = "0.7.1"
+version = "0.6.5"
 optional = true
 
 [dev-dependencies]
