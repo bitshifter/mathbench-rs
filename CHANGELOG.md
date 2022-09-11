@@ -8,10 +8,27 @@ The format is based on [Keep a Changelog].
 
 ### Added
 
+* Added benchmarks for `glam`'s affine types
+
+### Changed
+
+* Updated `euclid` to `0.22.7`
+* Updated `glam` to `0.21.3`
+* Updated `nalgebra` to `0.31.1`
+* Updated `static-math` to `0.2.3`
+* Updated `ultraviolet` to `0.9.0`
+* Updated `vek` to `0.15.8`
+
+## [0.4.0] - 2020-11-10
+
+### Added
+
 * Added wide benchmarks for `nalgebra` and `ultraviolet` libraries.
 
 ### Changed
 
+* Updated `glam` to `0.10.0`
+* Updated `nalgebra` to `0.23.0`
 * Updated `static-math` to `0.1.7`
 * Updated `ultraviolet` to `0.7.1`
 
@@ -88,7 +105,8 @@ The format is based on [Keep a Changelog].
   benchmarking functions has been silently deprecated in `0.3.0`.
 
 [Keep a Changelog]: https://keepachangelog.com/
-[Unreleased]: https://github.com/bitshifter/mathbench-rs/compare/0.3.2...HEAD
+[Unreleased]: https://github.com/bitshifter/mathbench-rs/compare/0.4.0...HEAD
+[0.4.0]: https://github.com/bitshifter/mathbench-rs/compare/0.3.2...0.4.0
 [0.3.2]: https://github.com/bitshifter/mathbench-rs/compare/0.3.1...0.3.2
 [0.3.1]: https://github.com/bitshifter/mathbench-rs/compare/0.3.0...0.3.1
 [0.3.0]: https://github.com/bitshifter/mathbench-rs/compare/0.2.0...0.3.0

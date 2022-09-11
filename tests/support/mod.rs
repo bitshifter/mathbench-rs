@@ -143,7 +143,7 @@ impl FloatCompare for mint::ColumnMatrix4<f32> {
 impl FloatCompare for Mat2 {
     #[inline]
     fn approx_eq(&self, other: &Mat2, max_abs_diff: f32) -> bool {
-        self.abs_diff_eq(other, max_abs_diff)
+        self.abs_diff_eq(*other, max_abs_diff)
     }
     #[inline]
     fn abs_diff(&self, other: &Mat2) -> Mat2 {
