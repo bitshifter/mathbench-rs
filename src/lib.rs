@@ -146,14 +146,14 @@ pub mod glam_support {
     where
         R: Rng,
     {
-        rng.gen_range(0.1, 1.0)
+        rng.gen_range(0.1..1.0)
     }
 
     pub fn random_angle_radians<R>(rng: &mut R) -> f32
     where
         R: Rng,
     {
-        rng.gen_range(-std::f32::consts::PI, std::f32::consts::PI)
+        rng.gen_range(-std::f32::consts::PI..std::f32::consts::PI)
     }
 
     // glam random functions ------------------------------------------------------
@@ -271,7 +271,7 @@ pub mod cgmath_support {
         R: Rng,
     {
         cgmath::Decomposed {
-            scale: rng.gen_range(0.1, 1.0),
+            scale: rng.gen_range(0.1..1.0),
             rot: random_mint_quat(rng).into(),
             disp: random_mint_vec3(rng).into(),
         }
