@@ -773,7 +773,7 @@ pub mod static_math_support {
     where
         R: Rng,
     {
-        rng.gen_range(0.1, 1.0)
+        rng.gen_range(0.1..1.0)
     }
 
     impl BenchValue for M22<f32> {
