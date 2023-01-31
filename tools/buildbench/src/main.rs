@@ -306,21 +306,21 @@ fn main() -> Result<()> {
                 .possible_values(&possible_libs),
             Arg::with_name("features")
                 .long("features")
-                .short("F")
+                .short('F')
                 .takes_value(true)
                 .multiple(true)
                 .possible_values(Features::possible_values()),
             Arg::with_name("profiles")
                 .long("profile")
-                .short("P")
+                .short('P')
                 .takes_value(true)
                 .multiple(true)
                 .possible_values(Profile::possible_values()),
             Arg::with_name("report-dir")
                 .long("report-dir")
-                .short("R")
+                .short('R')
                 .takes_value(true),
-            Arg::with_name("verbose").long("verbose").short("v"),
+            Arg::with_name("verbose").long("verbose").short('v'),
         ])
         .get_matches();
 
