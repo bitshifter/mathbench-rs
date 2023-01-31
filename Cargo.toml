@@ -1,6 +1,6 @@
 [package]
 name = "mathbench"
-version = "0.4.1"
+version = "0.4.2"
 authors = ["Cameron Hart <cameron.hart@gmail.com>"]
 edition = "2018"
 
@@ -37,18 +37,18 @@ rand = "0.8.5"
 rand_pcg = "0.3.1"
 
 [dependencies.glam]
-version = "0.21.3"
+version = "0.22.0"
 features = ["mint", "rand"]
 # a lot of random data generation uses glam, so can't be optional yet
 # optional = true
 
 [dependencies.nalgebra]
-version = "0.31.1"
+version = "0.32.1"
 features = ["mint"]
 optional = true
 
 [dependencies.simba]
-version = "0.7.2"
+version = "0.8.0"
 features = ["packed_simd"]
 optional = true
 
@@ -62,7 +62,7 @@ version = "0.22.7"
 optional = true
 
 [dependencies.vek]
-version = "0.15.8"
+version = "0.15.10"
 features = ["mint"]
 optional = true
 
@@ -81,7 +81,7 @@ optional = true
 
 [dependencies.wide_mathbench]
 package = "wide"
-version = "0.7.4"
+version = "0.7.5"
 optional = true
 
 [dev-dependencies]
