@@ -8,11 +8,11 @@ cd "${GITHUB_REPOSITORY}-bench" &&
 
 # Bench master
 git checkout master &&
-cargo bench --bench benchmark -- --noplot --save-baseline before &&
+cargo bench --bench eulerbench -- --noplot --save-baseline before &&
 
 # Bench current branch
 git checkout $GITHUB_SHA &&
-cargo bench --bench benchmark -- --noplot --save-baseline after &&
+cargo bench --bench eulerbench -- --noplot --save-baseline after &&
 
 # Install https://github.com/BurntSushi/critcmp
 cargo install critcmp --force &&
