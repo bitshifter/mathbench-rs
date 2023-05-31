@@ -1,28 +1,44 @@
-name: CI
-
-on:
+name: Rust CI
+'on':
   push:
     branches:
-      - master
+      - main
   pull_request:
     branches:
-      - master
-
+      - main
 jobs:
   build:
     runs-on: ubuntu-latest
-
+    strategy:
+      matrix:
+        rust:
+          - stable
+          - beta
+          - nightly
+    allow_failures:
+      - rust: nightly
+    fast_finish: true
     steps:
       - name: Set up Rust
         uses: actions/checkout@v2
-        with:
-          submodules: recursive
       - name: Install Rust
         uses: actions-rs/toolchain@v1
         with:
+          toolchain: '${{ matrix.rust }}'
           profile: minimal
-          override: true
-      - name: Build
-        run: cargo build --verbose
-      - name: Test
-        run: cargo test --verbose
+      - name: Clean
+        run: cargo clean
+      - name: Check with pathfinder_geometry features
+        run: cargo check --features pathfinder_geometry
+      - name: Check without default features
+        run: cargo check --no-default-features
+      - name: Run tests
+        run: cargo test
+      - name: Run benchmarks with pathfinder_geometry features
+        run: cargo bench --no-run --features pathfinder_geometry
+      - name: Run benchmarks without default features
+        run: cargo bench --no-default-features --no-run
+      - name: Run after-success.sh
+        run: |
+          chmod +x after-success.sh
+          ./after-success.sh
