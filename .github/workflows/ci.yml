@@ -17,9 +17,6 @@ jobs:
           - stable
           - beta
           - nightly
-    allow_failures:
-      - rust: nightly
-    fast_finish: true
 
     steps:
       - name: Set up Rust
