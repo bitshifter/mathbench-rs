@@ -170,27 +170,27 @@ fn bench_ray_sphere_intersect_scalar(c: &mut Criterion) {
     let mut group = c.benchmark_group("scalar ray-sphere intersection");
     for size in [10000].iter() {
         group.throughput(Throughput::Elements(*size as u64));
-        bench_glam!(group, size, |b, size| {
+        bench!("glam", group, size, |b, size| {
             use glam::Vec3;
             bench_intersection_scalar!(b, size, ty => Vec3, zero => Vec3::ZERO, norm => normalize, mag_sq => length_squared, param => by_value);
         });
-        bench_cgmath!(group, size, |b, size| {
+        bench!("cgmath", group, size, |b, size| {
             use cgmath::{prelude::*, Vector3};
             bench_intersection_scalar!(b, size, ty => Vector3<f32>, zero => Vector3::zero(), norm => normalize, mag_sq => magnitude2, param => by_value)
         });
-        bench_ultraviolet!(group, size, |b, size| {
+        bench!("ultraviolet", group, size, |b, size| {
             use ultraviolet::Vec3;
             bench_intersection_scalar!(b, size, ty => Vec3, zero => Vec3::zero(), norm => normalized, mag_sq => mag_sq, param => by_value);
         });
-        bench_nalgebra!(group, size, |b, size| {
+        bench!("nalgebra", group, size, |b, size| {
             use nalgebra::{zero, Vector3};
             bench_intersection_scalar!(b, size, ty => Vector3<f32>, zero => zero(), norm => normalize, mag_sq => norm_squared, param => by_ref);
         });
-        bench_euclid!(group, size, |b, size| {
+        bench!("euclid", group, size, |b, size| {
             use euclid::{UnknownUnit, Vector3D};
             bench_intersection_scalar!(b, size, ty => Vector3D<f32, UnknownUnit>, zero => Vector3D::zero(), norm => normalize, mag_sq => square_length, param => by_value);
         });
-        bench_vek!(group, size, |b, size| {
+        bench!("vek", group, size, |b, size| {
             use vek::Vec3;
             bench_intersection_scalar!(b, size, ty => Vec3<f32>, zero => Vec3::zero(), norm => normalized, mag_sq => magnitude_squared, param => by_value)
         });
@@ -202,28 +202,28 @@ fn bench_ray_sphere_intersect_wide(c: &mut Criterion) {
     let mut group = c.benchmark_group("wide ray-sphere intersection");
     for size in [80000].iter() {
         group.throughput(Throughput::Elements(*size as u64));
-        bench_glam_f32x1!(group, size, |b, size| {
+        bench!("glam_f32x1", group, size, |b, size| {
             use glam::Vec3A;
             bench_intersection_scalar!(b, size, ty => Vec3A, zero => Vec3A::ZERO, norm => normalize, mag_sq => length_squared, param => by_value);
         });
 
         // sse
-        bench_ultraviolet_f32x4!(group, size, |b, size| {
+        bench!("ultraviolet_f32x4", group, size, |b, size| {
             use ultraviolet::{f32x4, Vec3x4};
             bench_intersection_wide_uv!(b, &((*size as f32 / 4.0).ceil() as usize), ty => Vec3x4, wt => f32x4, zero_vec => Vec3x4::zero(), max => f32::MAX)
         });
-        bench_nalgebra_f32x4!(group, size, |b, size| {
+        bench!("nalgebra_f32x4", group, size, |b, size| {
             use nalgebra::{zero, Vector3};
             use simba::simd::{f32x4, SimdValue};
             bench_intersection_wide_na!(b, &((*size as f32 / 4.0).ceil() as usize), ty => Vector3<f32x4>, wt => f32x4, zero_vec => zero(), max => f32::MAX);
         });
 
         // avx
-        bench_ultraviolet_f32x8!(group, size, |b, size| {
+        bench!("ultraviolet_f32x8", group, size, |b, size| {
             use ultraviolet::{f32x8, Vec3x8};
             bench_intersection_wide_uv!(b, &((*size as f32 / 8.0).ceil() as usize), ty => Vec3x8, wt => f32x8, zero_vec => Vec3x8::zero(), max => f32::MAX)
         });
-        bench_nalgebra_f32x8!(group, size, |b, size| {
+        bench!("nalgebra_f32x8", group, size, |b, size| {
             use nalgebra::{zero, Vector3};
             use simba::simd::{f32x8, SimdValue};
             bench_intersection_wide_na!(b, &((*size as f32 / 8.0).ceil() as usize), ty => Vector3<f32x8>, wt => f32x8, zero_vec => zero(), max => f32::MAX);

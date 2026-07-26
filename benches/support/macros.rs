@@ -1,224 +1,55 @@
 #[allow(dead_code)]
 pub const MIN_WIDE_BENCH_SIZE: u64 = 16;
 
+/// Register a Criterion benchmark for a math library.
+///
+/// # Forms
+///
+/// **glam** (always compiled, no `#[cfg]` gate):
+/// ```ignore
+/// bench!("glam", group, |b| { ... });
+/// bench!("glam", group, size, |b, size| { ... });
+/// ```
+///
+/// **Gated library** (feature name == display name):
+/// ```ignore
+/// bench!("cgmath", group, |b| { ... });
+/// bench!("nalgebra", group, size, |b, size| { ... });
+/// ```
+///
+/// **Display-name override** (feature name ≠ display name):
+/// ```ignore
+/// bench!("pathfinder_geometry" as "pathfinder", group, |b| { ... });
+/// bench!("pathfinder_geometry" as "pathfinder", group, size, |b, size| { ... });
+/// ```
 #[macro_export]
-macro_rules! bench_lib {
-    ($libname:literal, $group:ident, $size:expr, $closure:expr) => {
-        #[cfg(feature = $libname)]
-        $group.bench_with_input(
-            criterion::BenchmarkId::new($libname, $size),
-            $size,
-            $closure,
-        )
-    };
-    ($libname:literal, $group:ident, $closure:expr) => {
-        #[cfg(feature = $libname)]
-        $group.bench_function($libname, $closure)
-    };
-}
-
-#[macro_export]
-macro_rules! bench_glam {
-    ($group:ident, $closure:expr) => {
-        // bench_lib!("glam", $group, $closure)
+macro_rules! bench {
+    // glam (always compiled, no feature gate)
+    ("glam", $group:ident, $closure:expr) => {
         $group.bench_function("glam", $closure)
     };
-    ($group:ident, $size:expr, $closure:expr) => {
-        // bench_lib!("glam", $group, $size, $closure)
+    ("glam", $group:ident, $size:expr, $closure:expr) => {
         $group.bench_with_input(criterion::BenchmarkId::new("glam", $size), $size, $closure)
     };
-}
 
-#[macro_export]
-macro_rules! bench_glam_f32x1 {
-    ($group:ident, $size:expr, $closure:expr) => {
-        bench_lib!("glam_f32x1", $group, $size, $closure)
+    // Gated libraries (feature name = display name)
+    ($lib:literal, $group:ident, $closure:expr) => {
+        #[cfg(feature = $lib)]
+        $group.bench_function($lib, $closure)
     };
-}
+    ($lib:literal, $group:ident, $size:expr, $closure:expr) => {
+        #[cfg(feature = $lib)]
+        $group.bench_with_input(criterion::BenchmarkId::new($lib, $size), $size, $closure)
+    };
 
-#[macro_export]
-macro_rules! bench_cgmath {
-    ($group:ident, $closure:expr) => {
-        bench_lib!("cgmath", $group, $closure)
+    // Display-name override
+    ($lib:literal as $display:literal, $group:ident, $closure:expr) => {
+        #[cfg(feature = $lib)]
+        $group.bench_function($display, $closure)
     };
-    ($group:ident, $size:expr, $closure:expr) => {
-        bench_lib!("cgmath", $group, $size, $closure)
-    };
-}
-
-#[macro_export]
-macro_rules! bench_ultraviolet {
-    ($group:ident, $closure:expr) => {
-        bench_lib!("ultraviolet", $group, $closure)
-    };
-    ($group:ident, $size:expr, $closure:expr) => {
-        bench_lib!("ultraviolet", $group, $size, $closure)
-    };
-}
-
-#[macro_export]
-macro_rules! bench_ultraviolet_f32x4 {
-    // ($group:ident, $closure:expr) => {
-    //     bench_lib!("ultraviolet_f32x4", $group, $closure)
-    // };
-    ($group:ident, $size:expr, $closure:expr) => {
-        bench_lib!("ultraviolet_f32x4", $group, $size, $closure)
-    };
-}
-
-#[macro_export]
-macro_rules! bench_ultraviolet_f32x8 {
-    // ($group:ident, $closure:expr) => {
-    //     bench_lib!("ultraviolet_f32x8", $group, $closure)
-    // };
-    ($group:ident, $size:expr, $closure:expr) => {
-        bench_lib!("ultraviolet_f32x8", $group, $size, $closure)
-    };
-}
-
-#[macro_export]
-macro_rules! bench_ultraviolet_f64 {
-    // ($group:ident, $closure:expr) => {
-    //     bench_lib!("ultraviolet_f64", $group, $closure)
-    // };
-    ($group:ident, $size:expr, $closure:expr) => {
-        bench_lib!("ultraviolet_f64", $group, $size, $closure)
-    };
-}
-
-#[macro_export]
-macro_rules! bench_ultraviolet_f64x2 {
-    // ($group:ident, $closure:expr) => {
-    //     bench_lib!("ultraviolet_f64x2", $group, $closure)
-    // };
-    ($group:ident, $size:expr, $closure:expr) => {
-        bench_lib!("ultraviolet_f64x2", $group, $size, $closure)
-    };
-}
-
-#[macro_export]
-macro_rules! bench_ultraviolet_f64x4 {
-    // ($group:ident, $closure:expr) => {
-    //     bench_lib!("ultraviolet_f64x4", $group, $closure)
-    // };
-    ($group:ident, $size:expr, $closure:expr) => {
-        bench_lib!("ultraviolet_f64x4", $group, $size, $closure)
-    };
-}
-
-#[macro_export]
-macro_rules! bench_nalgebra {
-    ($group:ident, $closure:expr) => {
-        bench_lib!("nalgebra", $group, $closure)
-    };
-    ($group:ident, $size:expr, $closure:expr) => {
-        bench_lib!("nalgebra", $group, $size, $closure)
-    };
-}
-
-#[macro_export]
-macro_rules! bench_nalgebra_f32x4 {
-    // ($group:ident, $closure:expr) => {
-    //     bench_lib!("nalgebra_f32x4", $group, $closure)
-    // };
-    ($group:ident, $size:expr, $closure:expr) => {
-        bench_lib!("nalgebra_f32x4", $group, $size, $closure)
-    };
-}
-
-#[macro_export]
-macro_rules! bench_nalgebra_f32x8 {
-    // ($group:ident, $closure:expr) => {
-    //     bench_lib!("nalgebra_f32x8", $group, $closure)
-    // };
-    ($group:ident, $size:expr, $closure:expr) => {
-        bench_lib!("nalgebra_f32x8", $group, $size, $closure)
-    };
-}
-
-#[macro_export]
-macro_rules! bench_nalgebra_f32x16 {
-    // ($group:ident, $closure:expr) => {
-    //     bench_lib!("nalgebra_f32x16", $group, $closure)
-    // };
-    ($group:ident, $size:expr, $closure:expr) => {
-        bench_lib!("nalgebra_f32x16", $group, $size, $closure)
-    };
-}
-
-#[macro_export]
-macro_rules! bench_nalgebra_f64 {
-    ($group:ident, $closure:expr) => {
-        bench_lib!("nalgebra_f64", $group, $closure)
-    };
-    ($group:ident, $size:expr, $closure:expr) => {
-        bench_lib!("nalgebra_f64", $group, $size, $closure)
-    };
-}
-
-#[macro_export]
-macro_rules! bench_nalgebra_f64x2 {
-    // ($group:ident, $closure:expr) => {
-    //     bench_lib!("nalgebra_f64x2", $group, $closure)
-    // };
-    ($group:ident, $size:expr, $closure:expr) => {
-        bench_lib!("nalgebra_f64x2", $group, $size, $closure)
-    };
-}
-
-#[macro_export]
-macro_rules! bench_nalgebra_f64x4 {
-    // ($group:ident, $closure:expr) => {
-    //     bench_lib!("nalgebra_f64x4", $group, $closure)
-    // };
-    ($group:ident, $size:expr, $closure:expr) => {
-        bench_lib!("nalgebra_f64x4", $group, $size, $closure)
-    };
-}
-
-#[macro_export]
-macro_rules! bench_nalgebra_f64x8 {
-    // ($group:ident, $closure:expr) => {
-    //     bench_lib!("nalgebra_f64x8", $group, $closure)
-    // };
-    ($group:ident, $size:expr, $closure:expr) => {
-        bench_lib!("nalgebra_f64x8", $group, $size, $closure)
-    };
-}
-
-#[macro_export]
-macro_rules! bench_euclid {
-    ($group:ident, $closure:expr) => {
-        bench_lib!("euclid", $group, $closure)
-    };
-    ($group:ident, $size:expr, $closure:expr) => {
-        bench_lib!("euclid", $group, $size, $closure)
-    };
-}
-
-#[macro_export]
-macro_rules! bench_vek {
-    ($group:ident, $closure:expr) => {
-        bench_lib!("vek", $group, $closure)
-    };
-    ($group:ident, $size:expr, $closure:expr) => {
-        bench_lib!("vek", $group, $size, $closure)
-    };
-}
-
-#[macro_export]
-macro_rules! bench_pathfinder {
-    ($group:ident, $closure:expr) => {
-        #[cfg(feature = "pathfinder_geometry")]
-        $group.bench_function("pathfinder", $closure)
-    };
-    ($group:ident, $size:expr, $closure:expr) => {
-        #[cfg(feature = "pathfinder_geometry")]
-        $group.bench_with_input(
-            criterion::BenchmarkId::new("pathfinder", $size),
-            $size,
-            $closure,
-        )
+    ($lib:literal as $display:literal, $group:ident, $size:expr, $closure:expr) => {
+        #[cfg(feature = $lib)]
+        $group.bench_with_input(criterion::BenchmarkId::new($display, $size), $size, $closure)
     };
 }
 
