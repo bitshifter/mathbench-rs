@@ -183,11 +183,8 @@ fn bench_transform_vector2(c: &mut Criterion) {
             use ultraviolet::{Mat3, Vec2};
             bench_binop!(b, size, op => transform_vec2, ty1 => Mat3, ty2 => Vec2)
         });
-        // TODO: doesn't compile but might need a macro change to set return type
-        // bench!("cgmath", group, |b| {
-        //     use cgmath::{Matrix3, Transform, Vector2};
-        //     bench_binop!(b, op => transform_vector, ty1 => Matrix3<f32>, ty2 => Vector2<f32>)
-        // });
+        // cgmath's transform_vector for Matrix3/Vector2 doesn't compile here;
+        // would need a macro change to handle the return type
         bench!("nalgebra", group, size, |b, size| {
             use nalgebra::{Transform2, Vector2};
             bench_binop!(b, size, op => transform_vector, ty1 => Transform2<f32>, ty2 => Vector2<f32>, param => by_ref)
