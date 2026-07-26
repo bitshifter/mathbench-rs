@@ -14,7 +14,6 @@ games and graphics development, including:
 * [`euclid`][euclid]
 * [`nalgebra`][nalgebra]
 * [`pathfinder_geometry`][pathfinder_geometry]
-* [`static-math`][static-math]
 * [`ultraviolet`][ultraviolet]
 * [`vek`][vek]
 
@@ -25,7 +24,6 @@ games and graphics development, including:
 [glam]: https://github.com/bitshifter/glam-rs
 [nalgebra]: https://nalgebra.org
 [pathfinder_geometry]: https://crates.io/crates/pathfinder_geometry
-[static-math]: https://crates.io/crates/static-math
 [ultraviolet]: https://crates.io/crates/ultraviolet
 [vek]: https://crates.io/crates/vek
 
@@ -167,7 +165,7 @@ run the benchmarks themselves and consider publishing their results.
 
 The following is a table of benchmarks produced by `mathbench` comparing `glam`
 performance to `cgmath`, `nalgebra`, `euclid`, `vek`, `pathfinder_geometry`,
-`static-math` and `ultraviolet` on `f32` data.
+and `ultraviolet` on `f32` data.
 
 These benchmarks were performed on an [Intel i7-4710HQ] CPU on Linux. They were
 compiled with the `1.56.1 (59eed8a2a 2021-11-01)` Rust compiler. Lower
@@ -181,7 +179,6 @@ The versions of the libraries tested were:
 * `glam` - `0.20.1`
 * `nalgebra` - `0.29.0`
 * `pathfinder_geometry` - `0.5.1`
-* `static-math` - `0.2.3`
 * `ultraviolet` - `0.8.1`
 * `vek` - `0.15.3` (`repr_c` types)
 
@@ -195,12 +192,12 @@ Run with the command:
 cargo bench --features scalar scalar
 ```
 
-| benchmark                      |          glam   |        cgmath   |      nalgebra   |       euclid   |           vek   |    pathfinder   |   static-math   |   ultraviolet   |
+| benchmark                      |          glam   |        cgmath   |      nalgebra   |       euclid   |           vek   |    pathfinder   |   ultraviolet   |
 |--------------------------------|-----------------|-----------------|-----------------|----------------|-----------------|-----------------|-----------------|-----------------|
-| euler 2d x10000                |      16.23 us   |      16.13 us   |    __9.954 us__ |     16.18 us   |       16.2 us   |      10.42 us   |     __9.97 us__ |      16.17 us   |
-| euler 3d x10000                |    __15.95 us__ |      32.11 us   |      32.13 us   |     32.13 us   |      32.13 us   |    __16.27 us__ |      32.16 us   |      32.11 us   |
-| matrix2 determinant            |   __2.0386 ns__ |     2.0999 ns   |     2.1018 ns   |      N/A       |     2.0997 ns   |     2.0987 ns   |     2.0962 ns   |     2.1080 ns   |
-| matrix2 inverse                |   __2.8226 ns__ |     8.4418 ns   |     7.6303 ns   |      N/A       |       N/A       |     3.3459 ns   |     9.4636 ns   |     5.8796 ns   |
+| euler 2d x10000                |      16.23 us   |      16.13 us   |    __9.954 us__ |     16.18 us   |       16.2 us   |      10.42 us   |      16.17 us   |
+| euler 3d x10000                |    __15.95 us__ |      32.11 us   |      32.13 us   |     32.13 us   |      32.13 us   |    __16.27 us__ |      32.11 us   |
+| matrix2 determinant            |   __2.0386 ns__ |     2.0999 ns   |     2.1018 ns   |      N/A       |     2.0997 ns   |     2.0987 ns   |     2.1080 ns   |
+| matrix2 inverse                |   __2.8226 ns__ |     8.4418 ns   |     7.6303 ns   |      N/A       |       N/A       |     3.3459 ns   |     5.8796 ns   |
 | matrix2 mul matrix2            |   __2.6036 ns__ |     5.0007 ns   |     4.8172 ns   |      N/A       |     9.3814 ns   |   __2.5516 ns__ |     4.7274 ns   |     4.9428 ns   |
 | matrix2 mul vector2 x1         |     2.4904 ns   |     2.6144 ns   |     2.8714 ns   |      N/A       |     4.2139 ns   |   __2.0839 ns__ |     2.8873 ns   |     2.6250 ns   |
 | matrix2 mul vector2 x100       |   227.5271 ns   |   243.3579 ns   |   265.1698 ns   |      N/A       |   400.6940 ns   | __219.7127 ns__ |   267.8780 ns   |   243.9880 ns   |
@@ -469,7 +466,6 @@ won't pay the build cost twice (unless it's a different version).
 | glam                | 0.9.4   |       1.1 |      0.6 |     2 |
 | nalgebra            | 0.22.0  |      24.2 |     18.0 |    24 |
 | pathfinder_geometry | 0.5.1   |       3.0 |      0.3 |     8 |
-| static-math         | 0.1.6   |       6.9 |      1.7 |    10 |
 | ultraviolet         | 0.5.1   |       2.5 |      1.3 |     4 |
 | vek                 | 0.12.0  |      34.4 |     10.1 |    16 |
 

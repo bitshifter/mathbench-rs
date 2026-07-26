@@ -7,7 +7,7 @@ import sys
 import prettytable
 
 DEFAULT = ['glam', 'cgmath', 'nalgebra']
-OPTIONAL = ['euclid', 'vek', 'pathfinder', 'static-math', 'ultraviolet']
+OPTIONAL = ['euclid', 'vek', 'pathfinder', 'ultraviolet']
 SCALAR = DEFAULT + OPTIONAL
 
 WIDE = ['glam_f32x1', 'ultraviolet_f32x4', 'nalgebra_f32x4', 'ultraviolet_f32x8', 'nalgebra_f32x8']
