@@ -11,7 +11,10 @@ git checkout master &&
 cargo bench --bench eulerbench -- --noplot --save-baseline before &&
 
 # Bench current branch
-git checkout $GITHUB_SHA &&
+# For PRs, GITHUB_SHA is a merge commit that doesn't exist in a fresh clone.
+# Use GITHUB_HEAD_REF (the branch name) for PRs, fall back to GITHUB_SHA for pushes.
+CHECKOUT="${GITHUB_HEAD_REF:-$GITHUB_SHA}"
+git checkout "$CHECKOUT" &&
 cargo bench --bench eulerbench -- --noplot --save-baseline after &&
 
 # Install https://github.com/BurntSushi/critcmp
