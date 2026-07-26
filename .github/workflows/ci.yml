@@ -19,16 +19,12 @@ jobs:
           - nightly
 
     steps:
-      - name: Set up Rust
-        uses: actions/checkout@v2
-      - name: Install Rust
-        uses: actions-rs/toolchain@v1
+      - uses: actions/checkout@v4
+      - name: Install Rust ${{ matrix.rust }}
+        uses: dtolnay/rust-toolchain@master
         with:
           toolchain: ${{ matrix.rust }}
-          profile: minimal
 
-      - name: Clean
-        run: cargo clean
       - name: Check with pathfinder_geometry features
         run: cargo check --features pathfinder_geometry
       - name: Check without default features

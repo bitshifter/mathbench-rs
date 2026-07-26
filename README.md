@@ -1,6 +1,6 @@
 # mathbench
 
-[![Build Status]][travis-ci]
+[![Build Status]][github-ci]
 
 `mathbench` is a suite of unit tests and benchmarks comparing the output and
 performance of a number of different Rust linear algebra libraries for common
@@ -18,8 +18,8 @@ games and graphics development, including:
 * [`ultraviolet`][ultraviolet]
 * [`vek`][vek]
 
-[Build Status]: https://travis-ci.org/bitshifter/mathbench-rs.svg?branch=master
-[travis-ci]: https://travis-ci.org/bitshifter/mathbench-rs
+[Build Status]: https://github.com/bitshifter/mathbench-rs/actions/workflows/ci.yml/badge.svg?branch=master
+[github-ci]: https://github.com/bitshifter/mathbench-rs/actions/workflows/ci.yml
 [cgmath]: https://crates.io/crates/cgmath
 [euclid]: https://crates.io/crates/euclid
 [glam]: https://github.com/bitshifter/glam-rs
