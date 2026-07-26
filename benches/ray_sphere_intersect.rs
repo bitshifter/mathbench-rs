@@ -8,7 +8,7 @@ use criterion::{criterion_group, criterion_main, Criterion, Throughput};
 #[cfg(any(feature = "ultraviolet_f32x4", feature = "ultraviolet_f32x8",))]
 macro_rules! bench_intersection_wide_uv {
     ($b: ident, $size:expr, ty => $t: ty, wt => $wt: ident, zero_vec => $zero: expr, max => $max: expr) => {{
-        use wide_mathbench::CmpGt;
+        use wide_v07::CmpGt;
         struct TestData {
             ray_d: Vec<$t>,
             result: Vec<$wt>,
