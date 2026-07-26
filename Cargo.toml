@@ -20,7 +20,7 @@ nalgebra_f32x4 = ["nalgebra", "simba"]
 nalgebra_f32x8 = ["nalgebra", "simba"]
 nalgebra_wide = ["nalgebra_f32x4", "nalgebra_f32x8"]
 
-scalar = ["cgmath", "nalgebra", "ultraviolet", "euclid", "vek", "pathfinder_geometry", "static-math"]
+scalar = ["cgmath", "nalgebra", "ultraviolet", "euclid", "vek", "pathfinder_geometry"]
 
 # nalgebra_wide fails to build due to packed_simd errors
 # wide = ["glam_f32x1", "ultraviolet_wide", "nalgebra_wide"]
@@ -69,9 +69,6 @@ optional = true
 version = "0.5.1"
 optional = true
 
-[dependencies.static-math]
-version = "0.2.3"
-optional = true
 
 [dependencies.ultraviolet]
 version = "0.10.0"
