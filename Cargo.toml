@@ -10,6 +10,9 @@ default = ["cgmath", "nalgebra", "ultraviolet"]
 # fake glam target for wide comparisons
 glam_f32x1 = []
 
+# glam_fearless wide types: one type, width chosen at runtime by fearless_simd dispatch
+glam_fearless = ["dep:glam_fearless", "dep:fearless_simd"]
+
 ultraviolet_f32x4 = ["ultraviolet", "wide_mathbench", "dep:wide_v07"]
 ultraviolet_f32x8 = ["ultraviolet", "wide_mathbench", "dep:wide_v07"]
 ultraviolet_wide = ["ultraviolet_f32x4", "ultraviolet_f32x8"]
@@ -22,7 +25,7 @@ nalgebra_wide = ["nalgebra_f32x4", "nalgebra_f32x8"]
 
 scalar = ["cgmath", "nalgebra", "ultraviolet", "euclid", "vek", "pathfinder_geometry"]
 
-wide = ["glam_f32x1", "ultraviolet_wide", "nalgebra_wide"]
+wide = ["glam_f32x1", "ultraviolet_wide", "nalgebra_wide", "glam_fearless"]
 
 all = ["scalar", "wide"]
 
@@ -81,6 +84,17 @@ optional = true
 [dependencies.wide_v07]
 package = "wide"
 version = "0.7"
+optional = true
+
+# Local prototype crate: lives on the `glam-fearless` branch of pathtrace-rs.
+[dependencies.glam_fearless]
+package = "glam-fearless"
+path = "../pathtrace-rs/glam-fearless"
+optional = true
+
+# `#[simd]` expands to paths in `fearless_simd`, so it must be a direct dependency.
+[dependencies.fearless_simd]
+version = "1.1"
 optional = true
 
 [dev-dependencies]
