@@ -33,22 +33,24 @@ unstable = []
 
 [dependencies]
 mint = "0.5.9"
-rand = "0.10.2"
+rand = "0.10.3"
 rand_pcg = "0.10.2"
 
 [dependencies.glam]
-version = "0.33.2"
-features = ["mint", "rand"]
+version = "0.34.1"
+default-features = false
+features = ["std", "mint-05", "rand-010"]
 # a lot of random data generation uses glam, so can't be optional yet
 # optional = true
 
 [dependencies.nalgebra]
 version = "0.35.0"
-features = ["mint"]
+default-features = false
+features = ["std", "mint"]
 optional = true
 
 [dependencies.simba]
-version = "0.10.0"
+version = "0.10.2"
 optional = true
 
 [dependencies.cgmath]
@@ -57,12 +59,13 @@ features = ["mint"]
 optional = true
 
 [dependencies.euclid]
-version = "0.22.7"
+version = "0.22.14"
 optional = true
 
 [dependencies.vek]
-version = "0.17.1"
-features = ["mint"]
+version = "0.17.2"
+default-features = false
+features = ["std", "mint"]
 optional = true
 
 [dependencies.pathfinder_geometry]
@@ -77,7 +80,7 @@ optional = true
 
 [dependencies.wide_mathbench]
 package = "wide"
-version = "1.5.0"
+version = "1.7.1"
 optional = true
 
 [dependencies.wide_v07]
