@@ -127,8 +127,8 @@ pub mod mint_support {
 }
 
 pub mod glam_support {
-    use super::mint_support::*;
     use super::BenchValue;
+    use super::mint_support::*;
     use rand::RngExt;
     impl_bench_value!(glam::Mat2, random_mint_invertible_mat2);
     impl_bench_value!(glam::Mat3, random_mint_homogeneous_mat3);
@@ -246,8 +246,8 @@ pub mod glam_support {
 
 #[cfg(feature = "cgmath")]
 pub mod cgmath_support {
-    use super::mint_support::*;
     use super::BenchValue;
+    use super::mint_support::*;
     use rand::RngExt;
     impl_bench_value!(
         cgmath::Decomposed<cgmath::Vector3<f32>, cgmath::Quaternion<f32>>,
@@ -319,8 +319,8 @@ pub mod cgmath_support {
 
 #[cfg(feature = "nalgebra")]
 pub mod nalgebra_support {
-    use super::mint_support::*;
     use super::BenchValue;
+    use super::mint_support::*;
     use rand::RngExt;
     impl_bench_value!(nalgebra::Matrix2<f32>, random_mint_invertible_mat2);
     impl_bench_value!(nalgebra::Matrix3<f32>, random_mint_homogeneous_mat3);
@@ -414,8 +414,8 @@ pub mod nalgebra_support {
 
 #[cfg(feature = "simba")]
 pub mod nalgebra_support_wide {
-    use super::mint_support::*;
     use super::BenchValue;
+    use super::mint_support::*;
     use rand::RngExt;
     use simba::simd::{WideF32x4, WideF32x8, WideF64x4};
     impl_bench_value!(nalgebra::Point2<WideF32x4>, random_na_point2x4);
@@ -470,7 +470,6 @@ pub mod nalgebra_support_wide {
         .into()
     }
 
-
     fn random_na_quat4<R: RngExt>(rng: &mut R) -> nalgebra::UnitQuaternion<WideF32x4> {
         [
             nalgebra::UnitQuaternion::from_quaternion(random_mint_quat(rng).into()),
@@ -495,7 +494,6 @@ pub mod nalgebra_support_wide {
         .into()
     }
 
-
     fn random_na_iso2x4<R: RngExt>(rng: &mut R) -> nalgebra::Isometry2<WideF32x4> {
         let rot = nalgebra::UnitComplex::random_value(rng);
         let tra = nalgebra::Vector2::random_value(rng);
@@ -508,7 +506,6 @@ pub mod nalgebra_support_wide {
         nalgebra::Isometry2::from_parts(tra.into(), rot)
     }
 
-
     fn random_na_iso3x4<R: RngExt>(rng: &mut R) -> nalgebra::Isometry3<WideF32x4> {
         let rot = nalgebra::UnitQuaternion::random_value(rng);
         let tra = nalgebra::Vector3::random_value(rng);
@@ -520,7 +517,6 @@ pub mod nalgebra_support_wide {
         let tra = nalgebra::Vector3::random_value(rng);
         nalgebra::Isometry3::from_parts(tra.into(), rot)
     }
-
 
     fn random_na_point2x4<R: RngExt>(rng: &mut R) -> nalgebra::Point2<WideF32x4> {
         random_na_vec2x4(rng).into()
@@ -537,8 +533,6 @@ pub mod nalgebra_support_wide {
     fn random_na_point3x8<R: RngExt>(rng: &mut R) -> nalgebra::Point3<WideF32x8> {
         random_na_vec3x8(rng).into()
     }
-
-
 
     fn random_na_vec2x4<R: RngExt>(rng: &mut R) -> nalgebra::Vector2<WideF32x4> {
         [random_f32x4(rng), random_f32x4(rng)].into()
@@ -576,20 +570,13 @@ pub mod nalgebra_support_wide {
         .into()
     }
 
-
-
-
-
     fn random_na_dvec2x4<R: RngExt>(rng: &mut R) -> nalgebra::Vector2<WideF64x4> {
         [random_f64x4(rng), random_f64x4(rng)].into()
     }
 
-
-
     fn random_na_dvec3x4<R: RngExt>(rng: &mut R) -> nalgebra::Vector3<WideF64x4> {
         [random_f64x4(rng), random_f64x4(rng), random_f64x4(rng)].into()
     }
-
 
     fn random_na_mat2x4<R: RngExt>(rng: &mut R) -> nalgebra::Matrix2<WideF32x4> {
         nalgebra::Matrix2::from_fn(|_, _| random_f32x4(rng))
@@ -615,9 +602,6 @@ pub mod nalgebra_support_wide {
         nalgebra::Matrix4::from_fn(|_, _| random_f32x8(rng))
     }
 
-
-
-
     fn random_f32x4<R: RngExt>(rng: &mut R) -> WideF32x4 {
         rng.random::<[f32; 4]>().into()
     }
@@ -626,12 +610,9 @@ pub mod nalgebra_support_wide {
         rng.random::<[f32; 8]>().into()
     }
 
-
-
     fn random_f64x4<R: RngExt>(rng: &mut R) -> WideF64x4 {
         rng.random::<[f64; 4]>().into()
     }
-
 }
 
 #[cfg(feature = "ultraviolet")]
@@ -887,7 +868,12 @@ pub mod ultraviolet_support {
 
     impl BenchValue for Vec4 {
         fn random_value<R: rand::RngExt>(rng: &mut R) -> Self {
-            Vec4::new(rng.random::<f32>(), rng.random(), rng.random(), rng.random())
+            Vec4::new(
+                rng.random::<f32>(),
+                rng.random(),
+                rng.random(),
+                rng.random(),
+            )
         }
     }
 
@@ -953,8 +939,8 @@ pub mod ultraviolet_support {
 
 #[cfg(feature = "euclid")]
 pub mod euclid_support {
-    use super::mint_support::*;
     use super::BenchValue;
+    use super::mint_support::*;
     use rand::RngExt;
 
     impl_bench_value!(euclid::Point2D<f32, euclid::UnknownUnit>, random_euclid_point2);
@@ -970,7 +956,7 @@ pub mod euclid_support {
     where
         R: RngExt,
     {
-        let (x, y) = rng.random::<(f32, f32)>().into();
+        let (x, y) = rng.random::<(f32, f32)>();
         euclid::vec2(x, y)
     }
 
@@ -985,7 +971,7 @@ pub mod euclid_support {
     where
         R: RngExt,
     {
-        let (x, y, z) = rng.random::<(f32, f32, f32)>().into();
+        let (x, y, z) = rng.random::<(f32, f32, f32)>();
         euclid::vec3(x, y, z)
     }
 
@@ -1032,8 +1018,8 @@ pub mod euclid_support {
 
 #[cfg(feature = "vek")]
 pub mod vek_support {
-    use super::mint_support::*;
     use super::BenchValue;
+    use super::mint_support::*;
     use vek;
     impl_bench_value!(vek::Mat2<f32>, random_mint_invertible_mat2);
     impl_bench_value!(vek::Mat3<f32>, random_mint_homogeneous_mat3);
@@ -1078,8 +1064,8 @@ pub mod vek_support {
 
 #[cfg(feature = "pathfinder_geometry")]
 pub mod pathfinder_support {
-    use super::mint_support::*;
     use super::BenchValue;
+    use super::mint_support::*;
     use rand::RngExt;
 
     impl_bench_value!(pathfinder_geometry::vector::Vector2F, random_pf_vec2);
@@ -1105,7 +1091,12 @@ pub mod pathfinder_support {
     where
         R: RngExt,
     {
-        pathfinder_geometry::vector::Vector4F::new(rng.random(), rng.random(), rng.random(), rng.random())
+        pathfinder_geometry::vector::Vector4F::new(
+            rng.random(),
+            rng.random(),
+            rng.random(),
+            rng.random(),
+        )
     }
 
     pub fn random_pf_mat2<R>(rng: &mut R) -> pathfinder_geometry::transform2d::Matrix2x2F

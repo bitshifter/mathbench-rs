@@ -49,7 +49,11 @@ macro_rules! bench {
     };
     ($lib:literal as $display:literal, $group:ident, $size:expr, $closure:expr) => {
         #[cfg(feature = $lib)]
-        $group.bench_with_input(criterion::BenchmarkId::new($display, $size), $size, $closure)
+        $group.bench_with_input(
+            criterion::BenchmarkId::new($display, $size),
+            $size,
+            $closure,
+        )
     };
 }
 

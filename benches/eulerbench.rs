@@ -1,7 +1,7 @@
 #[path = "support/macros.rs"]
 #[macro_use]
 mod macros;
-use criterion::{criterion_group, criterion_main, Criterion, Throughput};
+use criterion::{Criterion, Throughput, criterion_group, criterion_main};
 
 const UPDATE_RATE: f32 = 1.0 / 60.0;
 
@@ -26,8 +26,8 @@ macro_rules! bench_euler {
             for ((position, acceleration), velocity) in
                 data.pos.iter_mut().zip(&data.acc).zip(&mut data.vel)
             {
-                *velocity = *velocity + *acceleration * dt;
-                *position = *position + *velocity * dt;
+                *velocity += *acceleration * dt;
+                *position += *velocity * dt;
             }
         })
     }};
@@ -35,14 +35,15 @@ macro_rules! bench_euler {
 
 fn bench_euler_3d(c: &mut Criterion) {
     let mut group = c.benchmark_group("scalar euler 3d");
-    for size in [10000].iter() {
+    {
+        let size = &10000;
         group.throughput(Throughput::Elements(*size as u64));
         bench!("glam", group, size, |b, size| {
             use glam::Vec3A;
             bench_euler!(b, size, ty => Vec3A, zero => Vec3A::ZERO, dt => Vec3A::splat(UPDATE_RATE))
         });
         bench!("cgmath", group, size, |b, size| {
-            use cgmath::{prelude::*, Vector3};
+            use cgmath::{Vector3, prelude::*};
             bench_euler!(b, size, ty => Vector3<f32>, zero => Vector3::zero(), dt => UPDATE_RATE)
         });
         bench!("ultraviolet", group, size, |b, size| {
@@ -50,7 +51,7 @@ fn bench_euler_3d(c: &mut Criterion) {
             bench_euler!(b, size, ty => Vec3, zero => Vec3::zero(), dt => UPDATE_RATE);
         });
         bench!("nalgebra", group, size, |b, size| {
-            use nalgebra::{zero, Vector3};
+            use nalgebra::{Vector3, zero};
             bench_euler!(b, size, ty => Vector3<f32>, zero => zero(), dt => UPDATE_RATE);
         });
 
@@ -72,7 +73,8 @@ fn bench_euler_3d(c: &mut Criterion) {
 
 fn bench_euler_3d_wide(c: &mut Criterion) {
     let mut group = c.benchmark_group("wide euler 3d");
-    for size in [80000].iter() {
+    {
+        let size = &80000;
         group.throughput(Throughput::Elements(*size as u64));
         bench!("glam_f32x1", group, size, |b, size| {
             use glam::Vec3A;
@@ -81,23 +83,23 @@ fn bench_euler_3d_wide(c: &mut Criterion) {
 
         // sse
         bench!("ultraviolet_f32x4", group, size, |b, size| {
-            use ultraviolet::{f32x4, Vec3x4};
+            use ultraviolet::{Vec3x4, f32x4};
             bench_euler!(b, &((*size as f32 / 4.0).ceil() as usize), ty => Vec3x4, zero => Vec3x4::zero(), dt => f32x4::splat(UPDATE_RATE))
         });
         bench!("nalgebra_f32x4", group, size, |b, size| {
-            use nalgebra::{zero, Vector3};
-            use simba::simd::{WideF32x4, SimdValue};
+            use nalgebra::{Vector3, zero};
+            use simba::simd::{SimdValue, WideF32x4};
             bench_euler!(b, &((*size as f32 / 4.0).ceil() as usize), ty => Vector3<WideF32x4>, zero => zero(), dt => WideF32x4::splat(UPDATE_RATE));
         });
 
         // avx
         bench!("ultraviolet_f32x8", group, size, |b, size| {
-            use ultraviolet::{f32x8, Vec3x8};
+            use ultraviolet::{Vec3x8, f32x8};
             bench_euler!(b, &((*size as f32 / 8.0).ceil() as usize), ty => Vec3x8, zero => Vec3x8::zero(), dt => f32x8::splat(UPDATE_RATE))
         });
         bench!("nalgebra_f32x8", group, size, |b, size| {
-            use nalgebra::{zero, Vector3};
-            use simba::simd::{WideF32x8, SimdValue};
+            use nalgebra::{Vector3, zero};
+            use simba::simd::{SimdValue, WideF32x8};
             bench_euler!(b, &((*size as f32 / 8.0).ceil() as usize), ty => Vector3<WideF32x8>, zero => zero(), dt => WideF32x8::splat(UPDATE_RATE));
         });
     }
@@ -106,14 +108,15 @@ fn bench_euler_3d_wide(c: &mut Criterion) {
 
 fn bench_euler_2d(c: &mut Criterion) {
     let mut group = c.benchmark_group("scalar euler 2d");
-    for size in [10000].iter() {
+    {
+        let size = &10000;
         group.throughput(Throughput::Elements(*size as u64));
         bench!("glam", group, size, |b, size| {
             use glam::Vec2;
             bench_euler!(b, size, ty => Vec2, zero => Vec2::ZERO, dt => Vec2::splat(UPDATE_RATE))
         });
         bench!("cgmath", group, size, |b, size| {
-            use cgmath::{prelude::*, Vector2};
+            use cgmath::{Vector2, prelude::*};
             bench_euler!(b, size, ty => Vector2<f32>, zero => Vector2::zero(), dt => UPDATE_RATE)
         });
         bench!("ultraviolet", group, size, |b, size| {
@@ -121,7 +124,7 @@ fn bench_euler_2d(c: &mut Criterion) {
             bench_euler!(b, size, ty => Vec2, zero => Vec2::zero(), dt => UPDATE_RATE);
         });
         bench!("nalgebra", group, size, |b, size| {
-            use nalgebra::{zero, Vector2};
+            use nalgebra::{Vector2, zero};
             bench_euler!(b, size, ty => Vector2<f32>, zero => zero(), dt => UPDATE_RATE);
         });
 
@@ -143,7 +146,8 @@ fn bench_euler_2d(c: &mut Criterion) {
 
 fn bench_euler_2d_wide(c: &mut Criterion) {
     let mut group = c.benchmark_group("wide euler 2d");
-    for size in [80000].iter() {
+    {
+        let size = &80000;
         group.throughput(Throughput::Elements(*size as u64));
         bench!("glam_f32x1", group, size, |b, size| {
             use glam::Vec2;
@@ -152,22 +156,22 @@ fn bench_euler_2d_wide(c: &mut Criterion) {
 
         // sse
         bench!("ultraviolet_f32x4", group, size, |b, size| {
-            use ultraviolet::{f32x4, Vec2x4};
+            use ultraviolet::{Vec2x4, f32x4};
             bench_euler!(b, &((*size as f32 / 4.0).ceil() as usize), ty => Vec2x4, zero => Vec2x4::zero(), dt => f32x4::splat(UPDATE_RATE))
         });
         bench!("nalgebra_f32x4", group, size, |b, size| {
-            use nalgebra::{zero, Vector2};
-            use simba::simd::{WideF32x4, SimdValue};
+            use nalgebra::{Vector2, zero};
+            use simba::simd::{SimdValue, WideF32x4};
             bench_euler!(b, &((*size as f32 / 4.0).ceil() as usize), ty => Vector2<WideF32x4>, zero => zero(), dt => WideF32x4::splat(UPDATE_RATE));
         });
         // avx
         bench!("ultraviolet_f32x8", group, size, |b, size| {
-            use ultraviolet::{f32x8, Vec2x8};
+            use ultraviolet::{Vec2x8, f32x8};
             bench_euler!(b, &((*size as f32 / 8.0).ceil() as usize), ty => Vec2x8, zero => Vec2x8::zero(), dt => f32x8::splat(UPDATE_RATE))
         });
         bench!("nalgebra_f32x8", group, size, |b, size| {
-            use nalgebra::{zero, Vector2};
-            use simba::simd::{WideF32x8, SimdValue};
+            use nalgebra::{Vector2, zero};
+            use simba::simd::{SimdValue, WideF32x8};
             bench_euler!(b, &((*size as f32 / 8.0).ceil() as usize), ty => Vector2<WideF32x8>, zero => zero(), dt => WideF32x8::splat(UPDATE_RATE));
         });
     }

@@ -2,7 +2,6 @@
 mod macros;
 
 use glam::{Mat2, Mat3, Mat4, Quat, Vec2, Vec3, Vec4};
-use nalgebra;
 
 /// Trait used by the `assert_approx_eq` macro for floating point comparisons.
 pub trait FloatCompare<Rhs: ?Sized = Self> {
@@ -397,7 +396,7 @@ impl FloatCompare for nalgebra::Vector4<f32> {
 impl FloatCompare for nalgebra::Quaternion<f32> {
     #[inline]
     fn approx_eq(&self, other: &Self, max_abs_diff: f32) -> bool {
-        self.as_vector().approx_eq(&other.as_vector(), max_abs_diff)
+        self.as_vector().approx_eq(other.as_vector(), max_abs_diff)
     }
     #[inline]
     fn abs_diff(&self, other: &Self) -> Self {

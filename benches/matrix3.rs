@@ -1,7 +1,7 @@
 #[path = "support/macros.rs"]
 #[macro_use]
 mod macros;
-use criterion::{criterion_group, criterion_main, Criterion};
+use criterion::{Criterion, criterion_group, criterion_main};
 use macros::MIN_WIDE_BENCH_SIZE;
 use mathbench::BenchValue;
 use std::ops::Mul;
@@ -68,7 +68,7 @@ fn bench_matrix3_transpose(c: &mut Criterion) {
         bench_unop!(b, op => transpose, ty => Mat3)
     });
     bench!("cgmath", group, |b| {
-        use cgmath::{prelude::*, Matrix3};
+        use cgmath::{Matrix3, prelude::*};
         bench_unop!(b, op => transpose, ty => Matrix3<f32>)
     });
     bench!("ultraviolet", group, |b| {
@@ -123,7 +123,7 @@ fn bench_matrix3_determinant(c: &mut Criterion) {
         bench_unop!(b, op => determinant, ty => Mat3)
     });
     bench!("cgmath", group, |b| {
-        use cgmath::{prelude::*, Matrix3};
+        use cgmath::{Matrix3, prelude::*};
         bench_unop!(b, op => determinant, ty => Matrix3<f32>)
     });
     bench!("ultraviolet", group, |b| {
@@ -168,7 +168,7 @@ fn bench_matrix3_inverse(c: &mut Criterion) {
         bench_unop!(b, op => inverse, ty => Mat3)
     });
     bench!("cgmath", group, |b| {
-        use cgmath::{prelude::*, Matrix3};
+        use cgmath::{Matrix3, prelude::*};
         bench_unop!(b, op => invert, ty => Matrix3<f32>)
     });
     bench!("ultraviolet", group, |b| {

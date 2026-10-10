@@ -1,8 +1,5 @@
 mod support;
-use cgmath;
-use glam;
 use mathbench::mint_support::{random_mint_quat, random_mint_vec3};
-use nalgebra;
 use rand_pcg::Pcg64Mcg;
 
 const NUM_ITERS: usize = 1024;

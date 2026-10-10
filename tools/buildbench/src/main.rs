@@ -1,4 +1,4 @@
-use anyhow::{anyhow, Result};
+use anyhow::{Result, anyhow};
 use cargo_toml::Manifest;
 use clap::{App, Arg};
 use lazy_static::lazy_static;
@@ -12,7 +12,7 @@ use std::{
     process::Command,
     str::FromStr,
 };
-use tempfile::{tempdir, TempDir};
+use tempfile::{TempDir, tempdir};
 
 #[derive(Debug, Default)]
 struct TimingInfo {
@@ -25,16 +25,11 @@ struct TimingInfo {
     units: u32,
 }
 
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, Default)]
 enum Profile {
     Dev,
+    #[default]
     Release,
-}
-
-impl Default for Profile {
-    fn default() -> Self {
-        Profile::Release
-    }
 }
 
 impl TryFrom<&str> for Profile {
@@ -68,16 +63,11 @@ impl Profile {
     }
 }
 
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, Default)]
 enum Features {
+    #[default]
     Defaults,
     NoDefaults,
-}
-
-impl Default for Features {
-    fn default() -> Self {
-        Features::Defaults
-    }
 }
 
 impl TryFrom<&str> for Features {
@@ -159,14 +149,16 @@ fn bench_crate(
 
     let output = Command::new("cargo")
         .current_dir(build_dir.path())
-        .args(&["+nightly", "build", "--release", "-Z", "timings=html,info"])
+        .args(["+nightly", "build", "--release", "-Z", "timings=html,info"])
         .output()?;
 
-    let mut timing_info = TimingInfo::default();
-    timing_info.name = name.to_string();
-    timing_info.version = version.to_string();
-    timing_info.profile = profile;
-    timing_info.features = features;
+    let mut timing_info = TimingInfo {
+        name: name.to_string(),
+        version: version.to_string(),
+        profile,
+        features,
+        ..Default::default()
+    };
 
     lazy_static! {
         static ref COMPLETED_MATCH: Regex =
@@ -214,8 +206,8 @@ fn bench_crate(
 
 fn summarize(profiles: &[Profile], features: &[Features], results: &[TimingInfo]) {
     use prettytable::{
-        format::{Alignment, FormatBuilder, LinePosition, LineSeparator},
         Cell, Row, Table,
+        format::{Alignment, FormatBuilder, LinePosition, LineSeparator},
     };
 
     let markdown_format = FormatBuilder::new()
@@ -280,18 +272,16 @@ fn main() -> Result<()> {
         .iter()
         .filter_map(|(name, dep)| {
             // assume that detailed dependencies are the libs we want
-            if let Some(detail) = dep.detail() {
-                Some((
+            dep.detail().map(|detail| {
+                (
                     name.as_str(),
                     detail
                         .version
                         .as_ref()
                         .expect("dependency version expected")
                         .as_str(),
-                ))
-            } else {
-                None
-            }
+                )
+            })
         })
         .collect();
 

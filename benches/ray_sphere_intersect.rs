@@ -3,7 +3,7 @@
 #[macro_use]
 mod macros;
 
-use criterion::{criterion_group, criterion_main, Criterion, Throughput};
+use criterion::{Criterion, Throughput, criterion_group, criterion_main};
 
 #[cfg(any(feature = "ultraviolet_f32x4", feature = "ultraviolet_f32x8",))]
 macro_rules! bench_intersection_wide_uv {
@@ -148,11 +148,7 @@ macro_rules! bench_intersection_scalar {
                     t1
                 } else {
                     let t2 = -b + desc_sqrt;
-                    if t2 > 0.0 {
-                        t2
-                    } else {
-                        f32::MAX
-                    }
+                    if t2 > 0.0 { t2 } else { f32::MAX }
                 }
             } else {
                 f32::MAX
@@ -169,14 +165,15 @@ macro_rules! bench_intersection_scalar {
 
 fn bench_ray_sphere_intersect_scalar(c: &mut Criterion) {
     let mut group = c.benchmark_group("scalar ray-sphere intersection");
-    for size in [10000].iter() {
+    {
+        let size = &10000;
         group.throughput(Throughput::Elements(*size as u64));
         bench!("glam", group, size, |b, size| {
             use glam::Vec3;
             bench_intersection_scalar!(b, size, ty => Vec3, zero => Vec3::ZERO, norm => normalize, mag_sq => length_squared, param => by_value);
         });
         bench!("cgmath", group, size, |b, size| {
-            use cgmath::{prelude::*, Vector3};
+            use cgmath::{Vector3, prelude::*};
             bench_intersection_scalar!(b, size, ty => Vector3<f32>, zero => Vector3::zero(), norm => normalize, mag_sq => magnitude2, param => by_value)
         });
         bench!("ultraviolet", group, size, |b, size| {
@@ -184,7 +181,7 @@ fn bench_ray_sphere_intersect_scalar(c: &mut Criterion) {
             bench_intersection_scalar!(b, size, ty => Vec3, zero => Vec3::zero(), norm => normalized, mag_sq => mag_sq, param => by_value);
         });
         bench!("nalgebra", group, size, |b, size| {
-            use nalgebra::{zero, Vector3};
+            use nalgebra::{Vector3, zero};
             bench_intersection_scalar!(b, size, ty => Vector3<f32>, zero => zero(), norm => normalize, mag_sq => norm_squared, param => by_ref);
         });
         bench!("euclid", group, size, |b, size| {
@@ -201,7 +198,8 @@ fn bench_ray_sphere_intersect_scalar(c: &mut Criterion) {
 
 fn bench_ray_sphere_intersect_wide(c: &mut Criterion) {
     let mut group = c.benchmark_group("wide ray-sphere intersection");
-    for size in [80000].iter() {
+    {
+        let size = &80000;
         group.throughput(Throughput::Elements(*size as u64));
         bench!("glam_f32x1", group, size, |b, size| {
             use glam::Vec3A;
@@ -210,22 +208,22 @@ fn bench_ray_sphere_intersect_wide(c: &mut Criterion) {
 
         // sse
         bench!("ultraviolet_f32x4", group, size, |b, size| {
-            use ultraviolet::{f32x4, Vec3x4};
+            use ultraviolet::{Vec3x4, f32x4};
             bench_intersection_wide_uv!(b, &((*size as f32 / 4.0).ceil() as usize), ty => Vec3x4, wt => f32x4, zero_vec => Vec3x4::zero(), max => f32::MAX)
         });
         bench!("nalgebra_f32x4", group, size, |b, size| {
-            use nalgebra::{zero, Vector3};
+            use nalgebra::{Vector3, zero};
             use simba::simd::WideF32x4;
             bench_intersection_wide_na!(b, &((*size as f32 / 4.0).ceil() as usize), ty => Vector3<WideF32x4>, wt => WideF32x4, zero_vec => zero(), max => f32::MAX);
         });
 
         // avx
         bench!("ultraviolet_f32x8", group, size, |b, size| {
-            use ultraviolet::{f32x8, Vec3x8};
+            use ultraviolet::{Vec3x8, f32x8};
             bench_intersection_wide_uv!(b, &((*size as f32 / 8.0).ceil() as usize), ty => Vec3x8, wt => f32x8, zero_vec => Vec3x8::zero(), max => f32::MAX)
         });
         bench!("nalgebra_f32x8", group, size, |b, size| {
-            use nalgebra::{zero, Vector3};
+            use nalgebra::{Vector3, zero};
             use simba::simd::WideF32x8;
             bench_intersection_wide_na!(b, &((*size as f32 / 8.0).ceil() as usize), ty => Vector3<WideF32x8>, wt => WideF32x8, zero_vec => zero(), max => f32::MAX);
         });

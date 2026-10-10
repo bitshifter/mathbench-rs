@@ -2,12 +2,12 @@
 name = "buildbench"
 version = "0.1.0"
 authors = ["Cameron Hart <cameron.hart@gmail.com>"]
-edition = "2018"
+edition = "2024"
 
 [dependencies]
 anyhow = "1.0"
 cargo_toml = "0.14"
-clap = { version = "3", default-features = false }
+clap = { version = "3", default-features = false, features = ["std"] }
 lazy_static = "1.4"
 prettytable-rs = { version = "0.10", default-features = false }
 regex = "1.3"

@@ -1,7 +1,7 @@
 [package]
 name = "mathbench"
 version = "0.4.2"
-edition = "2018"
+edition = "2024"
 
 [features]
 # defaults can be disabled for benchmarks but are required for tests

@@ -1,7 +1,7 @@
 #[path = "support/macros.rs"]
 #[macro_use]
 mod macros;
-use criterion::{criterion_group, criterion_main, Criterion};
+use criterion::{Criterion, criterion_group, criterion_main};
 
 // returns self to check overhead of benchmark
 fn bench_transform3_ret_self(c: &mut Criterion) {

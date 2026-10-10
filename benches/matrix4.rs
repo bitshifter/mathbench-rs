@@ -1,7 +1,7 @@
 #[path = "support/macros.rs"]
 #[macro_use]
 mod macros;
-use criterion::{criterion_group, criterion_main, Criterion};
+use criterion::{Criterion, criterion_group, criterion_main};
 use macros::MIN_WIDE_BENCH_SIZE;
 use mathbench::BenchValue;
 use std::ops::Mul;
@@ -36,7 +36,7 @@ fn bench_matrix4_ret_self(c: &mut Criterion) {
 fn bench_matrix4_ret_self_wide(c: &mut Criterion) {
     let size = &MIN_WIDE_BENCH_SIZE;
     let mut group = c.benchmark_group("wide matrix4 return self");
-    group.throughput(criterion::Throughput::Elements(*size as u64));
+    group.throughput(criterion::Throughput::Elements(*size));
     bench!("glam_f32x1", group, size, |b, size| {
         use glam::Mat4;
         bench_unop_wide!(b, size, width => 1, op => ret_self, ty => Mat4)
@@ -69,7 +69,7 @@ fn bench_matrix4_transpose(c: &mut Criterion) {
         bench_unop!(b, op => transpose, ty => Mat4);
     });
     bench!("cgmath", group, |b| {
-        use cgmath::{prelude::*, Matrix4};
+        use cgmath::{Matrix4, prelude::*};
         bench_unop!(b, op => transpose, ty => Matrix4<f32>);
     });
     bench!("ultraviolet", group, |b| {

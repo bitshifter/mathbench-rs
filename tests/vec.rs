@@ -1,9 +1,7 @@
 mod support;
 
 use cgmath::{self, InnerSpace};
-use glam;
 use mathbench::mint_support::{random_mint_vec2, random_mint_vec3, random_mint_vec4};
-use nalgebra;
 use rand_pcg::Pcg64Mcg;
 
 const NUM_ITERS: usize = 1024;
