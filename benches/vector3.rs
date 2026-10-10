@@ -1,6 +1,11 @@
 #[path = "support/macros.rs"]
 #[macro_use]
 mod macros;
+#[cfg(feature = "glam_fearless")]
+#[allow(dead_code)] // shared by the ray-sphere and vector3 benches
+#[path = "support/glam_fearless.rs"]
+mod gf;
+
 use criterion::{Criterion, criterion_group, criterion_main};
 use mathbench::BenchValue;
 
@@ -85,6 +90,15 @@ fn bench_vector3_length_wide(c: &mut Criterion) {
         use simba::simd::WideF32x8;
         bench_unop_wide!(b, width => 8, op => norm, ty => Vector3<WideF32x8>)
     });
+    bench!("glam_fearless", group, size, |b, size| {
+        let size = *size as usize;
+        let mut rng = rand_pcg::Pcg64Mcg::new(rand::random());
+        let a = gf::random_soa(size, &mut rng);
+        let mut out = vec![0.0f32; size];
+        let refs: [&[f32]; 3] = [&a[0], &a[1], &a[2]];
+        b.iter(|| gf::length_soa_dispatch(refs, &mut out));
+        std::hint::black_box(&out);
+    });
     group.finish();
 }
 
@@ -140,6 +154,17 @@ fn bench_vector3_normalize_wide(c: &mut Criterion) {
         use nalgebra::Vector3;
         use simba::simd::WideF32x8;
         bench_unop_wide!(b, width => 8, op => normalize, ty => Vector3<WideF32x8>)
+    });
+    bench!("glam_fearless", group, size, |b, size| {
+        let size = *size as usize;
+        let mut rng = rand_pcg::Pcg64Mcg::new(rand::random());
+        let a = gf::random_soa(size, &mut rng);
+        let mut ox = vec![0.0f32; size];
+        let mut oy = vec![0.0f32; size];
+        let mut oz = vec![0.0f32; size];
+        let refs: [&[f32]; 3] = [&a[0], &a[1], &a[2]];
+        b.iter(|| gf::normalize_soa_dispatch(refs, &mut ox, &mut oy, &mut oz));
+        std::hint::black_box((&ox, &oy, &oz));
     });
     group.finish();
 }
@@ -198,6 +223,17 @@ fn bench_vector3_dot_wide(c: &mut Criterion) {
         use simba::simd::WideF32x8;
         bench_binop_wide!(b, width => 8, op => dot, ty1 => Vector3<WideF32x8>, ty2 => Vector3<WideF32x8>, param => by_ref)
     });
+    bench!("glam_fearless", group, size, |b, size| {
+        let size = *size as usize;
+        let mut rng = rand_pcg::Pcg64Mcg::new(rand::random());
+        let a = gf::random_soa(size, &mut rng);
+        let c = gf::random_soa(size, &mut rng);
+        let mut out = vec![0.0f32; size];
+        let arefs: [&[f32]; 3] = [&a[0], &a[1], &a[2]];
+        let crefs: [&[f32]; 3] = [&c[0], &c[1], &c[2]];
+        b.iter(|| gf::dot_soa_dispatch(arefs, crefs, &mut out));
+        std::hint::black_box(&out);
+    });
     group.finish();
 }
 
@@ -254,6 +290,19 @@ fn bench_vector3_cross_wide(c: &mut Criterion) {
         use nalgebra::Vector3;
         use simba::simd::WideF32x8;
         bench_binop_wide!(b, width => 8, op => cross, ty1 => Vector3<WideF32x8>, ty2 => Vector3<WideF32x8>, param => by_ref)
+    });
+    bench!("glam_fearless", group, size, |b, size| {
+        let size = *size as usize;
+        let mut rng = rand_pcg::Pcg64Mcg::new(rand::random());
+        let a = gf::random_soa(size, &mut rng);
+        let c = gf::random_soa(size, &mut rng);
+        let mut ox = vec![0.0f32; size];
+        let mut oy = vec![0.0f32; size];
+        let mut oz = vec![0.0f32; size];
+        let arefs: [&[f32]; 3] = [&a[0], &a[1], &a[2]];
+        let crefs: [&[f32]; 3] = [&c[0], &c[1], &c[2]];
+        b.iter(|| gf::cross_soa_dispatch(arefs, crefs, &mut ox, &mut oy, &mut oz));
+        std::hint::black_box((&ox, &oy, &oz));
     });
     group.finish();
 }

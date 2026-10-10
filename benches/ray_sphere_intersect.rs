@@ -136,51 +136,9 @@ macro_rules! bench_intersection_wide_na {
 }
 
 #[cfg(feature = "glam_fearless")]
-mod gf {
-    use glam_fearless::{Level, Vec3xN, dispatch, prelude::*, simd};
-
-    /// Wide ray/sphere test over SoA ray-direction components: one ray per lane.
-    ///
-    /// The sphere is at the origin with radius 10 and the ray starts at (0, 0, -11),
-    /// matching the other wide entries in this file.
-    #[simd]
-    #[inline(always)]
-    pub fn intersect_soa<S: Simd>(simd: S, dirs: [&[f32]; 3], out: &mut [f32]) {
-        let n = Vec3xN::<S>::LANES;
-        let oc = Vec3xN::splat_xyz(simd, 0.0, 0.0, -11.0);
-        let r_sq = S::f32s::splat(simd, 100.0);
-        let miss = S::f32s::splat(simd, f32::MAX);
-
-        for i in (0..out.len()).step_by(n) {
-            let d = Vec3xN::from_slice(
-                simd,
-                &dirs[0][i..i + n],
-                &dirs[1][i..i + n],
-                &dirs[2][i..i + n],
-            );
-            let b = oc.dot(d);
-            let c = oc.length_squared() - r_sq;
-            let discr = b * b - c;
-
-            let pos = discr.simd_gt(0.0);
-            let discr_sqrt = discr.sqrt();
-
-            let t1 = -b - discr_sqrt;
-            let t2 = -b + discr_sqrt;
-
-            let t = (t2.simd_gt(0.0) & pos).select(t2, miss);
-            let t = (t1.simd_gt(0.0) & pos).select(t1, t);
-
-            t.store_slice(&mut out[i..i + n]);
-        }
-    }
-
-    /// Run `intersect_soa` at the best level this CPU supports.
-    pub fn intersect_soa_dispatch(dirs: [&[f32]; 3], out: &mut [f32]) {
-        let level = Level::new();
-        dispatch!(level, simd => intersect_soa(simd, dirs, out))
-    }
-}
+#[allow(dead_code)] // shared by the ray-sphere and vector3 benches
+#[path = "support/glam_fearless.rs"]
+mod gf;
 
 macro_rules! bench_intersection_scalar {
     ($b: ident, $size:expr, width => $width:expr, ty => $t: ty, zero => $zero: expr, norm => $norm: ident, mag_sq => $mag_sq: ident, param => $param: tt) => {{
@@ -307,13 +265,7 @@ fn bench_ray_sphere_intersect_wide(c: &mut Criterion) {
         bench!("glam_fearless", group, size, |b, size| {
             let size = *size;
             let mut rng = rand_pcg::Pcg64Mcg::new(rand::random());
-            let mut dirs = [vec![0.0f32; size], vec![0.0f32; size], vec![0.0f32; size]];
-            for i in 0..size {
-                let d = <glam::Vec3 as mathbench::BenchValue>::random_value(&mut rng).normalize();
-                dirs[0][i] = d.x;
-                dirs[1][i] = d.y;
-                dirs[2][i] = d.z;
-            }
+            let dirs = gf::random_unit_soa(size, &mut rng);
             let mut out = vec![0.0f32; size];
             let refs: [&[f32]; 3] = [&dirs[0], &dirs[1], &dirs[2]];
             b.iter(|| gf::intersect_soa_dispatch(refs, &mut out));
