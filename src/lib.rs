@@ -87,7 +87,7 @@ pub mod mint_support {
     {
         loop {
             let m = glam::Mat2::from_cols_array(&rng.random::<[f32; 4]>());
-            if m.determinant().abs() > std::f32::EPSILON {
+            if m.determinant().abs() > f32::EPSILON {
                 return m.into();
             }
         }
@@ -103,7 +103,7 @@ pub mod mint_support {
                 random_angle_radians(rng),
                 random_glam_vec2(rng),
             );
-            if m.determinant().abs() > std::f32::EPSILON {
+            if m.determinant().abs() > f32::EPSILON {
                 return m.into();
             }
         }
@@ -119,7 +119,7 @@ pub mod mint_support {
                 random_glam_quat(rng),
                 random_glam_vec3(rng),
             );
-            if m.determinant().abs() > std::f32::EPSILON {
+            if m.determinant().abs() > f32::EPSILON {
                 return m.into();
             }
         }

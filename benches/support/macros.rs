@@ -58,7 +58,7 @@ macro_rules! bench_unop {
     ($b: ident, op => $unop: ident, ty => $t:ty) => {{
         let size: usize = 1 << 13;
         let mut rng = rand_pcg::Pcg64Mcg::new(rand::random());
-        let inputs = criterion::black_box(
+        let inputs = std::hint::black_box(
             (0..size)
                 .map(|_| <$t as mathbench::BenchValue>::random_value(&mut rng))
                 .collect::<Vec<_>>(),
@@ -72,7 +72,7 @@ macro_rules! bench_unop {
             unsafe { *outputs.get_unchecked_mut(i) = res }
             res
         });
-        criterion::black_box(outputs);
+        std::hint::black_box(outputs);
     }};
 }
 
@@ -85,7 +85,7 @@ macro_rules! bench_unop_wide {
         let total_size = SIZE * batch_size;
 
         let mut rng = rand_pcg::Pcg64Mcg::new(rand::random());
-        let inputs = criterion::black_box(
+        let inputs = std::hint::black_box(
             (0..total_size)
                 .map(|_| <$t as mathbench::BenchValue>::random_value(&mut rng))
                 .collect::<Vec<_>>(),
@@ -101,13 +101,13 @@ macro_rules! bench_unop_wide {
             let end = start + batch_size;
             for j in start..end {
                 let res = unsafe { inputs.get_unchecked(j).$unop() };
-                criterion::black_box(res);
+                std::hint::black_box(res);
                 unsafe {
                     *outputs.get_unchecked_mut(j) = res;
                 }
             }
         });
-        criterion::black_box(outputs);
+        std::hint::black_box(outputs);
     }};
 }
 
@@ -132,12 +132,12 @@ macro_rules! bench_binop {
         let batch_size = SIZE * $size;
         let mut rng = rand_pcg::Pcg64Mcg::new(rand::random());
         // generate input arrays
-        let inputs1 = criterion::black_box(
+        let inputs1 = std::hint::black_box(
             (0..batch_size)
                 .map(|_| <$t1 as mathbench::BenchValue>::random_value(&mut rng))
                 .collect::<Vec<_>>(),
         );
-        let inputs2 = criterion::black_box(
+        let inputs2 = std::hint::black_box(
             (0..batch_size)
                 .map(|_| <$t2 as mathbench::BenchValue>::random_value(&mut rng))
                 .collect::<Vec<_>>(),
@@ -195,12 +195,12 @@ macro_rules! bench_binop_wide {
         let total_size = SIZE * size;
         let mut rng = rand_pcg::Pcg64Mcg::new(rand::random());
         // generate input arrays
-        let inputs1 = criterion::black_box(
+        let inputs1 = std::hint::black_box(
             (0..total_size)
                 .map(|_| <$t1 as mathbench::BenchValue>::random_value(&mut rng))
                 .collect::<Vec<_>>(),
         );
-        let inputs2 = criterion::black_box(
+        let inputs2 = std::hint::black_box(
             (0..total_size)
                 .map(|_| <$t2 as mathbench::BenchValue>::random_value(&mut rng))
                 .collect::<Vec<_>>(),
@@ -215,7 +215,7 @@ macro_rules! bench_binop_wide {
             let end = start + batch_size;
             for j in start..end {
                 let res = unsafe { inputs1.get_unchecked(j).$binop($param!(inputs2.get_unchecked(j))) };
-                criterion::black_box(res);
+                std::hint::black_box(res);
                 unsafe { *outputs.get_unchecked_mut(j) = res; }
             }
         })
