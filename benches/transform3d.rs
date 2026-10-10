@@ -3,10 +3,10 @@
 mod macros;
 use criterion::{Criterion, criterion_group, criterion_main};
 
-// returns self to check overhead of benchmark
+// measures benchmark harness overhead for this type
 fn bench_transform3_ret_self(c: &mut Criterion) {
     use mathbench::BenchValue;
-    let mut group = c.benchmark_group("scalar transform3 return self");
+    let mut group = c.benchmark_group("scalar transform3 harness overhead");
     bench!("glam", group, |b| {
         use glam::Affine3A;
         bench_unop!(b, op => ret_self, ty => Affine3A)

@@ -22,14 +22,17 @@ macro_rules! bench_euler {
 
         let dt = $dt;
 
-        $b.iter(|| {
-            for ((position, acceleration), velocity) in
-                data.pos.iter_mut().zip(&data.acc).zip(&mut data.vel)
-            {
-                *velocity += *acceleration * dt;
-                *position += *velocity * dt;
-            }
-        })
+        let name = $b.1;
+        $b.0.bench_function(criterion::BenchmarkId::new(name, *$size), |bencher| {
+            bencher.iter(|| {
+                for ((position, acceleration), velocity) in
+                    data.pos.iter_mut().zip(&data.acc).zip(&mut data.vel)
+                {
+                    *velocity += *acceleration * dt;
+                    *position += *velocity * dt;
+                }
+            })
+        });
     }};
 }
 

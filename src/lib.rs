@@ -2,7 +2,7 @@ use rand::RngExt;
 
 pub trait BenchValue {
     fn random_value<R: RngExt>(rng: &mut R) -> Self;
-    // Return self to test overhead of benches
+    // Return self to measure benchmark harness overhead
     fn ret_self(&self) -> Self
     where
         Self: Copy + std::marker::Sized,

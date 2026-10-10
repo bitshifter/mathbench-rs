@@ -1,118 +1,306 @@
+// Shared criterion benchmark macros.
+//
+// `bench!` binds a benchmark context, `(&mut BenchmarkGroup, lib_name)`, and
+// forwards it to one of the `bench_*` macros below. Each `bench_*` macro
+// registers one case per size and reports per-element throughput via
+// `Throughput::Elements`. A timed iteration runs a batch of independent
+// operations drawn from a pool that is generated once and reused across sizes,
+// so the measurement is not dominated by per-iteration harness overhead.
+//
+// Default sizes are `[16, 1024]`: 16 is L1-resident, 1024 adds cache pressure.
+// Pass `sizes => [..]` to override per benchmark.
+
+/// Invoke a benchmark closure with its context.
+///
+/// A free function is used rather than an immediately-invoked closure because
+/// rustc cannot infer the parameter type of a closure invoked in place.
 #[allow(dead_code)]
-pub const MIN_WIDE_BENCH_SIZE: u64 = 16;
+pub fn bench_context<M, F>(
+    group: &mut criterion::BenchmarkGroup<'_, M>,
+    name: &'static str,
+    closure: F,
+) where
+    M: criterion::measurement::Measurement,
+    F: FnOnce(&mut (&mut criterion::BenchmarkGroup<'_, M>, &'static str)),
+{
+    let mut ctx = (group, name);
+    closure(&mut ctx);
+}
+
+/// Variant of [`bench_context`] for workload benchmarks that own their sizing.
+#[allow(dead_code)]
+pub fn bench_context_sized<M, F, T>(
+    group: &mut criterion::BenchmarkGroup<'_, M>,
+    name: &'static str,
+    size: T,
+    closure: F,
+) where
+    M: criterion::measurement::Measurement,
+    F: FnOnce(&mut (&mut criterion::BenchmarkGroup<'_, M>, &'static str), T),
+{
+    let mut ctx = (group, name);
+    closure(&mut ctx, size);
+}
 
 /// Register a Criterion benchmark for a math library.
+///
+/// The closure is invoked with a context `(&mut BenchmarkGroup, lib_name)` and
+/// is expected to call one of the `bench_*` macros. The two argument form is
+/// for workload benchmarks that own their input sizing (euler, ray-sphere) and
+/// receive the size as a second argument.
 ///
 /// # Forms
 ///
 /// **glam** (always compiled, no `#[cfg]` gate):
 /// ```ignore
-/// bench!("glam", group, |b| { ... });
-/// bench!("glam", group, size, |b, size| { ... });
+/// bench!("glam", group, |b| { bench_unop!(b, op => length, ty => Vec3) });
 /// ```
 ///
 /// **Gated library** (feature name == display name):
 /// ```ignore
 /// bench!("cgmath", group, |b| { ... });
-/// bench!("nalgebra", group, size, |b, size| { ... });
 /// ```
 ///
 /// **Display-name override** (feature name ≠ display name):
 /// ```ignore
 /// bench!("pathfinder_geometry" as "pathfinder", group, |b| { ... });
-/// bench!("pathfinder_geometry" as "pathfinder", group, size, |b, size| { ... });
 /// ```
 #[macro_export]
 macro_rules! bench {
     // glam (always compiled, no feature gate)
     ("glam", $group:ident, $closure:expr) => {
-        $group.bench_function("glam", $closure)
+        macros::bench_context(&mut $group, "glam", $closure)
     };
     ("glam", $group:ident, $size:expr, $closure:expr) => {
-        $group.bench_with_input(criterion::BenchmarkId::new("glam", $size), $size, $closure)
+        macros::bench_context_sized(&mut $group, "glam", $size, $closure)
     };
 
     // Gated libraries (feature name = display name)
     ($lib:literal, $group:ident, $closure:expr) => {
         #[cfg(feature = $lib)]
-        $group.bench_function($lib, $closure)
+        macros::bench_context(&mut $group, $lib, $closure)
     };
     ($lib:literal, $group:ident, $size:expr, $closure:expr) => {
         #[cfg(feature = $lib)]
-        $group.bench_with_input(criterion::BenchmarkId::new($lib, $size), $size, $closure)
+        macros::bench_context_sized(&mut $group, $lib, $size, $closure)
     };
 
     // Display-name override
     ($lib:literal as $display:literal, $group:ident, $closure:expr) => {
         #[cfg(feature = $lib)]
-        $group.bench_function($display, $closure)
+        macros::bench_context(&mut $group, $display, $closure)
     };
     ($lib:literal as $display:literal, $group:ident, $size:expr, $closure:expr) => {
         #[cfg(feature = $lib)]
-        $group.bench_with_input(
-            criterion::BenchmarkId::new($display, $size),
-            $size,
-            $closure,
-        )
+        macros::bench_context_sized(&mut $group, $display, $size, $closure)
     };
 }
 
+/// Run `$unop` on a batch of values and report per-element throughput.
+///
+/// `$b` is the context bound by [`bench!`].
 #[macro_export]
 macro_rules! bench_unop {
-    ($b: ident, op => $unop: ident, ty => $t:ty) => {{
-        let size: usize = 1 << 13;
-        let mut rng = rand_pcg::Pcg64Mcg::new(rand::random());
-        let inputs = std::hint::black_box(
-            (0..size)
-                .map(|_| <$t as mathbench::BenchValue>::random_value(&mut rng))
-                .collect::<Vec<_>>(),
-        );
-        // pre-fill output vector with some random value
-        let mut outputs = vec![<$t as mathbench::BenchValue>::random_value(&mut rng).$unop(); size];
-        let mut i = 0;
-        $b.iter(|| {
-            i = (i + 1) & (size - 1);
-            let res = unsafe { inputs.get_unchecked(i).$unop() };
-            unsafe { *outputs.get_unchecked_mut(i) = res }
-            res
-        });
-        std::hint::black_box(outputs);
+    ($b:ident, sizes => [$($size:expr),+ $(,)?], op => $unop:ident, ty => $t:ty) => {
+        bench_unop!($b, op => $unop, ty => $t, sizes => [$($size),+])
+    };
+    ($b:ident, op => $unop:ident, ty => $t:ty, sizes => [$($size:expr),+ $(,)?]) => {{
+        let sizes: &[usize] = &[$($size),+];
+        let max_size = *sizes.iter().max().unwrap();
+        let mut rng = rand_pcg::Pcg64Mcg::new(0x853c49e6748fea9b_da3e39cb94b95bdb_u128);
+        let inputs = (0..max_size)
+            .map(|_| <$t as mathbench::BenchValue>::random_value(&mut rng))
+            .collect::<Vec<$t>>();
+        let mut outputs = (0..max_size)
+            .map(|_| <$t as mathbench::BenchValue>::random_value(&mut rng).$unop())
+            .collect::<Vec<_>>();
+        let name = $b.1;
+        for &size in sizes {
+            let inputs = &inputs[..size];
+            let outputs = &mut outputs[..size];
+            $b.0.throughput(criterion::Throughput::Elements(size as u64));
+            $b.0
+                .bench_function(criterion::BenchmarkId::new(name, size), |bencher| {
+                    bencher.iter(|| {
+                        for (input, output) in inputs.iter().zip(outputs.iter_mut()) {
+                            *output = input.$unop();
+                        }
+                        std::hint::black_box(&outputs);
+                    })
+                });
+        }
     }};
+    ($b:ident, op => $unop:ident, ty => $t:ty) => {
+        bench_unop!($b, op => $unop, ty => $t, sizes => [16, 1024])
+    };
 }
 
+/// Run `$binop` on a batch of value pairs and report per-element throughput.
+#[macro_export]
+macro_rules! bench_binop {
+    ($b:ident, sizes => [$($size:expr),+ $(,)?], op => $binop:ident, ty1 => $t1:ty, ty2 => $t2:ty, param => $param:tt) => {
+        bench_binop!($b, op => $binop, ty1 => $t1, ty2 => $t2, param => $param, sizes => [$($size),+])
+    };
+    ($b:ident, sizes => [$($size:expr),+ $(,)?], op => $binop:ident, ty1 => $t1:ty, ty2 => $t2:ty) => {
+        bench_binop!($b, op => $binop, ty1 => $t1, ty2 => $t2, sizes => [$($size),+])
+    };
+    ($b:ident, op => $binop:ident, ty1 => $t1:ty, ty2 => $t2:ty, param => $param:tt, sizes => [$($size:expr),+ $(,)?]) => {{
+        let sizes: &[usize] = &[$($size),+];
+        let max_size = *sizes.iter().max().unwrap();
+        let mut rng = rand_pcg::Pcg64Mcg::new(0x853c49e6748fea9b_da3e39cb94b95bdb_u128);
+        let inputs1 = (0..max_size)
+            .map(|_| <$t1 as mathbench::BenchValue>::random_value(&mut rng))
+            .collect::<Vec<$t1>>();
+        let inputs2 = (0..max_size)
+            .map(|_| <$t2 as mathbench::BenchValue>::random_value(&mut rng))
+            .collect::<Vec<$t2>>();
+        let mut outputs = (0..max_size)
+            .map(|_| {
+                let a = <$t1 as mathbench::BenchValue>::random_value(&mut rng);
+                let b = <$t2 as mathbench::BenchValue>::random_value(&mut rng);
+                a.$binop($param!(&b))
+            })
+            .collect::<Vec<_>>();
+        let name = $b.1;
+        for &size in sizes {
+            let inputs1 = &inputs1[..size];
+            let inputs2 = &inputs2[..size];
+            let outputs = &mut outputs[..size];
+            $b.0.throughput(criterion::Throughput::Elements(size as u64));
+            $b.0
+                .bench_function(criterion::BenchmarkId::new(name, size), |bencher| {
+                    bencher.iter(|| {
+                        for ((input1, input2), output) in
+                            inputs1.iter().zip(inputs2).zip(outputs.iter_mut())
+                        {
+                            *output = input1.$binop($param!(input2));
+                        }
+                        std::hint::black_box(&outputs);
+                    })
+                });
+        }
+    }};
+    ($b:ident, op => $binop:ident, ty1 => $t1:ty, ty2 => $t2:ty, sizes => [$($size:expr),+ $(,)?]) => {
+        bench_binop!($b, op => $binop, ty1 => $t1, ty2 => $t2, param => by_value, sizes => [$($size),+])
+    };
+    ($b:ident, op => $binop:ident, ty1 => $t1:ty, ty2 => $t2:ty, param => $param:tt) => {
+        bench_binop!($b, op => $binop, ty1 => $t1, ty2 => $t2, param => $param, sizes => [16, 1024])
+    };
+    ($b:ident, op => $binop:ident, ty1 => $t1:ty, ty2 => $t2:ty) => {
+        bench_binop!($b, op => $binop, ty1 => $t1, ty2 => $t2, param => by_value, sizes => [16, 1024])
+    };
+    ($b:ident, op => $binop:ident, ty => $ty:ty, param => $param:tt) => {
+        bench_binop!($b, op => $binop, ty1 => $ty, ty2 => $ty, param => $param)
+    };
+    ($b:ident, op => $binop:ident, ty => $ty:ty) => {
+        bench_binop!($b, op => $binop, ty1 => $ty, ty2 => $ty)
+    };
+}
+
+/// Wide variant of [`bench_unop`]. `sizes` are scalar element counts; each
+/// timed iteration runs `size / width` wide operations.
 #[macro_export]
 macro_rules! bench_unop_wide {
-    ($b: ident, $size: expr, width => $width: expr, op => $unop: ident, ty => $t:ty) => {{
-        const SIZE: usize = 1 << 13;
-        let size = *$size as f32;
-        let batch_size = (size / $width as f32).ceil() as usize;
-        let total_size = SIZE * batch_size;
-
-        let mut rng = rand_pcg::Pcg64Mcg::new(rand::random());
-        let inputs = std::hint::black_box(
-            (0..total_size)
-                .map(|_| <$t as mathbench::BenchValue>::random_value(&mut rng))
-                .collect::<Vec<_>>(),
-        );
-        // pre-fill output vector with some random value
-        let mut outputs =
-            vec![<$t as mathbench::BenchValue>::random_value(&mut rng).$unop(); total_size];
-        let mut i = 0;
-        $b.iter(|| {
-            // minimise overhead of accessing random data using get unchecked
-            i = (i + 1) & (SIZE - 1);
-            let start = i * batch_size;
-            let end = start + batch_size;
-            for j in start..end {
-                let res = unsafe { inputs.get_unchecked(j).$unop() };
-                std::hint::black_box(res);
-                unsafe {
-                    *outputs.get_unchecked_mut(j) = res;
-                }
-            }
-        });
-        std::hint::black_box(outputs);
+    ($b:ident, sizes => [$($size:expr),+ $(,)?], width => $width:expr, op => $unop:ident, ty => $t:ty) => {
+        bench_unop_wide!($b, width => $width, op => $unop, ty => $t, sizes => [$($size),+])
+    };
+    ($b:ident, width => $width:expr, op => $unop:ident, ty => $t:ty, sizes => [$($size:expr),+ $(,)?]) => {{
+        let sizes: &[usize] = &[$($size),+];
+        let max_size = *sizes.iter().max().unwrap();
+        let width: usize = $width;
+        let max_count = max_size.div_ceil(width);
+        let mut rng = rand_pcg::Pcg64Mcg::new(0x853c49e6748fea9b_da3e39cb94b95bdb_u128);
+        let inputs = (0..max_count)
+            .map(|_| <$t as mathbench::BenchValue>::random_value(&mut rng))
+            .collect::<Vec<$t>>();
+        let mut outputs = (0..max_count)
+            .map(|_| <$t as mathbench::BenchValue>::random_value(&mut rng).$unop())
+            .collect::<Vec<_>>();
+        let name = $b.1;
+        for &size in sizes {
+            let count = size.div_ceil(width);
+            let inputs = &inputs[..count];
+            let outputs = &mut outputs[..count];
+            $b.0.throughput(criterion::Throughput::Elements(size as u64));
+            $b.0
+                .bench_function(criterion::BenchmarkId::new(name, size), |bencher| {
+                    bencher.iter(|| {
+                        for (input, output) in inputs.iter().zip(outputs.iter_mut()) {
+                            *output = input.$unop();
+                        }
+                        std::hint::black_box(&outputs);
+                    })
+                });
+        }
     }};
+    ($b:ident, width => $width:expr, op => $unop:ident, ty => $t:ty) => {
+        bench_unop_wide!($b, width => $width, op => $unop, ty => $t, sizes => [16, 1024])
+    };
+}
+
+/// Wide variant of [`bench_binop`]. `sizes` are scalar element counts.
+#[macro_export]
+macro_rules! bench_binop_wide {
+    ($b:ident, sizes => [$($size:expr),+ $(,)?], width => $width:expr, op => $binop:ident, ty1 => $t1:ty, ty2 => $t2:ty, param => $param:tt) => {
+        bench_binop_wide!($b, width => $width, op => $binop, ty1 => $t1, ty2 => $t2, param => $param, sizes => [$($size),+])
+    };
+    ($b:ident, sizes => [$($size:expr),+ $(,)?], width => $width:expr, op => $binop:ident, ty1 => $t1:ty, ty2 => $t2:ty) => {
+        bench_binop_wide!($b, width => $width, op => $binop, ty1 => $t1, ty2 => $t2, sizes => [$($size),+])
+    };
+    ($b:ident, width => $width:expr, op => $binop:ident, ty1 => $t1:ty, ty2 => $t2:ty, param => $param:tt, sizes => [$($size:expr),+ $(,)?]) => {{
+        let sizes: &[usize] = &[$($size),+];
+        let max_size = *sizes.iter().max().unwrap();
+        let width: usize = $width;
+        let max_count = max_size.div_ceil(width);
+        let mut rng = rand_pcg::Pcg64Mcg::new(0x853c49e6748fea9b_da3e39cb94b95bdb_u128);
+        let inputs1 = (0..max_count)
+            .map(|_| <$t1 as mathbench::BenchValue>::random_value(&mut rng))
+            .collect::<Vec<$t1>>();
+        let inputs2 = (0..max_count)
+            .map(|_| <$t2 as mathbench::BenchValue>::random_value(&mut rng))
+            .collect::<Vec<$t2>>();
+        let mut outputs = (0..max_count)
+            .map(|_| {
+                let a = <$t1 as mathbench::BenchValue>::random_value(&mut rng);
+                let b = <$t2 as mathbench::BenchValue>::random_value(&mut rng);
+                a.$binop($param!(&b))
+            })
+            .collect::<Vec<_>>();
+        let name = $b.1;
+        for &size in sizes {
+            let count = size.div_ceil(width);
+            let inputs1 = &inputs1[..count];
+            let inputs2 = &inputs2[..count];
+            let outputs = &mut outputs[..count];
+            $b.0.throughput(criterion::Throughput::Elements(size as u64));
+            $b.0
+                .bench_function(criterion::BenchmarkId::new(name, size), |bencher| {
+                    bencher.iter(|| {
+                        for ((input1, input2), output) in
+                            inputs1.iter().zip(inputs2).zip(outputs.iter_mut())
+                        {
+                            *output = input1.$binop($param!(input2));
+                        }
+                        std::hint::black_box(&outputs);
+                    })
+                });
+        }
+    }};
+    ($b:ident, width => $width:expr, op => $binop:ident, ty1 => $t1:ty, ty2 => $t2:ty, sizes => [$($size:expr),+ $(,)?]) => {
+        bench_binop_wide!($b, width => $width, op => $binop, ty1 => $t1, ty2 => $t2, param => by_value, sizes => [$($size),+])
+    };
+    ($b:ident, width => $width:expr, op => $binop:ident, ty1 => $t1:ty, ty2 => $t2:ty, param => $param:tt) => {
+        bench_binop_wide!($b, width => $width, op => $binop, ty1 => $t1, ty2 => $t2, param => $param, sizes => [16, 1024])
+    };
+    ($b:ident, width => $width:expr, op => $binop:ident, ty1 => $t1:ty, ty2 => $t2:ty) => {
+        bench_binop_wide!($b, width => $width, op => $binop, ty1 => $t1, ty2 => $t2, param => by_value, sizes => [16, 1024])
+    };
+    ($b:ident, width => $width:expr, op => $binop:ident, ty => $ty:ty, param => $param:tt) => {
+        bench_binop_wide!($b, width => $width, op => $binop, ty1 => $ty, ty2 => $ty, param => $param)
+    };
+    ($b:ident, width => $width:expr, op => $binop:ident, ty => $ty:ty) => {
+        bench_binop_wide!($b, width => $width, op => $binop, ty1 => $ty, ty2 => $ty)
+    };
 }
 
 #[macro_export]
@@ -127,106 +315,6 @@ macro_rules! by_ref {
     ($e:expr) => {
         $e
     };
-}
-
-#[macro_export]
-macro_rules! bench_binop {
-    ($b: ident, $size:expr, op => $binop: ident, ty1 => $t1:ty, ty2 => $t2:ty, param => $param:tt) => {{
-        const SIZE: usize = 1 << 13;
-        let batch_size = SIZE * $size;
-        let mut rng = rand_pcg::Pcg64Mcg::new(rand::random());
-        // generate input arrays
-        let inputs1 = std::hint::black_box(
-            (0..batch_size)
-                .map(|_| <$t1 as mathbench::BenchValue>::random_value(&mut rng))
-                .collect::<Vec<_>>(),
-        );
-        let inputs2 = std::hint::black_box(
-            (0..batch_size)
-                .map(|_| <$t2 as mathbench::BenchValue>::random_value(&mut rng))
-                .collect::<Vec<_>>(),
-        );
-        // pre-fill output vector with some random value
-        let mut outputs = vec![<$t1 as mathbench::BenchValue>::random_value(&mut rng).$binop($param!(&<$t2 as mathbench::BenchValue>::random_value(&mut rng))); batch_size];
-        let mut i = 0;
-        if *$size == 1usize {
-            $b.iter(|| {
-                // minimise overhead of accessing random data using get unchecked
-                i = (i + 1) & (SIZE - 1);
-                unsafe {
-                    *outputs.get_unchecked_mut(i) = inputs1.get_unchecked(i).$binop($param!(inputs2.get_unchecked(i)))
-                }
-            })
-        } else {
-            $b.iter(|| {
-                // minimise overhead of accessing random data using get unchecked
-                i = (i + 1) & (SIZE - 1);
-                let start = i * $size;
-                let end = start + $size;
-                for j in start..end {
-                    unsafe {
-                        *outputs.get_unchecked_mut(j) = inputs1.get_unchecked(j).$binop($param!(inputs2.get_unchecked(j)))
-                    }
-                }
-            })
-        }
-    }};
-    ($b: ident, op => $binop: ident, ty1 => $t1:ty, ty2 => $t2:ty, param => $param:tt) => {{
-        bench_binop!($b, &1, op => $binop, ty1 => $t1, ty2 => $t2, param => $param)
-    }};
-    ($b: ident, $size: expr, op => $binop: ident, ty1 => $ty1:ty, ty2 => $ty2:ty) => {{
-        bench_binop!($b, $size, op => $binop, ty1 => $ty1, ty2 => $ty2, param => by_value)
-    }};
-    ($b: ident, op => $binop: ident, ty1 => $ty1:ty, ty2 => $ty2:ty) => {{
-        bench_binop!($b, op => $binop, ty1 => $ty1, ty2 => $ty2, param => by_value)
-    }};
-    ($b: ident, $size:expr, op => $binop: ident, ty => $ty:ty, param => $param:tt) => {{
-        bench_binop!($b, $size, op => $binop, ty1 => $ty, ty2 => $ty, param => $param)
-    }};
-    ($b: ident, op => $binop: ident, ty => $ty:ty, param => $param:tt) => {{
-        bench_binop!($b, op => $binop, ty1 => $ty, ty2 => $ty, param => $param)
-    }};
-}
-
-#[macro_export]
-macro_rules! bench_binop_wide {
-    ($b: ident, $size:expr, width => $width: expr, op => $binop: ident, ty1 => $t1:ty, ty2 => $t2:ty, param => $param:tt) => {{
-        assert!(*$size >= 16);
-        let size = *$size as usize;
-
-        let batch_size = (size as f32 / $width as f32).ceil() as usize;
-        const SIZE: usize = 1 << 13;
-        let total_size = SIZE * size;
-        let mut rng = rand_pcg::Pcg64Mcg::new(rand::random());
-        // generate input arrays
-        let inputs1 = std::hint::black_box(
-            (0..total_size)
-                .map(|_| <$t1 as mathbench::BenchValue>::random_value(&mut rng))
-                .collect::<Vec<_>>(),
-        );
-        let inputs2 = std::hint::black_box(
-            (0..total_size)
-                .map(|_| <$t2 as mathbench::BenchValue>::random_value(&mut rng))
-                .collect::<Vec<_>>(),
-        );
-        // pre-fill output vector with some random value
-        let mut outputs = vec![<$t1 as mathbench::BenchValue>::random_value(&mut rng).$binop($param!(&<$t2 as mathbench::BenchValue>::random_value(&mut rng))); total_size];
-        let mut i = 0;
-        $b.iter(|| {
-            // minimise overhead of accessing random data using get unchecked
-            i = (i + 1) & (SIZE - 1);
-            let start = i * batch_size;
-            let end = start + batch_size;
-            for j in start..end {
-                let res = unsafe { inputs1.get_unchecked(j).$binop($param!(inputs2.get_unchecked(j))) };
-                std::hint::black_box(res);
-                unsafe { *outputs.get_unchecked_mut(j) = res; }
-            }
-        })
-    }};
-    ($b: ident, $size:expr, width => $width: expr, op => $binop: ident, ty1 => $ty1:ty, ty2 => $ty2:ty) => {{
-        bench_binop_wide!($b, $size, width => $width, op => $binop, ty1 => $ty1, ty2 => $ty2, param => by_value)
-    }};
 }
 
 // necessary because this macro isn't used in every benchmark

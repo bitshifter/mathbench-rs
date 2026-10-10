@@ -51,11 +51,14 @@ macro_rules! bench_intersection_wide_uv {
 
             *result = t;
         });
-        $b.iter(|| {
-            for (ray_d, result) in data.ray_d.iter().zip(&mut data.result) {
-                do_inner(ray_d, result);
-            }
-        })
+        let name = $b.1;
+        $b.0.bench_function(criterion::BenchmarkId::new(name, *$size), |bencher| {
+            bencher.iter(|| {
+                for (ray_d, result) in data.ray_d.iter().zip(&mut data.result) {
+                    do_inner(ray_d, result);
+                }
+            })
+        });
     }};
 }
 
@@ -105,11 +108,14 @@ macro_rules! bench_intersection_wide_na {
 
             *result = t;
         });
-        $b.iter(|| {
-            for (ray_d, result) in data.ray_d.iter().zip(&mut data.result) {
-                do_inner(ray_d, result);
-            }
-        })
+        let name = $b.1;
+        $b.0.bench_function(criterion::BenchmarkId::new(name, *$size), |bencher| {
+            bencher.iter(|| {
+                for (ray_d, result) in data.ray_d.iter().zip(&mut data.result) {
+                    do_inner(ray_d, result);
+                }
+            })
+        });
     }};
 }
 
@@ -155,11 +161,14 @@ macro_rules! bench_intersection_scalar {
             };
         });
 
-        $b.iter(|| {
-            for (ray_d, result) in data.ray_d.iter().zip(&mut data.result) {
-                do_inner(ray_d, result);
-            }
-        })
+        let name = $b.1;
+        $b.0.bench_function(criterion::BenchmarkId::new(name, *$size), |bencher| {
+            bencher.iter(|| {
+                for (ray_d, result) in data.ray_d.iter().zip(&mut data.result) {
+                    do_inner(ray_d, result);
+                }
+            })
+        });
     }};
 }
 
