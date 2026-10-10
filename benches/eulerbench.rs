@@ -1,6 +1,11 @@
 #[path = "support/macros.rs"]
 #[macro_use]
 mod macros;
+#[cfg(feature = "glam_fearless")]
+#[allow(dead_code)] // shared with the other benches
+#[path = "support/glam_fearless.rs"]
+mod gf;
+
 use criterion::{Criterion, criterion_group, criterion_main};
 
 const UPDATE_RATE: f32 = 1.0 / 60.0;
@@ -104,6 +109,17 @@ fn bench_euler_3d_wide(c: &mut Criterion) {
             use simba::simd::{SimdValue, WideF32x8};
             bench_euler!(b, size, width => 8, ty => Vector3<WideF32x8>, zero => zero(), dt => WideF32x8::splat(UPDATE_RATE));
         });
+        // Runtime-dispatched width: the same 80000 elements, SoA components, one kernel body.
+        bench!("glam_fearless", group, size, |b, size| {
+            let size = *size as usize;
+            let mut rng = rand_pcg::Pcg64Mcg::new(rand::random());
+            let acc = gf::random_soa(size, &mut rng);
+            let mut vel = [vec![0.0f32; size], vec![0.0f32; size], vec![0.0f32; size]];
+            let mut pos = [vec![0.0f32; size], vec![0.0f32; size], vec![0.0f32; size]];
+            let arefs: [&[f32]; 3] = [&acc[0], &acc[1], &acc[2]];
+            b.iter(|| gf::euler3_soa_dispatch(arefs, &mut vel, &mut pos));
+            std::hint::black_box((&vel, &pos));
+        });
     }
     group.finish();
 }
@@ -173,6 +189,17 @@ fn bench_euler_2d_wide(c: &mut Criterion) {
             use nalgebra::{Vector2, zero};
             use simba::simd::{SimdValue, WideF32x8};
             bench_euler!(b, size, width => 8, ty => Vector2<WideF32x8>, zero => zero(), dt => WideF32x8::splat(UPDATE_RATE));
+        });
+        // Runtime-dispatched width: the same 80000 elements, SoA components, one kernel body.
+        bench!("glam_fearless", group, size, |b, size| {
+            let size = *size as usize;
+            let mut rng = rand_pcg::Pcg64Mcg::new(rand::random());
+            let acc = gf::random_soa2(size, &mut rng);
+            let mut vel = [vec![0.0f32; size], vec![0.0f32; size]];
+            let mut pos = [vec![0.0f32; size], vec![0.0f32; size]];
+            let arefs: [&[f32]; 2] = [&acc[0], &acc[1]];
+            b.iter(|| gf::euler2_soa_dispatch(arefs, &mut vel, &mut pos));
+            std::hint::black_box((&vel, &pos));
         });
     }
     group.finish();

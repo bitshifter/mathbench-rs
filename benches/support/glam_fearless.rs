@@ -5,7 +5,10 @@
 //! and dispatch per call instead of using the fixed-width `bench_*_wide!` macros. The dispatch
 //! match is negligible next to the kernel (measured: hoisting it changes the results by <=10%).
 
-use glam_fearless::{Level, Vec3xN, dispatch, prelude::*, simd};
+use glam_fearless::{Level, Vec2xN, Vec3xN, dispatch, prelude::*, simd};
+
+/// Euler integration update rate, matching the other euler entries.
+pub const UPDATE_RATE: f32 = 1.0 / 60.0;
 use mathbench::BenchValue;
 use rand_pcg::Pcg64Mcg;
 
@@ -172,12 +175,7 @@ dispatch_wrapper!(intersect_soa_dispatch, intersect_soa);
 dispatch_wrapper!(length_soa_dispatch, length_soa);
 
 /// Run the kernel at the best level this CPU supports.
-pub fn normalize_soa_dispatch(
-    a: [&[f32]; 3],
-    ox: &mut [f32],
-    oy: &mut [f32],
-    oz: &mut [f32],
-) {
+pub fn normalize_soa_dispatch(a: [&[f32]; 3], ox: &mut [f32], oy: &mut [f32], oz: &mut [f32]) {
     let level = Level::new();
     dispatch!(level, simd => normalize_soa(simd, a, ox, oy, oz))
 }
@@ -198,4 +196,104 @@ pub fn cross_soa_dispatch(
 ) {
     let level = Level::new();
     dispatch!(level, simd => cross_soa(simd, a, b, ox, oy, oz))
+}
+
+/// Random 2-component SoA.
+pub fn random_soa2(size: usize, rng: &mut Pcg64Mcg) -> [Vec<f32>; 2] {
+    let mut out = [vec![0.0f32; size], vec![0.0f32; size]];
+    for i in 0..size {
+        let v = glam::Vec2::random_value(rng);
+        out[0][i] = v.x;
+        out[1][i] = v.y;
+    }
+    out
+}
+
+/// One Euler integration step for 3D vectors, in place.
+#[simd]
+#[inline(always)]
+pub fn euler3_soa<S: Simd>(simd: S, acc: [&[f32]; 3], vel: [&mut [f32]; 3], pos: [&mut [f32]; 3]) {
+    let n = Vec3xN::<S>::LANES;
+    let dt = Vec3xN::splat(simd, UPDATE_RATE);
+
+    let [ax, ay, az] = acc;
+    let [vx, vy, vz] = vel;
+    let [px, py, pz] = pos;
+    let ins = ax
+        .chunks_exact(n)
+        .zip(ay.chunks_exact(n))
+        .zip(az.chunks_exact(n));
+    let vels = vx
+        .chunks_exact_mut(n)
+        .zip(vy.chunks_exact_mut(n))
+        .zip(vz.chunks_exact_mut(n));
+    let poss = px
+        .chunks_exact_mut(n)
+        .zip(py.chunks_exact_mut(n))
+        .zip(pz.chunks_exact_mut(n));
+
+    for ((((ax, ay), az), ((vx, vy), vz)), ((px, py), pz)) in ins.zip(vels).zip(poss) {
+        let a = Vec3xN::from_slice(simd, ax, ay, az);
+        let v = Vec3xN::from_slice(simd, vx, vy, vz);
+        let p = Vec3xN::from_slice(simd, px, py, pz);
+
+        let v = v + a * dt;
+        let p = p + v * dt;
+
+        v.x.store_slice(vx);
+        v.y.store_slice(vy);
+        v.z.store_slice(vz);
+        p.x.store_slice(px);
+        p.y.store_slice(py);
+        p.z.store_slice(pz);
+    }
+}
+
+/// One Euler integration step for 2D vectors, in place.
+#[simd]
+#[inline(always)]
+pub fn euler2_soa<S: Simd>(simd: S, acc: [&[f32]; 2], vel: [&mut [f32]; 2], pos: [&mut [f32]; 2]) {
+    let n = Vec2xN::<S>::LANES;
+    let dt = Vec2xN::splat(simd, UPDATE_RATE);
+
+    let [ax, ay] = acc;
+    let [vx, vy] = vel;
+    let [px, py] = pos;
+    let ins = ax.chunks_exact(n).zip(ay.chunks_exact(n));
+    let vels = vx.chunks_exact_mut(n).zip(vy.chunks_exact_mut(n));
+    let poss = px.chunks_exact_mut(n).zip(py.chunks_exact_mut(n));
+
+    for (((ax, ay), (vx, vy)), (px, py)) in ins.zip(vels).zip(poss) {
+        let a = Vec2xN::from_slice(simd, ax, ay);
+        let v = Vec2xN::from_slice(simd, vx, vy);
+        let p = Vec2xN::from_slice(simd, px, py);
+
+        let v = v + a * dt;
+        let p = p + v * dt;
+
+        v.x.store_slice(vx);
+        v.y.store_slice(vy);
+        p.x.store_slice(px);
+        p.y.store_slice(py);
+    }
+}
+
+/// Euler integration step for 3D, at the best level this CPU supports.
+pub fn euler3_soa_dispatch(acc: [&[f32]; 3], vel: &mut [Vec<f32>; 3], pos: &mut [Vec<f32>; 3]) {
+    let level = Level::new();
+    let [v0, v1, v2] = vel;
+    let [p0, p1, p2] = pos;
+    let v: [&mut [f32]; 3] = [v0.as_mut_slice(), v1.as_mut_slice(), v2.as_mut_slice()];
+    let p: [&mut [f32]; 3] = [p0.as_mut_slice(), p1.as_mut_slice(), p2.as_mut_slice()];
+    dispatch!(level, simd => euler3_soa(simd, acc, v, p))
+}
+
+/// Euler integration step for 2D, at the best level this CPU supports.
+pub fn euler2_soa_dispatch(acc: [&[f32]; 2], vel: &mut [Vec<f32>; 2], pos: &mut [Vec<f32>; 2]) {
+    let level = Level::new();
+    let [v0, v1] = vel;
+    let [p0, p1] = pos;
+    let v: [&mut [f32]; 2] = [v0.as_mut_slice(), v1.as_mut_slice()];
+    let p: [&mut [f32]; 2] = [p0.as_mut_slice(), p1.as_mut_slice()];
+    dispatch!(level, simd => euler2_soa(simd, acc, v, p))
 }
