@@ -138,7 +138,9 @@ README, which contains a discussion of how to port scalar algorithms to wide
 ones, with the examples of the Euler integration and ray-sphere intersection
 benchmarks from `mathbench`.
 
-Note that the `nalgebra_f32x4` and `nalgebra_f32x8` benchmarks require a Rust
+Note that the `nalgebra` wide benchmarks use `simba`'s stable, `wide` crate
+backed types (`WideF32x4`, `WideF32x8` and `WideF64x4`), so they build on
+stable Rust.
 
 Additionally the `f32x8` benchmarks will require the `AVX2` instruction set, to
 enable that you will need to build with `RUSTFLAGS='-C target-feature=+avx2`.
@@ -253,13 +255,17 @@ row.
 The versions of the libraries tested were:
 
 * `glam` - `0.33.2`
-* `nalgebra` - `0.35.0` (not included, see note)
+* `nalgebra` - `0.35.0`
 * `ultraviolet` - `0.10.0`
+
+The `nalgebra` wide columns are `N/A` below because these benchmarks did not
+build at the time of this run. They now build on stable Rust, so re-running the
+benchmarks will produce results for them.
 
 Run with the command:
 
 ```sh
-RUSTFLAGS='-C target-feature=+avx2' cargo +nightly bench --features wide wide
+RUSTFLAGS='-C target-feature=+avx2' cargo bench --features wide wide
 ```
 
 | benchmark                      |    glam_f32x1   |   ultraviolet_f32x4   |   nalgebra_f32x4   |   ultraviolet_f32x8   |   nalgebra_f32x8   |
@@ -378,7 +384,7 @@ each benchmarked library.
   each of `ultraviolet` or `nalgebra`.
 * `ultraviolet_wide`, `nalgebra_wide` - these enable benchmarking all wide
   types from `ultraviolet` or `nalgebra` respectively.
-* `wide` - enables all "wide" type benchmarks
+* `wide` - enables all "wide" type benchmarks, these build on stable Rust.
 * `all` - enables all supported libraries, including wide and scalar ones.
 * `unstable` - see next section
 

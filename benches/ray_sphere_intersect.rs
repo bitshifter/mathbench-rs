@@ -62,6 +62,7 @@ macro_rules! bench_intersection_wide_uv {
 #[cfg(any(feature = "nalgebra_f32x4", feature = "nalgebra_f32x8",))]
 macro_rules! bench_intersection_wide_na {
     ($b: ident, $size:expr, ty => $t: ty, wt => $wt: ident, zero_vec => $zero: expr, max => $max: expr) => {{
+        use simba::simd::{SimdBool, SimdComplexField, SimdPartialOrd, SimdValue};
         struct TestData {
             ray_d: Vec<$t>,
             result: Vec<$wt>,
@@ -89,20 +90,20 @@ macro_rules! bench_intersection_wide_na {
             let descrim = b * b - c;
 
             let z = $wt::splat(0.0);
-            let desc_pos = descrim.0.gt(z.0);
+            let desc_pos = descrim.simd_gt(z);
 
-            let desc_sqrt = simba::simd::Simd(descrim.0.sqrt());
+            let desc_sqrt = descrim.simd_sqrt();
 
             let t1 = -b - desc_sqrt;
-            let t1_valid = t1.0.gt(z.0) & desc_pos;
+            let t1_valid = t1.simd_gt(z) & desc_pos;
 
             let t2 = -b + desc_sqrt;
-            let t2_valid = t2.0.gt(z.0) & desc_pos;
+            let t2_valid = t2.simd_gt(z) & desc_pos;
 
-            let t = t2_valid.select(t2.0, miss.0);
-            let t = t1_valid.select(t1.0, t);
+            let t = t2_valid.if_else(|| t2, || miss);
+            let t = t1_valid.if_else(|| t1, || t);
 
-            *result = simba::simd::Simd(t);
+            *result = t;
         });
         $b.iter(|| {
             for (ray_d, result) in data.ray_d.iter().zip(&mut data.result) {
@@ -214,8 +215,8 @@ fn bench_ray_sphere_intersect_wide(c: &mut Criterion) {
         });
         bench!("nalgebra_f32x4", group, size, |b, size| {
             use nalgebra::{zero, Vector3};
-            use simba::simd::{f32x4, SimdValue};
-            bench_intersection_wide_na!(b, &((*size as f32 / 4.0).ceil() as usize), ty => Vector3<f32x4>, wt => f32x4, zero_vec => zero(), max => f32::MAX);
+            use simba::simd::WideF32x4;
+            bench_intersection_wide_na!(b, &((*size as f32 / 4.0).ceil() as usize), ty => Vector3<WideF32x4>, wt => WideF32x4, zero_vec => zero(), max => f32::MAX);
         });
 
         // avx
@@ -225,8 +226,8 @@ fn bench_ray_sphere_intersect_wide(c: &mut Criterion) {
         });
         bench!("nalgebra_f32x8", group, size, |b, size| {
             use nalgebra::{zero, Vector3};
-            use simba::simd::{f32x8, SimdValue};
-            bench_intersection_wide_na!(b, &((*size as f32 / 8.0).ceil() as usize), ty => Vector3<f32x8>, wt => f32x8, zero_vec => zero(), max => f32::MAX);
+            use simba::simd::WideF32x8;
+            bench_intersection_wide_na!(b, &((*size as f32 / 8.0).ceil() as usize), ty => Vector3<WideF32x8>, wt => WideF32x8, zero_vec => zero(), max => f32::MAX);
         });
     }
     group.finish();

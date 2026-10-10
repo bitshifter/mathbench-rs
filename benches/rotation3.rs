@@ -47,8 +47,8 @@ fn bench_rotation3_nop_wide(c: &mut Criterion) {
     });
     bench!("nalgebra_f32x4", group, size, |b, size| {
         use nalgebra::UnitQuaternion;
-        use simba::simd::f32x4;
-        bench_unop_wide!(b, size, width => 4, op => ret_self, ty => UnitQuaternion<f32x4>)
+        use simba::simd::WideF32x4;
+        bench_unop_wide!(b, size, width => 4, op => ret_self, ty => UnitQuaternion<WideF32x4>)
     });
     bench!("ultraviolet_f32x8", group, size, |b, size| {
         use ultraviolet::Rotor3x8;
@@ -56,8 +56,8 @@ fn bench_rotation3_nop_wide(c: &mut Criterion) {
     });
     bench!("nalgebra_f32x8", group, size, |b, size| {
         use nalgebra::UnitQuaternion;
-        use simba::simd::f32x8;
-        bench_unop_wide!(b, size, width => 8, op => ret_self, ty => UnitQuaternion<f32x8>)
+        use simba::simd::WideF32x8;
+        bench_unop_wide!(b, size, width => 8, op => ret_self, ty => UnitQuaternion<WideF32x8>)
     });
     group.finish();
 }
@@ -108,8 +108,8 @@ fn bench_rotation3_inverse_wide(c: &mut Criterion) {
     });
     bench!("nalgebra_f32x4", group, size, |b, size| {
         use nalgebra::UnitQuaternion;
-        use simba::simd::f32x4;
-        bench_unop_wide!(b, size, width => 4, op => conjugate, ty => UnitQuaternion<f32x4>)
+        use simba::simd::WideF32x4;
+        bench_unop_wide!(b, size, width => 4, op => conjugate, ty => UnitQuaternion<WideF32x4>)
     });
     bench!("ultraviolet_f32x8", group, size, |b, size| {
         use ultraviolet::Rotor3x8;
@@ -117,8 +117,8 @@ fn bench_rotation3_inverse_wide(c: &mut Criterion) {
     });
     bench!("nalgebra_f32x8", group, size, |b, size| {
         use nalgebra::UnitQuaternion;
-        use simba::simd::f32x8;
-        bench_unop_wide!(b, size, width => 8, op => conjugate, ty => UnitQuaternion<f32x8>)
+        use simba::simd::WideF32x8;
+        bench_unop_wide!(b, size, width => 8, op => conjugate, ty => UnitQuaternion<WideF32x8>)
     });
     group.finish();
 }
@@ -167,8 +167,8 @@ fn bench_rotation3_mul_rotation3_wide(c: &mut Criterion) {
     });
     bench!("nalgebra_f32x4", group, size, |b, size| {
         use nalgebra::UnitQuaternion;
-        use simba::simd::f32x4;
-        bench_binop_wide!(b, size, width => 4, op => mul, ty1 => UnitQuaternion<f32x4>, ty2 => UnitQuaternion<f32x4>)
+        use simba::simd::WideF32x4;
+        bench_binop_wide!(b, size, width => 4, op => mul, ty1 => UnitQuaternion<WideF32x4>, ty2 => UnitQuaternion<WideF32x4>)
     });
     bench!("ultraviolet_f32x8", group, size, |b, size| {
         use ultraviolet::Rotor3x8;
@@ -176,8 +176,8 @@ fn bench_rotation3_mul_rotation3_wide(c: &mut Criterion) {
     });
     bench!("nalgebra_f32x8", group, size, |b, size| {
         use nalgebra::UnitQuaternion;
-        use simba::simd::f32x8;
-        bench_binop_wide!(b, size, width => 8, op => mul, ty1 => UnitQuaternion<f32x8>, ty2 => UnitQuaternion<f32x8>)
+        use simba::simd::WideF32x8;
+        bench_binop_wide!(b, size, width => 8, op => mul, ty1 => UnitQuaternion<WideF32x8>, ty2 => UnitQuaternion<WideF32x8>)
     });
     group.finish();
 }
@@ -229,8 +229,8 @@ fn bench_rotation3_mul_vector3_wide(c: &mut Criterion) {
     });
     bench!("nalgebra_f32x4", group, size, |b, size| {
         use nalgebra::{UnitQuaternion, Vector3};
-        use simba::simd::f32x4;
-        bench_binop_wide!(b, size, width => 4, op => mul, ty1 => UnitQuaternion<f32x4>, ty2 => Vector3<f32x4>)
+        use simba::simd::WideF32x4;
+        bench_binop_wide!(b, size, width => 4, op => mul, ty1 => UnitQuaternion<WideF32x4>, ty2 => Vector3<WideF32x4>)
     });
     bench!("ultraviolet_f32x8", group, size, |b, size| {
         use ultraviolet::{Rotor3x8, Vec3x8};
@@ -238,8 +238,8 @@ fn bench_rotation3_mul_vector3_wide(c: &mut Criterion) {
     });
     bench!("nalgebra_f32x8", group, size, |b, size| {
         use nalgebra::{UnitQuaternion, Vector3};
-        use simba::simd::f32x8;
-        bench_binop_wide!(b, size, width => 8, op => mul, ty1 => UnitQuaternion<f32x8>, ty2 => Vector3<f32x8>)
+        use simba::simd::WideF32x8;
+        bench_binop_wide!(b, size, width => 8, op => mul, ty1 => UnitQuaternion<WideF32x8>, ty2 => Vector3<WideF32x8>)
     });
     group.finish();
 }

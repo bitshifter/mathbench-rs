@@ -47,8 +47,8 @@ fn bench_matrix4_ret_self_wide(c: &mut Criterion) {
     });
     bench!("nalgebra_f32x4", group, size, |b, size| {
         use nalgebra::Matrix4;
-        use simba::simd::f32x4;
-        bench_unop_wide!(b, size, width => 4, op => ret_self, ty => Matrix4<f32x4>)
+        use simba::simd::WideF32x4;
+        bench_unop_wide!(b, size, width => 4, op => ret_self, ty => Matrix4<WideF32x4>)
     });
     bench!("ultraviolet_f32x8", group, size, |b, size| {
         use ultraviolet::Mat4x8;
@@ -56,8 +56,8 @@ fn bench_matrix4_ret_self_wide(c: &mut Criterion) {
     });
     bench!("nalgebra_f32x8", group, size, |b, size| {
         use nalgebra::Matrix4;
-        use simba::simd::f32x8;
-        bench_unop_wide!(b, size, width => 8, op => ret_self, ty => Matrix4<f32x8>)
+        use simba::simd::WideF32x8;
+        bench_unop_wide!(b, size, width => 8, op => ret_self, ty => Matrix4<WideF32x8>)
     });
     group.finish();
 }
@@ -102,8 +102,8 @@ fn bench_matrix4_transpose_wide(c: &mut Criterion) {
     });
     bench!("nalgebra_f32x4", group, size, |b, size| {
         use nalgebra::Matrix4;
-        use simba::simd::f32x4;
-        bench_unop_wide!(b, size, width => 4, op => transpose, ty => Matrix4<f32x4>)
+        use simba::simd::WideF32x4;
+        bench_unop_wide!(b, size, width => 4, op => transpose, ty => Matrix4<WideF32x4>)
     });
     bench!("ultraviolet_f32x8", group, size, |b, size| {
         use ultraviolet::Mat4x8;
@@ -111,8 +111,8 @@ fn bench_matrix4_transpose_wide(c: &mut Criterion) {
     });
     bench!("nalgebra_f32x8", group, size, |b, size| {
         use nalgebra::Matrix4;
-        use simba::simd::f32x8;
-        bench_unop_wide!(b, size, width => 8, op => transpose, ty => Matrix4<f32x8>)
+        use simba::simd::WideF32x8;
+        bench_unop_wide!(b, size, width => 8, op => transpose, ty => Matrix4<WideF32x8>)
     });
     group.finish();
 }
@@ -259,8 +259,8 @@ fn bench_matrix4_mul_matrix4_wide(c: &mut Criterion) {
         });
         bench!("nalgebra_f32x4", group, size, |b, size| {
             use nalgebra::Matrix4;
-            use simba::simd::f32x4;
-            bench_binop_wide!(b, size, width => 4, op => mul, ty1 => Matrix4<f32x4>, ty2 => Matrix4<f32x4>)
+            use simba::simd::WideF32x4;
+            bench_binop_wide!(b, size, width => 4, op => mul, ty1 => Matrix4<WideF32x4>, ty2 => Matrix4<WideF32x4>)
         });
         bench!("ultraviolet_f32x8", group, size, |b, size| {
             use ultraviolet::Mat4x8;
@@ -268,8 +268,8 @@ fn bench_matrix4_mul_matrix4_wide(c: &mut Criterion) {
         });
         bench!("nalgebra_f32x8", group, size, |b, size| {
             use nalgebra::Matrix4;
-            use simba::simd::f32x8;
-            bench_binop_wide!(b, size, width => 8, op => mul, ty1 => Matrix4<f32x8>, ty2 => Matrix4<f32x8>)
+            use simba::simd::WideF32x8;
+            bench_binop_wide!(b, size, width => 8, op => mul, ty1 => Matrix4<WideF32x8>, ty2 => Matrix4<WideF32x8>)
         });
     }
     group.finish();
@@ -318,8 +318,8 @@ fn bench_matrix4_mul_vector4_wide(c: &mut Criterion) {
         });
         bench!("nalgebra_f32x4", group, size, |b, size| {
             use nalgebra::{Matrix4, Vector4};
-            use simba::simd::f32x4;
-            bench_binop_wide!(b, size, width => 4, op => mul, ty1 => Matrix4<f32x4>, ty2 => Vector4<f32x4>)
+            use simba::simd::WideF32x4;
+            bench_binop_wide!(b, size, width => 4, op => mul, ty1 => Matrix4<WideF32x4>, ty2 => Vector4<WideF32x4>)
         });
         bench!("ultraviolet_f32x8", group, size, |b, size| {
             use ultraviolet::{Mat4x8, Vec4x8};
@@ -327,8 +327,8 @@ fn bench_matrix4_mul_vector4_wide(c: &mut Criterion) {
         });
         bench!("nalgebra_f32x8", group, size, |b, size| {
             use nalgebra::{Matrix4, Vector4};
-            use simba::simd::f32x8;
-            bench_binop_wide!(b, size, width => 8, op => mul, ty1 => Matrix4<f32x8>, ty2 => Vector4<f32x8>)
+            use simba::simd::WideF32x8;
+            bench_binop_wide!(b, size, width => 8, op => mul, ty1 => Matrix4<WideF32x8>, ty2 => Vector4<WideF32x8>)
         });
     }
     group.finish();

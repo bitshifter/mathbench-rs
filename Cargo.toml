@@ -15,16 +15,15 @@ ultraviolet_f32x4 = ["ultraviolet", "wide_mathbench", "dep:wide_v07"]
 ultraviolet_f32x8 = ["ultraviolet", "wide_mathbench", "dep:wide_v07"]
 ultraviolet_wide = ["ultraviolet_f32x4", "ultraviolet_f32x8"]
 
-# nalgebra wide types require a nightly compiler
+# nalgebra wide types use simba's stable `wide`-backed types (WideF32x4,
+# WideF32x8, WideF64x4), so these build on stable
 nalgebra_f32x4 = ["nalgebra", "simba"]
 nalgebra_f32x8 = ["nalgebra", "simba"]
 nalgebra_wide = ["nalgebra_f32x4", "nalgebra_f32x8"]
 
 scalar = ["cgmath", "nalgebra", "ultraviolet", "euclid", "vek", "pathfinder_geometry"]
 
-# nalgebra_wide fails to build due to packed_simd errors
-# wide = ["glam_f32x1", "ultraviolet_wide", "nalgebra_wide"]
-wide = ["glam_f32x1", "ultraviolet_wide"]
+wide = ["glam_f32x1", "ultraviolet_wide", "nalgebra_wide"]
 
 all = ["scalar", "wide"]
 

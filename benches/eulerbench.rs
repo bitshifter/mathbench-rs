@@ -86,8 +86,8 @@ fn bench_euler_3d_wide(c: &mut Criterion) {
         });
         bench!("nalgebra_f32x4", group, size, |b, size| {
             use nalgebra::{zero, Vector3};
-            use simba::simd::{f32x4, SimdValue};
-            bench_euler!(b, &((*size as f32 / 4.0).ceil() as usize), ty => Vector3<f32x4>, zero => zero(), dt => f32x4::splat(UPDATE_RATE));
+            use simba::simd::{WideF32x4, SimdValue};
+            bench_euler!(b, &((*size as f32 / 4.0).ceil() as usize), ty => Vector3<WideF32x4>, zero => zero(), dt => WideF32x4::splat(UPDATE_RATE));
         });
 
         // avx
@@ -97,8 +97,8 @@ fn bench_euler_3d_wide(c: &mut Criterion) {
         });
         bench!("nalgebra_f32x8", group, size, |b, size| {
             use nalgebra::{zero, Vector3};
-            use simba::simd::{f32x8, SimdValue};
-            bench_euler!(b, &((*size as f32 / 8.0).ceil() as usize), ty => Vector3<f32x8>, zero => zero(), dt => f32x8::splat(UPDATE_RATE));
+            use simba::simd::{WideF32x8, SimdValue};
+            bench_euler!(b, &((*size as f32 / 8.0).ceil() as usize), ty => Vector3<WideF32x8>, zero => zero(), dt => WideF32x8::splat(UPDATE_RATE));
         });
     }
     group.finish();
@@ -157,8 +157,8 @@ fn bench_euler_2d_wide(c: &mut Criterion) {
         });
         bench!("nalgebra_f32x4", group, size, |b, size| {
             use nalgebra::{zero, Vector2};
-            use simba::simd::{f32x4, SimdValue};
-            bench_euler!(b, &((*size as f32 / 4.0).ceil() as usize), ty => Vector2<f32x4>, zero => zero(), dt => f32x4::splat(UPDATE_RATE));
+            use simba::simd::{WideF32x4, SimdValue};
+            bench_euler!(b, &((*size as f32 / 4.0).ceil() as usize), ty => Vector2<WideF32x4>, zero => zero(), dt => WideF32x4::splat(UPDATE_RATE));
         });
         // avx
         bench!("ultraviolet_f32x8", group, size, |b, size| {
@@ -167,8 +167,8 @@ fn bench_euler_2d_wide(c: &mut Criterion) {
         });
         bench!("nalgebra_f32x8", group, size, |b, size| {
             use nalgebra::{zero, Vector2};
-            use simba::simd::{f32x8, SimdValue};
-            bench_euler!(b, &((*size as f32 / 8.0).ceil() as usize), ty => Vector2<f32x8>, zero => zero(), dt => f32x8::splat(UPDATE_RATE));
+            use simba::simd::{WideF32x8, SimdValue};
+            bench_euler!(b, &((*size as f32 / 8.0).ceil() as usize), ty => Vector2<WideF32x8>, zero => zero(), dt => WideF32x8::splat(UPDATE_RATE));
         });
     }
     group.finish();
