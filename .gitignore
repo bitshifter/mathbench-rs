@@ -2,3 +2,4 @@
 /target
 Cargo.lock
 Session.vim
+__pycache__/
