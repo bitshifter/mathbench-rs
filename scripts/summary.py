@@ -39,48 +39,40 @@ def fmt_value(value):
     return f'{value:3.4f} ns'
 
 
+def fail(message):
+    sys.exit('error: {}\n\nDelete target/criterion and re-run the benchmarks.'
+             .format(message))
+
+
 def parse_bench(json_dir, benches):
-    benchmark_path = os.path.join(json_dir, 'benchmark.json')
-    estimates_path = os.path.join(json_dir, 'estimates.json')
     try:
-        with open(benchmark_path) as f:
+        with open(os.path.join(json_dir, 'benchmark.json')) as f:
             benchmark = json.load(f)
-        with open(estimates_path) as f:
+        with open(os.path.join(json_dir, 'estimates.json')) as f:
             estimates = json.load(f)
-    except FileNotFoundError:
-        return
 
-    bench_name = benchmark['group_id']
-    lib_name = benchmark['function_id']
-    input_size = benchmark['value_str']
+        # Criterion's estimate is per timed iteration, i.e. per batch of `size`
+        # elements. Report per element so rows are comparable across sizes and
+        # across scalar and wide types. Every benchmark declares its element
+        # count via Throughput::Elements and uses that count as its BenchmarkId.
+        size = int(benchmark['throughput']['Elements'])
+        if benchmark['value_str'] != str(size):
+            raise ValueError(
+                "BenchmarkId {!r} does not match Throughput::Elements {}"
+                .format(benchmark['value_str'], size))
 
-    # Criterion's estimate is per timed iteration, i.e. per batch of `size`
-    # elements. Report per element so rows are comparable across sizes and
-    # across scalar and wide types. Prefer the declared element throughput:
-    # workload benches (euler, ray-sphere) register a per-lane BenchmarkId but
-    # report the full element count, so `value_str` alone would mis-scale the
-    # wide rows. Fall back to the numeric BenchmarkId for older data.
-    throughput = benchmark.get('throughput')
-    elements = throughput.get('Elements') if isinstance(throughput, dict) else None
-    if elements:
-        size = int(elements)
-    else:
-        size = 1
-        if input_size is not None:
-            try:
-                size = int(input_size)
-            except ValueError:
-                pass
-    if input_size is not None:
-        bench_name = '{} x{}'.format(bench_name, size)
+        bench_name = '{} x{}'.format(benchmark['group_id'], size)
+        lib_name = benchmark['function_id']
 
-    slope = estimates['slope']
-    point = slope['point_estimate'] / size
-    interval = slope.get('confidence_interval') or {}
-    lower = interval.get('lower_bound')
-    upper = interval.get('upper_bound')
-    lower = lower / size if lower is not None else None
-    upper = upper / size if upper is not None else None
+        slope = estimates['slope']
+        point = slope['point_estimate'] / size
+        interval = slope.get('confidence_interval') or {}
+        lower = interval.get('lower_bound')
+        upper = interval.get('upper_bound')
+        lower = lower / size if lower is not None else None
+        upper = upper / size if upper is not None else None
+    except (KeyError, TypeError, ValueError, OSError) as e:
+        fail("unexpected data in '{}': {}".format(json_dir, e))
 
     benches.setdefault(bench_name, {}).setdefault(
         lib_name, (point, lower, upper))
@@ -141,19 +133,14 @@ def main():
             lib_path = os.path.join(bench_path, lib_name)
             if not os.path.isdir(lib_path):
                 continue
-            # Prefer parameterized (per-size) results. Fall back to a single
-            # `new` directory for a benchmark that has no size.
-            input_sizes = []
-            for entry in os.listdir(lib_path):
-                try:
-                    input_sizes.append(int(entry))
-                except ValueError:
-                    pass
-            if input_sizes:
-                for input_size in sorted(input_sizes):
-                    parse_bench(os.path.join(lib_path, str(input_size), 'new'), benches)
-            else:
-                parse_bench(os.path.join(lib_path, 'new'), benches)
+            # Every benchmark is parameterized by its element count.
+            entries = [e for e in os.listdir(lib_path) if e != 'report']
+            if not entries:
+                fail("no benchmark results in '{}'".format(lib_path))
+            for size in entries:
+                if not size.isdigit():
+                    fail("unexpected entry '{}' in '{}'".format(size, lib_path))
+                parse_bench(os.path.join(lib_path, size, 'new'), benches)
 
     pt = prettytable.PrettyTable(['benchmark'] + [f'  {x:}  ' for x in libs])
     pt.title = 'ns per element'

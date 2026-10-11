@@ -361,6 +361,9 @@ packages are left alone. Pass `--help` for the other options. If you would
 rather manage the environment yourself, `scripts/summary.py` is the script
 being run and only needs Python 3 and `prettytable`.
 
+Before running the benchmarks, clear any previous results with
+`rm -rf target/criterion`.
+
 ## Default and optional features
 
 All libraries except for `glam` are optional for running benchmarks. The default
