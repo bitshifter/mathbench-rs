@@ -50,8 +50,8 @@ pub fn bench_context_sized<M, F, T>(
 
 /// Register one benchmark case per size for a workload that owns its pools.
 ///
-/// `build` is called once per size with the shared RNG and the scalar element
-/// count; `run` is the timed body and receives that state by `&mut`.
+/// `build` is called once per size with a freshly seeded RNG and the scalar
+/// element count; `run` is the timed body and receives that state by `&mut`.
 ///
 /// This is the skeleton every entry shares: the size list, per-size
 /// [`Throughput::Elements`](criterion::Throughput), the `BenchmarkId`, and the
