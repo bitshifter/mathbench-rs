@@ -5,7 +5,7 @@
 //! and dispatch per call instead of using the fixed-width `bench_*_wide!` macros. The dispatch
 //! match is negligible next to the kernel (measured: hoisting it changes the results by <=10%).
 
-use glam_fearless::{Level, Vec2xN, Vec3xN, dispatch, prelude::*, simd};
+use glam_fearless::{Level, QuatxN, Vec2xN, Vec3xN, dispatch, prelude::*, simd};
 
 /// Euler integration update rate, matching the other euler entries.
 pub const UPDATE_RATE: f32 = 1.0 / 60.0;
@@ -306,4 +306,206 @@ pub fn euler2_soa_dispatch(acc: [&[f32]; 2], vel: &mut [Vec<f32>; 2], pos: &mut 
     let v: [&mut [f32]; 2] = [v0.as_mut_slice(), v1.as_mut_slice()];
     let p: [&mut [f32]; 2] = [p0.as_mut_slice(), p1.as_mut_slice()];
     dispatch!(level, simd => euler2_soa(simd, acc, v, p))
+}
+
+/// Random unit quaternions as SoA components.
+pub fn random_quat_soa(size: usize, rng: &mut Pcg64Mcg) -> [Vec<f32>; 4] {
+    let mut out = [
+        vec![0.0f32; size],
+        vec![0.0f32; size],
+        vec![0.0f32; size],
+        vec![0.0f32; size],
+    ];
+    for i in 0..size {
+        let q = glam::Quat::random_value(rng).normalize();
+        out[0][i] = q.x;
+        out[1][i] = q.y;
+        out[2][i] = q.z;
+        out[3][i] = q.w;
+    }
+    out
+}
+
+/// Four zeroed component arrays, for quaternion outputs.
+pub fn zero_soa4(size: usize) -> [Vec<f32>; 4] {
+    [
+        vec![0.0f32; size],
+        vec![0.0f32; size],
+        vec![0.0f32; size],
+        vec![0.0f32; size],
+    ]
+}
+
+/// Borrow four component arrays as slices.
+pub fn refs4(a: &[Vec<f32>; 4]) -> [&[f32]; 4] {
+    [&a[0], &a[1], &a[2], &a[3]]
+}
+
+/// Borrow four component arrays as mutable slices.
+pub fn refs4_mut(a: &mut [Vec<f32>; 4]) -> [&mut [f32]; 4] {
+    let [a0, a1, a2, a3] = a;
+    [
+        a0.as_mut_slice(),
+        a1.as_mut_slice(),
+        a2.as_mut_slice(),
+        a3.as_mut_slice(),
+    ]
+}
+
+/// Borrow three component arrays as mutable slices.
+pub fn refs3_mut(a: &mut [Vec<f32>; 3]) -> [&mut [f32]; 3] {
+    let [a0, a1, a2] = a;
+    [a0.as_mut_slice(), a1.as_mut_slice(), a2.as_mut_slice()]
+}
+
+/// Quaternion conjugate, per lane.
+#[simd]
+#[inline(always)]
+pub fn quat_conjugate_soa<S: Simd>(simd: S, q: [&[f32]; 4], out: [&mut [f32]; 4]) {
+    let n = S::f32s::LEN;
+    let [x, y, z, w] = q;
+    let [ox, oy, oz, ow] = out;
+    let ins = x
+        .chunks_exact(n)
+        .zip(y.chunks_exact(n))
+        .zip(z.chunks_exact(n))
+        .zip(w.chunks_exact(n));
+    let outs = ox
+        .chunks_exact_mut(n)
+        .zip(oy.chunks_exact_mut(n))
+        .zip(oz.chunks_exact_mut(n))
+        .zip(ow.chunks_exact_mut(n));
+    for ((((i0, i1), i2), i3), (((o0, o1), o2), o3)) in ins.zip(outs) {
+        let r = QuatxN::from_slice(simd, i0, i1, i2, i3).conjugate();
+        o0.copy_from_slice(r.x.as_slice());
+        o1.copy_from_slice(r.y.as_slice());
+        o2.copy_from_slice(r.z.as_slice());
+        o3.copy_from_slice(r.w.as_slice());
+    }
+}
+
+/// Quaternion multiply, per lane.
+#[simd]
+#[inline(always)]
+pub fn quat_mul_soa<S: Simd>(
+    simd: S,
+    a: [&[f32]; 4],
+    b: [&[f32]; 4],
+    out: [&mut [f32]; 4],
+) {
+    let n = S::f32s::LEN;
+    let left = a[0]
+        .chunks_exact(n)
+        .zip(a[1].chunks_exact(n))
+        .zip(a[2].chunks_exact(n))
+        .zip(a[3].chunks_exact(n));
+    let right = b[0]
+        .chunks_exact(n)
+        .zip(b[1].chunks_exact(n))
+        .zip(b[2].chunks_exact(n))
+        .zip(b[3].chunks_exact(n));
+    let [ox, oy, oz, ow] = out;
+    let outs = ox
+        .chunks_exact_mut(n)
+        .zip(oy.chunks_exact_mut(n))
+        .zip(oz.chunks_exact_mut(n))
+        .zip(ow.chunks_exact_mut(n));
+    for (((((l0, l1), l2), l3), (((r0, r1), r2), r3)), (((o0, o1), o2), o3)) in
+        left.zip(right).zip(outs)
+    {
+        let qa = QuatxN::from_slice(simd, l0, l1, l2, l3);
+        let qb = QuatxN::from_slice(simd, r0, r1, r2, r3);
+        let r = qa * qb;
+        o0.copy_from_slice(r.x.as_slice());
+        o1.copy_from_slice(r.y.as_slice());
+        o2.copy_from_slice(r.z.as_slice());
+        o3.copy_from_slice(r.w.as_slice());
+    }
+}
+
+/// Rotate a vector by a quaternion, per lane.
+#[simd]
+#[inline(always)]
+pub fn quat_rotate_soa<S: Simd>(simd: S, q: [&[f32]; 4], v: [&[f32]; 3], out: [&mut [f32]; 3]) {
+    let n = S::f32s::LEN;
+    let quats = q[0]
+        .chunks_exact(n)
+        .zip(q[1].chunks_exact(n))
+        .zip(q[2].chunks_exact(n))
+        .zip(q[3].chunks_exact(n));
+    let vecs = v[0]
+        .chunks_exact(n)
+        .zip(v[1].chunks_exact(n))
+        .zip(v[2].chunks_exact(n));
+    let [ox, oy, oz] = out;
+    let outs = ox
+        .chunks_exact_mut(n)
+        .zip(oy.chunks_exact_mut(n))
+        .zip(oz.chunks_exact_mut(n));
+    for (((((q0, q1), q2), q3), ((v0, v1), v2)), ((o0, o1), o2)) in
+        quats.zip(vecs).zip(outs)
+    {
+        let qa = QuatxN::from_slice(simd, q0, q1, q2, q3);
+        let va = Vec3xN::from_slice(simd, v0, v1, v2);
+        let r = qa * va;
+        o0.copy_from_slice(r.x.as_slice());
+        o1.copy_from_slice(r.y.as_slice());
+        o2.copy_from_slice(r.z.as_slice());
+    }
+}
+
+/// Quaternion conjugate, at the best level this CPU supports.
+pub fn quat_conjugate_soa_dispatch(q: [&[f32]; 4], out: [&mut [f32]; 4]) {
+    let level = Level::new();
+    dispatch!(level, simd => quat_conjugate_soa(simd, q, out))
+}
+
+/// Quaternion multiply, at the best level this CPU supports.
+pub fn quat_mul_soa_dispatch(a: [&[f32]; 4], b: [&[f32]; 4], out: [&mut [f32]; 4]) {
+    let level = Level::new();
+    dispatch!(level, simd => quat_mul_soa(simd, a, b, out))
+}
+
+/// Rotate a vector by a quaternion, at the best level this CPU supports.
+pub fn quat_rotate_soa_dispatch(q: [&[f32]; 4], v: [&[f32]; 3], out: [&mut [f32]; 3]) {
+    let level = Level::new();
+    dispatch!(level, simd => quat_rotate_soa(simd, q, v, out))
+}
+
+/// Rotate every lane of `v` by one quaternion, given as four scalars.
+///
+/// This matches the `broadcast` benchmarks, where the rotation is held in registers while
+/// the vectors stream past, which is also how one rotation is applied to many points.
+#[simd]
+#[inline(always)]
+pub fn quat_rotate_broadcast_soa<S: Simd>(
+    simd: S,
+    q: [f32; 4],
+    v: [&[f32]; 3],
+    out: [&mut [f32]; 3],
+) {
+    let n = S::f32s::LEN;
+    let qa = QuatxN::splat_xyzw(simd, q[0], q[1], q[2], q[3]);
+    let [ox, oy, oz] = out;
+    let vecs = v[0]
+        .chunks_exact(n)
+        .zip(v[1].chunks_exact(n))
+        .zip(v[2].chunks_exact(n));
+    let outs = ox
+        .chunks_exact_mut(n)
+        .zip(oy.chunks_exact_mut(n))
+        .zip(oz.chunks_exact_mut(n));
+    for (((v0, v1), v2), ((o0, o1), o2)) in vecs.zip(outs) {
+        let va = Vec3xN::from_slice(simd, v0, v1, v2);
+        let r = qa * va;
+        o0.copy_from_slice(r.x.as_slice());
+        o1.copy_from_slice(r.y.as_slice());
+        o2.copy_from_slice(r.z.as_slice());
+    }
+}
+
+/// Rotate every lane of `v` by one quaternion, at the best level this CPU supports.
+pub fn quat_rotate_broadcast_soa_dispatch(q: [f32; 4], v: [&[f32]; 3], out: [&mut [f32]; 3]) {
+    let level = Level::new();
+    dispatch!(level, simd => quat_rotate_broadcast_soa(simd, q, v, out))
 }

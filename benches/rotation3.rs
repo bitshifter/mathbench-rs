@@ -1,6 +1,11 @@
 #[path = "support/macros.rs"]
 #[macro_use]
 mod macros;
+#[cfg(feature = "glam_fearless")]
+#[allow(dead_code)] // shared with the other benches
+#[path = "support/glam_fearless.rs"]
+mod gf;
+
 use criterion::{Criterion, criterion_group, criterion_main};
 use mathbench::BenchValue;
 use std::ops::Mul;
@@ -88,6 +93,21 @@ fn bench_rotation3_inverse_wide(c: &mut Criterion) {
         use simba::simd::WideF32x8;
         bench_unop_wide!(b, width => 8, op => conjugate, ty => UnitQuaternion<WideF32x8>)
     });
+    bench!("glam_fearless", group, |b| {
+        macros::bench_workload(
+            b,
+            &[16, 1024],
+            |rng, size| {
+                let q = gf::random_quat_soa(size, rng);
+                (q, gf::zero_soa4(size))
+            },
+            |s| {
+                let (q, out) = s;
+                gf::quat_conjugate_soa_dispatch(gf::refs4(q), gf::refs4_mut(out));
+                std::hint::black_box(&*out);
+            },
+        )
+    });
     group.finish();
 }
 
@@ -145,6 +165,22 @@ fn bench_rotation3_mul_rotation3_wide(c: &mut Criterion) {
         use simba::simd::WideF32x8;
         bench_binop_wide!(b, width => 8, op => mul, ty1 => UnitQuaternion<WideF32x8>, ty2 => UnitQuaternion<WideF32x8>)
     });
+    bench!("glam_fearless", group, |b| {
+        macros::bench_workload(
+            b,
+            &[16, 1024],
+            |rng, size| {
+                let a = gf::random_quat_soa(size, rng);
+                let c = gf::random_quat_soa(size, rng);
+                (a, c, gf::zero_soa4(size))
+            },
+            |s| {
+                let (a, c, out) = s;
+                gf::quat_mul_soa_dispatch(gf::refs4(a), gf::refs4(c), gf::refs4_mut(out));
+                std::hint::black_box(&*out);
+            },
+        )
+    });
     group.finish();
 }
 
@@ -201,6 +237,26 @@ fn bench_rotation3_mul_vector3_wide(c: &mut Criterion) {
         use nalgebra::{UnitQuaternion, Vector3};
         use simba::simd::WideF32x8;
         bench_binop_wide_broadcast!(b, width => 8, op => mul, ty1 => UnitQuaternion<WideF32x8>, ty2 => Vector3<WideF32x8>)
+    });
+    bench!("glam_fearless", group, |b| {
+        macros::bench_workload(
+            b,
+            &[16, 1024],
+            |rng, size| {
+                let q = glam::Quat::random_value(rng).normalize();
+                let v = gf::random_soa(size, rng);
+                (
+                    [q.x, q.y, q.z, q.w],
+                    v,
+                    [vec![0.0f32; size], vec![0.0f32; size], vec![0.0f32; size]],
+                )
+            },
+            |s| {
+                let (q, v, out) = s;
+                gf::quat_rotate_broadcast_soa_dispatch(*q, gf::refs3(v), gf::refs3_mut(out));
+                std::hint::black_box(&*out);
+            },
+        )
     });
     group.finish();
 }
