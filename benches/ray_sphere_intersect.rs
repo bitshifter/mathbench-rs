@@ -264,12 +264,17 @@ fn bench_ray_sphere_intersect_wide(c: &mut Criterion) {
         // Runtime-dispatched width: the same `size` rays, SoA components, one kernel body.
         bench!("glam_fearless", group, size, |b, size| {
             let size = *size;
-            let mut rng = rand_pcg::Pcg64Mcg::new(rand::random());
+            let name = b.1;
+            let mut rng = rand_pcg::Pcg64Mcg::new(macros::BENCH_RNG_SEED);
             let dirs = gf::random_unit_soa(size, &mut rng);
             let mut out = vec![0.0f32; size];
             let refs: [&[f32]; 3] = [&dirs[0], &dirs[1], &dirs[2]];
-            b.iter(|| gf::intersect_soa_dispatch(refs, &mut out));
-            std::hint::black_box(&out);
+            b.0.bench_function(criterion::BenchmarkId::new(name, size), |bencher| {
+                bencher.iter(|| {
+                    gf::intersect_soa_dispatch(refs, &mut out);
+                    std::hint::black_box(&out);
+                })
+            });
         });
     }
     group.finish();
