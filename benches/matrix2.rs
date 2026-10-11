@@ -240,28 +240,28 @@ fn bench_matrix2_mul_vector2(c: &mut Criterion) {
     let mut group = c.benchmark_group("scalar matrix2 mul vector2");
     bench!("glam", group, |b| {
         use glam::{Mat2, Vec2};
-        bench_binop!(b, sizes => [1, 100], op => mul, ty1 => Mat2, ty2 => Vec2)
+        bench_binop_broadcast!(b, op => mul, ty1 => Mat2, ty2 => Vec2)
     });
     bench!("cgmath", group, |b| {
         use cgmath::{Matrix2, Vector2};
-        bench_binop!(b, sizes => [1, 100], op => mul, ty1 => Matrix2<f32>, ty2 => Vector2<f32>)
+        bench_binop_broadcast!(b, op => mul, ty1 => Matrix2<f32>, ty2 => Vector2<f32>)
     });
     bench!("ultraviolet", group, |b| {
         use ultraviolet::{Mat2, Vec2};
-        bench_binop!(b, sizes => [1, 100], op => mul, ty1 => Mat2, ty2 => Vec2)
+        bench_binop_broadcast!(b, op => mul, ty1 => Mat2, ty2 => Vec2)
     });
     bench!("nalgebra", group, |b| {
         use nalgebra::{Matrix2, Vector2};
-        bench_binop!(b, sizes => [1, 100], op => mul, ty1 => Matrix2<f32>, ty2 => Vector2<f32>)
+        bench_binop_broadcast!(b, op => mul, ty1 => Matrix2<f32>, ty2 => Vector2<f32>)
     });
 
     bench!("vek", group, |b| {
         use vek::{Mat2, Vec2};
-        bench_binop!(b, sizes => [1, 100], op => mul, ty1 => Mat2<f32>, ty2 => Vec2<f32>)
+        bench_binop_broadcast!(b, op => mul, ty1 => Mat2<f32>, ty2 => Vec2<f32>)
     });
     bench!("pathfinder_geometry" as "pathfinder", group, |b| {
         use pathfinder_geometry::{transform2d::Matrix2x2F, vector::Vector2F};
-        bench_binop!(b, sizes => [1, 100], op => mul, ty1 => Matrix2x2F, ty2 => Vector2F)
+        bench_binop_broadcast!(b, op => mul, ty1 => Matrix2x2F, ty2 => Vector2F)
     });
     group.finish();
 }

@@ -44,12 +44,14 @@ the following categories:
 * workload operations - these attempt to recreate common workloads found in game
   development to try and demonstrate performance on real world tasks.
 
-Operation benchmarks run a batch of independent operations per timed iteration
-and report per-element throughput via Criterion's `Throughput::Elements`, at two
-sizes by default: 16 (L1-resident) and 1024 (adds cache pressure). This keeps
-the fixed per-iteration harness cost from dominating short operations, so
-results are directly comparable across libraries and across scalar and wide
-types. A single input pool is generated per benchmark and reused across sizes.
+Operation benchmarks run a batch of operations per timed iteration and report
+per-element throughput via Criterion's `Throughput::Elements`, at two sizes by
+default: 16 (L1-resident) and 1024 (adds cache pressure). This keeps the fixed
+per-iteration harness cost from dominating short operations, so results are
+directly comparable across libraries and across scalar and wide types. A single
+input pool is generated per benchmark and reused across sizes. The
+matrix/quaternion "multiply vector" and transform benches apply one transform to
+a batch of vectors or points, matching the throughput workload described above.
 
 Despite best attempts, take the results of micro benchmarks with a pinch of
 salt.

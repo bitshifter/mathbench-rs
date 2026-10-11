@@ -240,24 +240,24 @@ fn bench_matrix4_mul_vector4(c: &mut Criterion) {
     let mut group = c.benchmark_group("scalar matrix4 mul vector4");
     bench!("glam", group, |b| {
         use glam::{Mat4, Vec4};
-        bench_binop!(b, sizes => [1, 100], op => mul, ty1 => Mat4, ty2 => Vec4)
+        bench_binop_broadcast!(b, op => mul, ty1 => Mat4, ty2 => Vec4)
     });
     bench!("cgmath", group, |b| {
         use cgmath::{Matrix4, Vector4};
-        bench_binop!(b, sizes => [1, 100], op => mul, ty1 => Matrix4<f32>, ty2 => Vector4<f32>)
+        bench_binop_broadcast!(b, op => mul, ty1 => Matrix4<f32>, ty2 => Vector4<f32>)
     });
     bench!("ultraviolet", group, |b| {
         use ultraviolet::{Mat4, Vec4};
-        bench_binop!(b, sizes => [1, 100], op => mul, ty1 => Mat4, ty2 => Vec4)
+        bench_binop_broadcast!(b, op => mul, ty1 => Mat4, ty2 => Vec4)
     });
     bench!("nalgebra", group, |b| {
         use nalgebra::{Matrix4, Vector4};
-        bench_binop!(b, sizes => [1, 100], op => mul, ty1 => Matrix4<f32>, ty2 => Vector4<f32>)
+        bench_binop_broadcast!(b, op => mul, ty1 => Matrix4<f32>, ty2 => Vector4<f32>)
     });
 
     bench!("vek", group, |b| {
         use vek::{Mat4, Vec4};
-        bench_binop!(b, sizes => [1, 100], op => mul, ty1 => Mat4<f32>, ty2 => Vec4<f32>)
+        bench_binop_broadcast!(b, op => mul, ty1 => Mat4<f32>, ty2 => Vec4<f32>)
     });
     group.finish();
 }

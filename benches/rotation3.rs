@@ -152,28 +152,28 @@ fn bench_rotation3_mul_vector3(c: &mut Criterion) {
     let mut group = c.benchmark_group("scalar rotation3 mul vector3");
     bench!("glam", group, |b| {
         use glam::{Quat, Vec3};
-        bench_binop!(b, sizes => [1, 100], op => mul, ty1 => Quat, ty2 => Vec3)
+        bench_binop_broadcast!(b, op => mul, ty1 => Quat, ty2 => Vec3)
     });
     bench!("cgmath", group, |b| {
         use cgmath::{Quaternion, Vector3};
-        bench_binop!(b, sizes => [1, 100], op => mul, ty1 => Quaternion<f32>, ty2 => Vector3<f32>)
+        bench_binop_broadcast!(b, op => mul, ty1 => Quaternion<f32>, ty2 => Vector3<f32>)
     });
     bench!("ultraviolet", group, |b| {
         use ultraviolet::{Rotor3, Vec3};
-        bench_binop!(b, sizes => [1, 100], op => mul, ty1 => Rotor3, ty2 => Vec3)
+        bench_binop_broadcast!(b, op => mul, ty1 => Rotor3, ty2 => Vec3)
     });
     bench!("nalgebra", group, |b| {
         use nalgebra::{UnitQuaternion, Vector3};
-        bench_binop!(b, sizes => [1, 100], op => mul, ty1 => UnitQuaternion<f32>, ty2 => Vector3<f32>)
+        bench_binop_broadcast!(b, op => mul, ty1 => UnitQuaternion<f32>, ty2 => Vector3<f32>)
     });
 
     bench!("euclid", group, |b| {
         use euclid::{Point3D, Rotation3D, UnknownUnit};
-        bench_binop!(b, sizes => [1, 100], op => transform_point3d, ty1 => Rotation3D<f32, UnknownUnit, UnknownUnit>, ty2 => Point3D<f32, UnknownUnit>)
+        bench_binop_broadcast!(b, op => transform_point3d, ty1 => Rotation3D<f32, UnknownUnit, UnknownUnit>, ty2 => Point3D<f32, UnknownUnit>)
     });
     bench!("vek", group, |b| {
         use vek::{Quaternion, Vec3};
-        bench_binop!(b, sizes => [1, 100], op => mul, ty1 => Quaternion<f32>, ty2 => Vec3<f32>)
+        bench_binop_broadcast!(b, op => mul, ty1 => Quaternion<f32>, ty2 => Vec3<f32>)
     });
     group.finish();
 }

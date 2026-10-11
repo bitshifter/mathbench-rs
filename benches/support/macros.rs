@@ -197,6 +197,62 @@ macro_rules! bench_binop {
     };
 }
 
+/// Run `$binop` with a single `ty1` operand reused across a batch of `ty2`
+/// operands, e.g. transforming many vectors with the same matrix. `sizes` is
+/// the number of `ty2` operands in the batch.
+#[macro_export]
+macro_rules! bench_binop_broadcast {
+    ($b:ident, sizes => [$($size:expr),+ $(,)?], op => $binop:ident, ty1 => $t1:ty, ty2 => $t2:ty, param => $param:tt) => {
+        bench_binop_broadcast!($b, op => $binop, ty1 => $t1, ty2 => $t2, param => $param, sizes => [$($size),+])
+    };
+    ($b:ident, sizes => [$($size:expr),+ $(,)?], op => $binop:ident, ty1 => $t1:ty, ty2 => $t2:ty) => {
+        bench_binop_broadcast!($b, op => $binop, ty1 => $t1, ty2 => $t2, sizes => [$($size),+])
+    };
+    ($b:ident, op => $binop:ident, ty1 => $t1:ty, ty2 => $t2:ty, param => $param:tt, sizes => [$($size:expr),+ $(,)?]) => {{
+        let sizes: &[usize] = &[$($size),+];
+        let max_size = *sizes.iter().max().unwrap();
+        let mut rng = rand_pcg::Pcg64Mcg::new(0x853c49e6748fea9b_da3e39cb94b95bdb_u128);
+        let input1 = <$t1 as mathbench::BenchValue>::random_value(&mut rng);
+        let inputs2 = (0..max_size)
+            .map(|_| <$t2 as mathbench::BenchValue>::random_value(&mut rng))
+            .collect::<Vec<$t2>>();
+        let mut outputs = inputs2
+            .iter()
+            .map(|input2| input1.$binop($param!(input2)))
+            .collect::<Vec<_>>();
+        let name = $b.1;
+        for &size in sizes {
+            let inputs2 = &inputs2[..size];
+            let outputs = &mut outputs[..size];
+            $b.0.throughput(criterion::Throughput::Elements(size as u64));
+            $b.0
+                .bench_function(criterion::BenchmarkId::new(name, size), |bencher| {
+                    bencher.iter(|| {
+                        for (input2, output) in inputs2.iter().zip(outputs.iter_mut()) {
+                            *output = input1.$binop($param!(input2));
+                        }
+                        std::hint::black_box(&outputs);
+                    })
+                });
+        }
+    }};
+    ($b:ident, op => $binop:ident, ty1 => $t1:ty, ty2 => $t2:ty, sizes => [$($size:expr),+ $(,)?]) => {
+        bench_binop_broadcast!($b, op => $binop, ty1 => $t1, ty2 => $t2, param => by_value, sizes => [$($size),+])
+    };
+    ($b:ident, op => $binop:ident, ty1 => $t1:ty, ty2 => $t2:ty, param => $param:tt) => {
+        bench_binop_broadcast!($b, op => $binop, ty1 => $t1, ty2 => $t2, param => $param, sizes => [16, 1024])
+    };
+    ($b:ident, op => $binop:ident, ty1 => $t1:ty, ty2 => $t2:ty) => {
+        bench_binop_broadcast!($b, op => $binop, ty1 => $t1, ty2 => $t2, param => by_value, sizes => [16, 1024])
+    };
+    ($b:ident, op => $binop:ident, ty => $ty:ty, param => $param:tt) => {
+        bench_binop_broadcast!($b, op => $binop, ty1 => $ty, ty2 => $ty, param => $param)
+    };
+    ($b:ident, op => $binop:ident, ty => $ty:ty) => {
+        bench_binop_broadcast!($b, op => $binop, ty1 => $ty, ty2 => $ty)
+    };
+}
+
 /// Wide variant of [`bench_unop`]. `sizes` are scalar element counts; each
 /// timed iteration runs `size / width` wide operations.
 #[macro_export]
