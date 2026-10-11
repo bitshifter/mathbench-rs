@@ -387,12 +387,7 @@ pub fn quat_conjugate_soa<S: Simd>(simd: S, q: [&[f32]; 4], out: [&mut [f32]; 4]
 /// Quaternion multiply, per lane.
 #[simd]
 #[inline(always)]
-pub fn quat_mul_soa<S: Simd>(
-    simd: S,
-    a: [&[f32]; 4],
-    b: [&[f32]; 4],
-    out: [&mut [f32]; 4],
-) {
+pub fn quat_mul_soa<S: Simd>(simd: S, a: [&[f32]; 4], b: [&[f32]; 4], out: [&mut [f32]; 4]) {
     let n = S::f32s::LEN;
     let left = a[0]
         .chunks_exact(n)
@@ -442,9 +437,7 @@ pub fn quat_rotate_soa<S: Simd>(simd: S, q: [&[f32]; 4], v: [&[f32]; 3], out: [&
         .chunks_exact_mut(n)
         .zip(oy.chunks_exact_mut(n))
         .zip(oz.chunks_exact_mut(n));
-    for (((((q0, q1), q2), q3), ((v0, v1), v2)), ((o0, o1), o2)) in
-        quats.zip(vecs).zip(outs)
-    {
+    for (((((q0, q1), q2), q3), ((v0, v1), v2)), ((o0, o1), o2)) in quats.zip(vecs).zip(outs) {
         let qa = QuatxN::from_slice(simd, q0, q1, q2, q3);
         let va = Vec3xN::from_slice(simd, v0, v1, v2);
         let r = qa * va;
