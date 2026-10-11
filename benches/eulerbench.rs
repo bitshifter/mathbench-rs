@@ -10,37 +10,30 @@ macro_rules! bench_euler {
         // `$size` is a scalar element count; a wide value covers `$width` of
         // them, so the pools are sized per lane. The benchmark id and the
         // declared throughput stay in elements so all widths are comparable.
-        let count = usize::div_ceil(*$size, $width);
-
-        struct TestData {
-            acc: Vec<$t>,
-            vel: Vec<$t>,
-            pos: Vec<$t>,
-        }
-
-        let mut rng = rand_pcg::Pcg64Mcg::new(macros::BENCH_RNG_SEED);
-        let mut data = TestData {
-            acc: vec![<$t as mathbench::BenchValue>::random_value(&mut rng); count],
-            vel: vec![$zero; count],
-            pos: vec![$zero; count],
-        };
-
-        let dt = $dt;
-
-        let name = $b.1;
-        $b.0.bench_function(criterion::BenchmarkId::new(name, *$size), |bencher| {
-            bencher.iter(|| {
+        macros::bench_workload(
+            $b,
+            &[*$size],
+            |rng, size| {
+                let count = usize::div_ceil(size, $width);
+                let acc = vec![<$t as mathbench::BenchValue>::random_value(rng); count];
+                let vel: Vec<$t> = vec![$zero; count];
+                let pos: Vec<$t> = vec![$zero; count];
+                (acc, vel, pos, $dt)
+            },
+            |data| {
+                let (acc, vel, pos, dt) = data;
+                let dt = *dt;
                 for ((position, acceleration), velocity) in
-                    data.pos.iter_mut().zip(&data.acc).zip(&mut data.vel)
+                    pos.iter_mut().zip(&*acc).zip(vel.iter_mut())
                 {
                     *velocity += *acceleration * dt;
                     *position += *velocity * dt;
                 }
                 // Keep the writes live so the loop cannot be optimized away.
-                std::hint::black_box(&data.pos[..]);
-                std::hint::black_box(&data.vel[..]);
-            })
-        });
+                std::hint::black_box(&pos[..]);
+                std::hint::black_box(&vel[..]);
+            },
+        )
     }};
 }
 

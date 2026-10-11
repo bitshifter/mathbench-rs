@@ -10,68 +10,64 @@ macro_rules! bench_intersection_wide_uv {
         use wide_v07::CmpGt;
         // `$size` is a scalar element count; the pools are sized per lane and
         // the benchmark id stays in elements so all widths are comparable.
-        let count = usize::div_ceil(*$size, $width);
-        struct TestData {
-            ray_d: Vec<$t>,
-            result: Vec<$wt>,
-        }
+        macros::bench_workload(
+            $b,
+            &[*$size],
+            |rng, size| {
+                let count = usize::div_ceil(size, $width);
+                let ray_d = (0..count)
+                    .map(|_| <$t as mathbench::BenchValue>::random_value(rng).normalized())
+                    .collect::<Vec<$t>>();
+                let result: Vec<$wt> = vec![$wt::splat(0.0); count];
+                let ray_o: $t = $zero;
+                let sphere_o: $t = $zero;
+                let sphere_r_sq = $wt::splat(100.0);
+                let miss = $wt::splat($max);
+                (ray_d, result, ray_o, sphere_o, sphere_r_sq, miss)
+            },
+            |data| {
+                let (ray_d, result, ray_o, sphere_o, sphere_r_sq, miss) = data;
+                let (ray_o, sphere_o, sphere_r_sq, miss) = (*ray_o, *sphere_o, *sphere_r_sq, *miss);
 
-        let mut rng = rand_pcg::Pcg64Mcg::new(macros::BENCH_RNG_SEED);
-        let ray_d = (0..count)
-            .into_iter()
-            .map(|_| <$t as mathbench::BenchValue>::random_value(&mut rng).normalized())
-            .collect::<Vec<_>>();
-        let mut data = TestData {
-            ray_d,
-            result: vec![$wt::splat(0.0); count],
-        };
+                // `#[inline(never)]` keeps the autovectorizer from inlining the inner
+                // operation into the benchmark loop, so the loop stays scalar. This is
+                // a stable equivalent of `#[inline(never)]` on a closure.
+                #[inline(never)]
+                fn do_inner(
+                    ray_d: &$t,
+                    result: &mut $wt,
+                    ray_o: $t,
+                    sphere_o: $t,
+                    sphere_r_sq: $wt,
+                    miss: $wt,
+                ) {
+                    let oc: $t = ray_o - sphere_o;
+                    let b = oc.dot(*ray_d);
+                    let c = oc.mag_sq() - sphere_r_sq;
+                    let descrim = b * b - c;
 
-        let sphere_o = $zero;
-        let ray_o = $zero;
-        let sphere_r_sq = $wt::splat(100.0);
-        let miss = $wt::splat($max);
+                    let z = $wt::splat(0.0);
+                    let desc_pos = descrim.cmp_gt(z);
 
-        // `#[inline(never)]` keeps the autovectorizer from inlining the inner
-        // operation into the benchmark loop, so the loop stays scalar. This is
-        // a stable equivalent of `#[inline(never)]` on a closure.
-        #[inline(never)]
-        fn do_inner(
-            ray_d: &$t,
-            result: &mut $wt,
-            ray_o: $t,
-            sphere_o: $t,
-            sphere_r_sq: $wt,
-            miss: $wt,
-        ) {
-            let oc: $t = ray_o - sphere_o;
-            let b = oc.dot(*ray_d);
-            let c = oc.mag_sq() - sphere_r_sq;
-            let descrim = b * b - c;
+                    let desc_sqrt = descrim.sqrt();
 
-            let z = $wt::splat(0.0);
-            let desc_pos = descrim.cmp_gt(z);
+                    let t1 = -b - desc_sqrt;
+                    let t1_valid = t1.cmp_gt(z) & desc_pos;
 
-            let desc_sqrt = descrim.sqrt();
+                    let t2 = -b + desc_sqrt;
+                    let t2_valid = t2.cmp_gt(z) & desc_pos;
 
-            let t1 = -b - desc_sqrt;
-            let t1_valid = t1.cmp_gt(z) & desc_pos;
+                    let t = t2_valid.blend(t2, miss);
+                    let t = t1_valid.blend(t1, t);
 
-            let t2 = -b + desc_sqrt;
-            let t2_valid = t2.cmp_gt(z) & desc_pos;
+                    *result = t;
+                }
 
-            let t = t2_valid.blend(t2, miss);
-            let t = t1_valid.blend(t1, t);
-
-            *result = t;
-        }
-        let name = $b.1;
-        $b.0.bench_function(criterion::BenchmarkId::new(name, *$size), |bencher| {
-            bencher.iter(|| {
-                for (ray_d, result) in data.ray_d.iter().zip(&mut data.result) {
+                for (ray_d, result) in ray_d.iter().zip(result.iter_mut()) {
                     do_inner(ray_d, result, ray_o, sphere_o, sphere_r_sq, miss);
                 }
-            })
-        });
+            },
+        )
     }};
 }
 
@@ -81,65 +77,61 @@ macro_rules! bench_intersection_wide_na {
         use simba::simd::{SimdBool, SimdComplexField, SimdPartialOrd, SimdValue};
         // `$size` is a scalar element count; the pools are sized per lane and
         // the benchmark id stays in elements so all widths are comparable.
-        let count = usize::div_ceil(*$size, $width);
-        struct TestData {
-            ray_d: Vec<$t>,
-            result: Vec<$wt>,
-        }
+        macros::bench_workload(
+            $b,
+            &[*$size],
+            |rng, size| {
+                let count = usize::div_ceil(size, $width);
+                let ray_d = (0..count)
+                    .map(|_| <$t as mathbench::BenchValue>::random_value(rng).normalize())
+                    .collect::<Vec<$t>>();
+                let result: Vec<$wt> = vec![$wt::splat(0.0); count];
+                let ray_o: $t = $zero;
+                let sphere_o: $t = $zero;
+                let sphere_r_sq = $wt::splat(100.0);
+                let miss = $wt::splat($max);
+                (ray_d, result, ray_o, sphere_o, sphere_r_sq, miss)
+            },
+            |data| {
+                let (ray_d, result, ray_o, sphere_o, sphere_r_sq, miss) = data;
+                let (ray_o, sphere_o, sphere_r_sq, miss) = (*ray_o, *sphere_o, *sphere_r_sq, *miss);
 
-        let mut rng = rand_pcg::Pcg64Mcg::new(macros::BENCH_RNG_SEED);
-        let ray_d = (0..count)
-            .into_iter()
-            .map(|_| <$t as mathbench::BenchValue>::random_value(&mut rng).normalize())
-            .collect::<Vec<_>>();
-        let mut data = TestData {
-            ray_d,
-            result: vec![$wt::splat(0.0); count],
-        };
+                #[inline(never)]
+                fn do_inner(
+                    ray_d: &$t,
+                    result: &mut $wt,
+                    ray_o: $t,
+                    sphere_o: $t,
+                    sphere_r_sq: $wt,
+                    miss: $wt,
+                ) {
+                    let oc: $t = ray_o - sphere_o;
+                    let b = oc.dot(ray_d);
+                    let c = oc.norm_squared() - sphere_r_sq;
+                    let descrim = b * b - c;
 
-        let sphere_o: $t = $zero;
-        let ray_o: $t = $zero;
-        let sphere_r_sq = $wt::splat(100.0);
-        let miss = $wt::splat($max);
+                    let z = $wt::splat(0.0);
+                    let desc_pos = descrim.simd_gt(z);
 
-        #[inline(never)]
-        fn do_inner(
-            ray_d: &$t,
-            result: &mut $wt,
-            ray_o: $t,
-            sphere_o: $t,
-            sphere_r_sq: $wt,
-            miss: $wt,
-        ) {
-            let oc: $t = ray_o - sphere_o;
-            let b = oc.dot(ray_d);
-            let c = oc.norm_squared() - sphere_r_sq;
-            let descrim = b * b - c;
+                    let desc_sqrt = descrim.simd_sqrt();
 
-            let z = $wt::splat(0.0);
-            let desc_pos = descrim.simd_gt(z);
+                    let t1 = -b - desc_sqrt;
+                    let t1_valid = t1.simd_gt(z) & desc_pos;
 
-            let desc_sqrt = descrim.simd_sqrt();
+                    let t2 = -b + desc_sqrt;
+                    let t2_valid = t2.simd_gt(z) & desc_pos;
 
-            let t1 = -b - desc_sqrt;
-            let t1_valid = t1.simd_gt(z) & desc_pos;
+                    let t = t2_valid.if_else(|| t2, || miss);
+                    let t = t1_valid.if_else(|| t1, || t);
 
-            let t2 = -b + desc_sqrt;
-            let t2_valid = t2.simd_gt(z) & desc_pos;
+                    *result = t;
+                }
 
-            let t = t2_valid.if_else(|| t2, || miss);
-            let t = t1_valid.if_else(|| t1, || t);
-
-            *result = t;
-        }
-        let name = $b.1;
-        $b.0.bench_function(criterion::BenchmarkId::new(name, *$size), |bencher| {
-            bencher.iter(|| {
-                for (ray_d, result) in data.ray_d.iter().zip(&mut data.result) {
+                for (ray_d, result) in ray_d.iter().zip(result.iter_mut()) {
                     do_inner(ray_d, result, ray_o, sphere_o, sphere_r_sq, miss);
                 }
-            })
-        });
+            },
+        )
     }};
 }
 
@@ -147,56 +139,57 @@ macro_rules! bench_intersection_scalar {
     ($b: ident, $size:expr, width => $width:expr, ty => $t: ty, zero => $zero: expr, norm => $norm: ident, mag_sq => $mag_sq: ident, param => $param: tt) => {{
         // `$size` is a scalar element count; the pools are sized per lane and
         // the benchmark id stays in elements so all widths are comparable.
-        let count = usize::div_ceil(*$size, $width);
-        struct TestData {
-            ray_d: Vec<$t>,
-            result: Vec<f32>,
-        }
+        macros::bench_workload(
+            $b,
+            &[*$size],
+            |rng, size| {
+                let count = usize::div_ceil(size, $width);
+                let ray_d = (0..count)
+                    .map(|_| <$t as mathbench::BenchValue>::random_value(rng).$norm())
+                    .collect::<Vec<$t>>();
+                let result: Vec<f32> = vec![0.0f32; count];
+                let ray_o: $t = <$t>::new(0.0, 0.0, -11.0);
+                let sphere_o: $t = $zero;
+                let sphere_r_sq: f32 = 100.0f32;
+                (ray_d, result, ray_o, sphere_o, sphere_r_sq)
+            },
+            |data| {
+                let (ray_d, result, ray_o, sphere_o, sphere_r_sq) = data;
+                let (ray_o, sphere_o, sphere_r_sq) = (*ray_o, *sphere_o, *sphere_r_sq);
 
-        let mut rng = rand_pcg::Pcg64Mcg::new(macros::BENCH_RNG_SEED);
-        let ray_d = (0..count)
-            .into_iter()
-            .map(|_| <$t as mathbench::BenchValue>::random_value(&mut rng).$norm())
-            .collect::<Vec<_>>();
-        let mut data = TestData {
-            ray_d,
-            result: vec![0.0; count],
-        };
+                #[inline(never)]
+                fn do_inner(
+                    ray_d: &$t,
+                    result: &mut f32,
+                    ray_o: $t,
+                    sphere_o: $t,
+                    sphere_r_sq: f32,
+                ) {
+                    let oc: $t = ray_o - sphere_o;
+                    let b = oc.dot($param!(ray_d));
+                    let c = oc.$mag_sq() - sphere_r_sq;
+                    let descrim = b * b - c;
 
-        let sphere_o: $t = $zero;
-        let sphere_r_sq = 100.0;
-        let ray_o = <$t>::new(0.0, 0.0, -11.0);
+                    *result = if descrim > 0.0 {
+                        let desc_sqrt = descrim.sqrt();
 
-        #[inline(never)]
-        fn do_inner(ray_d: &$t, result: &mut f32, ray_o: $t, sphere_o: $t, sphere_r_sq: f32) {
-            let oc: $t = ray_o - sphere_o;
-            let b = oc.dot($param!(ray_d));
-            let c = oc.$mag_sq() - sphere_r_sq;
-            let descrim = b * b - c;
-
-            *result = if descrim > 0.0 {
-                let desc_sqrt = descrim.sqrt();
-
-                let t1 = -b - desc_sqrt;
-                if t1 > 0.0 {
-                    t1
-                } else {
-                    let t2 = -b + desc_sqrt;
-                    if t2 > 0.0 { t2 } else { f32::MAX }
+                        let t1 = -b - desc_sqrt;
+                        if t1 > 0.0 {
+                            t1
+                        } else {
+                            let t2 = -b + desc_sqrt;
+                            if t2 > 0.0 { t2 } else { f32::MAX }
+                        }
+                    } else {
+                        f32::MAX
+                    };
                 }
-            } else {
-                f32::MAX
-            };
-        }
 
-        let name = $b.1;
-        $b.0.bench_function(criterion::BenchmarkId::new(name, *$size), |bencher| {
-            bencher.iter(|| {
-                for (ray_d, result) in data.ray_d.iter().zip(&mut data.result) {
+                for (ray_d, result) in ray_d.iter().zip(result.iter_mut()) {
                     do_inner(ray_d, result, ray_o, sphere_o, sphere_r_sq);
                 }
-            })
-        });
+            },
+        )
     }};
 }
 
