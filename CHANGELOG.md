@@ -23,6 +23,9 @@ The format is based on [Keep a Changelog].
   matrix or rotation across a batch of vectors or points
 * The `ray-sphere intersection` benchmark always measures the non-vectorized
   case through an `#[inline(never)]` function
+* The `euler` and `ray-sphere` workload benchmarks register their benchmark id
+  in scalar elements rather than per-lane counts, so wide types of different
+  widths share one id and are directly comparable
 * Per-type "return self" benchmarks were renamed to "no-op baseline"
 * `scripts/summary.sh` runs the summary script in a local virtual environment.
   The summary reports ns per element and highlights libraries whose confidence
