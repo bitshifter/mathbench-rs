@@ -91,20 +91,16 @@ fn bench_vector3_length_wide(c: &mut Criterion) {
         bench_unop_wide!(b, width => 8, op => norm, ty => Vector3<WideF32x8>)
     });
     bench!("glam_fearless", group, |b| {
-        let name = b.1;
-        for size in [16, 1024] {
-            let mut rng = rand_pcg::Pcg64Mcg::new(macros::BENCH_RNG_SEED);
-            let a = gf::random_soa(size, &mut rng);
-            let mut out = vec![0.0f32; size];
-            let refs: [&[f32]; 3] = [&a[0], &a[1], &a[2]];
-            b.0.throughput(criterion::Throughput::Elements(size as u64));
-            b.0.bench_function(criterion::BenchmarkId::new(name, size), |bencher| {
-                bencher.iter(|| {
-                    gf::length_soa_dispatch(refs, &mut out);
-                    std::hint::black_box(&out);
-                })
-            });
-        }
+        macros::bench_workload(
+            b,
+            &[16, 1024],
+            |rng, size| (gf::random_soa(size, rng), vec![0.0f32; size]),
+            |s| {
+                let (a, out) = s;
+                gf::length_soa_dispatch(gf::refs3(a), out);
+                std::hint::black_box(&*out);
+            },
+        )
     });
     group.finish();
 }
@@ -163,22 +159,23 @@ fn bench_vector3_normalize_wide(c: &mut Criterion) {
         bench_unop_wide!(b, width => 8, op => normalize, ty => Vector3<WideF32x8>)
     });
     bench!("glam_fearless", group, |b| {
-        let name = b.1;
-        for size in [16, 1024] {
-            let mut rng = rand_pcg::Pcg64Mcg::new(macros::BENCH_RNG_SEED);
-            let a = gf::random_soa(size, &mut rng);
-            let mut ox = vec![0.0f32; size];
-            let mut oy = vec![0.0f32; size];
-            let mut oz = vec![0.0f32; size];
-            let refs: [&[f32]; 3] = [&a[0], &a[1], &a[2]];
-            b.0.throughput(criterion::Throughput::Elements(size as u64));
-            b.0.bench_function(criterion::BenchmarkId::new(name, size), |bencher| {
-                bencher.iter(|| {
-                    gf::normalize_soa_dispatch(refs, &mut ox, &mut oy, &mut oz);
-                    std::hint::black_box((&ox, &oy, &oz));
-                })
-            });
-        }
+        macros::bench_workload(
+            b,
+            &[16, 1024],
+            |rng, size| {
+                (
+                    gf::random_soa(size, rng),
+                    vec![0.0f32; size],
+                    vec![0.0f32; size],
+                    vec![0.0f32; size],
+                )
+            },
+            |s| {
+                let (a, ox, oy, oz) = s;
+                gf::normalize_soa_dispatch(gf::refs3(a), ox, oy, oz);
+                std::hint::black_box((&*ox, &*oy, &*oz));
+            },
+        )
     });
     group.finish();
 }
@@ -238,22 +235,22 @@ fn bench_vector3_dot_wide(c: &mut Criterion) {
         bench_binop_wide!(b, width => 8, op => dot, ty1 => Vector3<WideF32x8>, ty2 => Vector3<WideF32x8>, param => by_ref)
     });
     bench!("glam_fearless", group, |b| {
-        let name = b.1;
-        for size in [16, 1024] {
-            let mut rng = rand_pcg::Pcg64Mcg::new(macros::BENCH_RNG_SEED);
-            let a = gf::random_soa(size, &mut rng);
-            let c = gf::random_soa(size, &mut rng);
-            let mut out = vec![0.0f32; size];
-            let arefs: [&[f32]; 3] = [&a[0], &a[1], &a[2]];
-            let crefs: [&[f32]; 3] = [&c[0], &c[1], &c[2]];
-            b.0.throughput(criterion::Throughput::Elements(size as u64));
-            b.0.bench_function(criterion::BenchmarkId::new(name, size), |bencher| {
-                bencher.iter(|| {
-                    gf::dot_soa_dispatch(arefs, crefs, &mut out);
-                    std::hint::black_box(&out);
-                })
-            });
-        }
+        macros::bench_workload(
+            b,
+            &[16, 1024],
+            |rng, size| {
+                (
+                    gf::random_soa(size, rng),
+                    gf::random_soa(size, rng),
+                    vec![0.0f32; size],
+                )
+            },
+            |s| {
+                let (a, c, out) = s;
+                gf::dot_soa_dispatch(gf::refs3(a), gf::refs3(c), out);
+                std::hint::black_box(&*out);
+            },
+        )
     });
     group.finish();
 }
@@ -313,24 +310,24 @@ fn bench_vector3_cross_wide(c: &mut Criterion) {
         bench_binop_wide!(b, width => 8, op => cross, ty1 => Vector3<WideF32x8>, ty2 => Vector3<WideF32x8>, param => by_ref)
     });
     bench!("glam_fearless", group, |b| {
-        let name = b.1;
-        for size in [16, 1024] {
-            let mut rng = rand_pcg::Pcg64Mcg::new(macros::BENCH_RNG_SEED);
-            let a = gf::random_soa(size, &mut rng);
-            let c = gf::random_soa(size, &mut rng);
-            let mut ox = vec![0.0f32; size];
-            let mut oy = vec![0.0f32; size];
-            let mut oz = vec![0.0f32; size];
-            let arefs: [&[f32]; 3] = [&a[0], &a[1], &a[2]];
-            let crefs: [&[f32]; 3] = [&c[0], &c[1], &c[2]];
-            b.0.throughput(criterion::Throughput::Elements(size as u64));
-            b.0.bench_function(criterion::BenchmarkId::new(name, size), |bencher| {
-                bencher.iter(|| {
-                    gf::cross_soa_dispatch(arefs, crefs, &mut ox, &mut oy, &mut oz);
-                    std::hint::black_box((&ox, &oy, &oz));
-                })
-            });
-        }
+        macros::bench_workload(
+            b,
+            &[16, 1024],
+            |rng, size| {
+                (
+                    gf::random_soa(size, rng),
+                    gf::random_soa(size, rng),
+                    vec![0.0f32; size],
+                    vec![0.0f32; size],
+                    vec![0.0f32; size],
+                )
+            },
+            |s| {
+                let (a, c, ox, oy, oz) = s;
+                gf::cross_soa_dispatch(gf::refs3(a), gf::refs3(c), ox, oy, oz);
+                std::hint::black_box((&*ox, &*oy, &*oz));
+            },
+        )
     });
     group.finish();
 }

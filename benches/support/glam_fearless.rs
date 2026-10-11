@@ -27,6 +27,16 @@ pub fn random_soa(size: usize, rng: &mut Pcg64Mcg) -> [Vec<f32>; 3] {
     out
 }
 
+/// Borrow the two component slices of a packed SoA batch for a kernel call.
+pub fn refs2(a: &[Vec<f32>; 2]) -> [&[f32]; 2] {
+    [&a[0], &a[1]]
+}
+
+/// Borrow the three component slices of a packed SoA batch for a kernel call.
+pub fn refs3(a: &[Vec<f32>; 3]) -> [&[f32]; 3] {
+    [&a[0], &a[1], &a[2]]
+}
+
 /// Random unit SoA directions.
 pub fn random_unit_soa(size: usize, rng: &mut Pcg64Mcg) -> [Vec<f32>; 3] {
     let mut out = [vec![0.0f32; size], vec![0.0f32; size], vec![0.0f32; size]];

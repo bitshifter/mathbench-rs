@@ -261,20 +261,18 @@ fn bench_ray_sphere_intersect_wide(c: &mut Criterion) {
             bench_intersection_wide_na!(b, size, width => 8, ty => Vector3<WideF32x8>, wt => WideF32x8, zero_vec => zero(), max => f32::MAX);
         });
 
-        // Runtime-dispatched width: the same `size` rays, SoA components, one kernel body.
-        bench!("glam_fearless", group, size, |b, size| {
-            let size = *size;
-            let name = b.1;
-            let mut rng = rand_pcg::Pcg64Mcg::new(macros::BENCH_RNG_SEED);
-            let dirs = gf::random_unit_soa(size, &mut rng);
-            let mut out = vec![0.0f32; size];
-            let refs: [&[f32]; 3] = [&dirs[0], &dirs[1], &dirs[2]];
-            b.0.bench_function(criterion::BenchmarkId::new(name, size), |bencher| {
-                bencher.iter(|| {
-                    gf::intersect_soa_dispatch(refs, &mut out);
-                    std::hint::black_box(&out);
-                })
-            });
+        // Runtime-dispatched width: the same 80000 rays, SoA components, one kernel body.
+        bench!("glam_fearless", group, |b| {
+            macros::bench_workload(
+                b,
+                &[80000],
+                |rng, size| (gf::random_unit_soa(size, rng), vec![0.0f32; size]),
+                |s| {
+                    let (dirs, out) = s;
+                    gf::intersect_soa_dispatch(gf::refs3(dirs), out);
+                    std::hint::black_box(&*out);
+                },
+            )
         });
     }
     group.finish();

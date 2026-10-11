@@ -110,20 +110,23 @@ fn bench_euler_3d_wide(c: &mut Criterion) {
             bench_euler!(b, size, width => 8, ty => Vector3<WideF32x8>, zero => zero(), dt => WideF32x8::splat(UPDATE_RATE));
         });
         // Runtime-dispatched width: the same 80000 elements, SoA components, one kernel body.
-        bench!("glam_fearless", group, size, |b, size| {
-            let size = *size as usize;
-            let name = b.1;
-            let mut rng = rand_pcg::Pcg64Mcg::new(macros::BENCH_RNG_SEED);
-            let acc = gf::random_soa(size, &mut rng);
-            let mut vel = [vec![0.0f32; size], vec![0.0f32; size], vec![0.0f32; size]];
-            let mut pos = [vec![0.0f32; size], vec![0.0f32; size], vec![0.0f32; size]];
-            let arefs: [&[f32]; 3] = [&acc[0], &acc[1], &acc[2]];
-            b.0.bench_function(criterion::BenchmarkId::new(name, size), |bencher| {
-                bencher.iter(|| {
-                    gf::euler3_soa_dispatch(arefs, &mut vel, &mut pos);
-                    std::hint::black_box((&vel, &pos));
-                })
-            });
+        bench!("glam_fearless", group, |b| {
+            macros::bench_workload(
+                b,
+                &[80000],
+                |rng, size| {
+                    (
+                        gf::random_soa(size, rng),
+                        [vec![0.0f32; size], vec![0.0f32; size], vec![0.0f32; size]],
+                        [vec![0.0f32; size], vec![0.0f32; size], vec![0.0f32; size]],
+                    )
+                },
+                |s| {
+                    let (acc, vel, pos) = s;
+                    gf::euler3_soa_dispatch(gf::refs3(acc), vel, pos);
+                    std::hint::black_box((&*vel, &*pos));
+                },
+            )
         });
     }
     group.finish();
@@ -196,20 +199,23 @@ fn bench_euler_2d_wide(c: &mut Criterion) {
             bench_euler!(b, size, width => 8, ty => Vector2<WideF32x8>, zero => zero(), dt => WideF32x8::splat(UPDATE_RATE));
         });
         // Runtime-dispatched width: the same 80000 elements, SoA components, one kernel body.
-        bench!("glam_fearless", group, size, |b, size| {
-            let size = *size as usize;
-            let name = b.1;
-            let mut rng = rand_pcg::Pcg64Mcg::new(macros::BENCH_RNG_SEED);
-            let acc = gf::random_soa2(size, &mut rng);
-            let mut vel = [vec![0.0f32; size], vec![0.0f32; size]];
-            let mut pos = [vec![0.0f32; size], vec![0.0f32; size]];
-            let arefs: [&[f32]; 2] = [&acc[0], &acc[1]];
-            b.0.bench_function(criterion::BenchmarkId::new(name, size), |bencher| {
-                bencher.iter(|| {
-                    gf::euler2_soa_dispatch(arefs, &mut vel, &mut pos);
-                    std::hint::black_box((&vel, &pos));
-                })
-            });
+        bench!("glam_fearless", group, |b| {
+            macros::bench_workload(
+                b,
+                &[80000],
+                |rng, size| {
+                    (
+                        gf::random_soa2(size, rng),
+                        [vec![0.0f32; size], vec![0.0f32; size]],
+                        [vec![0.0f32; size], vec![0.0f32; size]],
+                    )
+                },
+                |s| {
+                    let (acc, vel, pos) = s;
+                    gf::euler2_soa_dispatch(gf::refs2(acc), vel, pos);
+                    std::hint::black_box((&*vel, &*pos));
+                },
+            )
         });
     }
     group.finish();
