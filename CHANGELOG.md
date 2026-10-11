@@ -30,17 +30,13 @@ The format is based on [Keep a Changelog].
 * `scripts/summary.sh` runs the summary script in a local virtual environment.
   The summary reports ns per element and highlights libraries whose confidence
   interval overlaps the fastest
-* Updated `euclid` to `0.22.7`
-* Updated `glam` to `0.21.3`
-* Updated `nalgebra` to `0.31.1`
-* Updated `static-math` to `0.2.3`
-* Updated `ultraviolet` to `0.9.0`
-* Updated `vek` to `0.15.8`
 
 ### Removed
 
 * Removed the `unstable` feature; the `ray-sphere intersection` benchmark no
   longer requires nightly
+* Removed the wide `return self` benchmarks; only the scalar `no-op baseline`
+  benchmarks remain
 
 ## [0.4.0] - 2020-11-10
 
