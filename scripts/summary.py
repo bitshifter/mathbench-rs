@@ -56,14 +56,23 @@ def parse_bench(json_dir, benches):
 
     # Criterion's estimate is per timed iteration, i.e. per batch of `size`
     # elements. Report per element so rows are comparable across sizes and
-    # across scalar and wide types.
-    size = 1
+    # across scalar and wide types. Prefer the declared element throughput:
+    # workload benches (euler, ray-sphere) register a per-lane BenchmarkId but
+    # report the full element count, so `value_str` alone would mis-scale the
+    # wide rows. Fall back to the numeric BenchmarkId for older data.
+    throughput = benchmark.get('throughput')
+    elements = throughput.get('Elements') if isinstance(throughput, dict) else None
+    if elements:
+        size = int(elements)
+    else:
+        size = 1
+        if input_size is not None:
+            try:
+                size = int(input_size)
+            except ValueError:
+                pass
     if input_size is not None:
-        try:
-            size = int(input_size)
-        except ValueError:
-            pass
-        bench_name = '{} x{}'.format(bench_name, input_size)
+        bench_name = '{} x{}'.format(bench_name, size)
 
     slope = estimates['slope']
     point = slope['point_estimate'] / size
@@ -101,15 +110,22 @@ def main():
                         help='choose from {0}'.format(CHOICES))
     args = parser.parse_args()
 
-    if args.wide or args.scalar or args.all:
-        if args.wide:
-            libs = WIDE
-        if args.scalar:
-            libs = SCALAR
-        if args.all:
-            libs = CHOICES
+    if args.all or (args.wide and args.scalar):
+        libs = CHOICES
+    elif args.wide:
+        libs = WIDE
+    elif args.scalar:
+        libs = SCALAR
     else:
         libs = list(dict.fromkeys(args.libs))
+
+    # `-a` (or `-w -s` together) includes both row kinds; otherwise restrict to
+    # the requested kind, defaulting to scalar-only.
+    if args.wide or args.scalar or args.all:
+        show_wide = args.wide or args.all
+        show_scalar = args.scalar or args.all
+    else:
+        show_wide, show_scalar = False, True
 
     root_dir = os.path.normpath(os.path.join(os.path.dirname(__file__), '..'))
     criterion_dir = os.path.join(root_dir, 'target', 'criterion')
@@ -142,12 +158,11 @@ def main():
     pt = prettytable.PrettyTable(['benchmark'] + [f'  {x:}  ' for x in libs])
     pt.title = 'ns per element'
     for bench_name in benches:
-        if args.wide:
-            if WIDE_PREFIX not in bench_name:
-                continue
-        else:
-            if WIDE_PREFIX in bench_name:
-                continue
+        is_wide = bench_name.startswith(WIDE_PREFIX)
+        if is_wide and not show_wide:
+            continue
+        if not is_wide and not show_scalar:
+            continue
 
         bench = benches[bench_name]
         # Highlight every library whose confidence interval overlaps the
@@ -171,11 +186,14 @@ def main():
             else:
                 value_strs.append(f'  {value}  ')
 
-        # strip prefix off the bench name for display
-        if bench_name.startswith(SCALAR_PREFIX):
-            bench_name = bench_name[len(SCALAR_PREFIX):]
-        elif bench_name.startswith(WIDE_PREFIX):
-            bench_name = bench_name[len(WIDE_PREFIX):]
+        # When only one row kind is shown its prefix is redundant; keep it when
+        # both are shown so scalar and wide rows with the same name stay
+        # distinguishable.
+        if not (show_wide and show_scalar):
+            if bench_name.startswith(SCALAR_PREFIX):
+                bench_name = bench_name[len(SCALAR_PREFIX):]
+            elif bench_name.startswith(WIDE_PREFIX):
+                bench_name = bench_name[len(WIDE_PREFIX):]
 
         pt.add_row([bench_name] + value_strs)
     pt.sortby = 'benchmark'
