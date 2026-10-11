@@ -344,9 +344,18 @@ benchmark!
 When running "wide" benchmarks, be sure you compile with with the appropriate
 `target-feature`s enabled, e.g. `+avx2`, for best results.
 
-There is a script in `scripts/summary.py` to summarize the results in a nice
-fashion. It requires Python 3 and the `prettytable` Python module, then can
-be run to generate an ASCII output.
+There is a script in `scripts/summary.sh` to summarize the results in a nice
+fashion, e.g. to include all libraries and generate an ASCII table:
+
+```sh
+./scripts/summary.sh -a
+```
+
+The wrapper creates a `.venv` in the repository root and installs the
+`prettytable` module into it on first use, so your system Python and its
+packages are left alone. Pass `--help` for the other options. If you would
+rather manage the environment yourself, `scripts/summary.py` is the script
+being run and only needs Python 3 and `prettytable`.
 
 ## Default and optional features
 
