@@ -111,13 +111,15 @@ def main():
     else:
         libs = list(dict.fromkeys(args.libs))
 
-    # `-a` (or `-w -s` together) includes both row kinds; otherwise restrict to
-    # the requested kind, defaulting to scalar-only.
+    # `-a` (or `-w -s` together) includes both row kinds. A kind flag
+    # restricts to that kind; without one, show the kinds of the libraries
+    # that were actually selected (scalar-only by default).
     if args.wide or args.scalar or args.all:
         show_wide = args.wide or args.all
         show_scalar = args.scalar or args.all
     else:
-        show_wide, show_scalar = False, True
+        show_wide = any(lib in WIDE for lib in libs)
+        show_scalar = any(lib in SCALAR for lib in libs)
 
     root_dir = os.path.normpath(os.path.join(os.path.dirname(__file__), '..'))
     criterion_dir = os.path.join(root_dir, 'target', 'criterion')
