@@ -4,20 +4,40 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog].
 
-## [Unreleased]
+## [0.5.0] - 2026-10-11
 
 ### Added
 
 * Added benchmarks for `glam`'s affine types
+* Added wide benchmarks that mirror the scalar broadcast workload (one matrix
+  or rotation applied to a batch of vectors or points)
 
 ### Changed
 
+* Operation benchmarks now run a batch of operations per timed iteration and
+  report per-element throughput via `Throughput::Elements`, at sizes 16 and
+  1024, from a single deterministic input pool. This amortizes per-iteration
+  harness overhead and makes results comparable across libraries and across
+  scalar and wide types
+* Scalar and wide "multiply vector" and transform benchmarks now reuse one
+  matrix or rotation across a batch of vectors or points
+* The `ray-sphere intersection` benchmark always measures the non-vectorized
+  case through an `#[inline(never)]` function
+* Per-type "return self" benchmarks were renamed to "no-op baseline"
+* `scripts/summary.sh` runs the summary script in a local virtual environment.
+  The summary reports ns per element and highlights libraries whose confidence
+  interval overlaps the fastest
 * Updated `euclid` to `0.22.7`
 * Updated `glam` to `0.21.3`
 * Updated `nalgebra` to `0.31.1`
 * Updated `static-math` to `0.2.3`
 * Updated `ultraviolet` to `0.9.0`
 * Updated `vek` to `0.15.8`
+
+### Removed
+
+* Removed the `unstable` feature; the `ray-sphere intersection` benchmark no
+  longer requires nightly
 
 ## [0.4.0] - 2020-11-10
 

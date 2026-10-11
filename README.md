@@ -194,8 +194,9 @@ and `ultraviolet` on `f32` data.
 
 These benchmarks were performed on an [AMD Ryzen 7 3800X] CPU on Linux. They were
 compiled with the `1.99.0 (b940084d7 2026-09-28)` Rust compiler. Lower
-(better) numbers are highlighted within a 2.5% range of the minimum for each
-row.
+(better) numbers are highlighted when their confidence interval overlaps that of
+the fastest library in the same row, i.e. when they are statistically
+indistinguishable from the best.
 
 The versions of the libraries tested were:
 
@@ -270,8 +271,9 @@ cargo bench --features scalar scalar
 
 These benchmarks were performed on an [AMD Ryzen 7 3800X] CPU on Linux. They were
 compiled with the `1.99.0 (b940084d7 2026-09-28)` Rust compiler. Lower
-(better) numbers are highlighted within a 2.5% range of the minimum for each
-row.
+(better) numbers are highlighted when their confidence interval overlaps that of
+the fastest library in the same row, i.e. when they are statistically
+indistinguishable from the best.
 
 The versions of the libraries tested were:
 
@@ -345,7 +347,9 @@ When running "wide" benchmarks, be sure you compile with with the appropriate
 `target-feature`s enabled, e.g. `+avx2`, for best results.
 
 There is a script in `scripts/summary.sh` to summarize the results in a nice
-fashion, e.g. to include all libraries and generate an ASCII table:
+fashion. It prints the scalar benchmarks by default; pass `-w` for the wide
+benchmarks, or `-w -s` / `-a` to include both. e.g. to include all libraries and
+both row kinds and generate an ASCII table:
 
 ```sh
 ./scripts/summary.sh -a
