@@ -2,7 +2,9 @@
 
 import argparse
 import json
+import math
 import os
+import statistics
 import sys
 import prettytable
 
@@ -17,6 +19,9 @@ CHOICES = SCALAR + WIDE
 
 SCALAR_PREFIX = 'scalar '
 WIDE_PREFIX = 'wide '
+
+# One-sided 95% z-score for the non-inferiority test in `is_equivalent`.
+EQUIVALENCE_Z = statistics.NormalDist().inv_cdf(0.95)
 
 
 class DefaultListAction(argparse.Action):
@@ -66,30 +71,39 @@ def parse_bench(json_dir, benches):
 
         slope = estimates['slope']
         point = slope['point_estimate'] / size
-        interval = slope.get('confidence_interval') or {}
-        lower = interval.get('lower_bound')
-        upper = interval.get('upper_bound')
-        lower = lower / size if lower is not None else None
-        upper = upper / size if upper is not None else None
+        se = slope.get('standard_error')
+        if se is None:
+            # Older results may carry only the interval; recover the standard
+            # error from it so the equivalence test still has an input.
+            interval = slope.get('confidence_interval') or {}
+            lower = interval.get('lower_bound')
+            upper = interval.get('upper_bound')
+            if lower is not None and upper is not None:
+                level = interval.get('confidence_level', 0.95)
+                z = statistics.NormalDist().inv_cdf(0.5 + level / 2.0)
+                se = (upper - lower) / (2.0 * z)
+            else:
+                se = 0.0
+        se = se / size
     except (KeyError, TypeError, ValueError, OSError) as e:
         fail("unexpected data in '{}': {}".format(json_dir, e))
 
-    benches.setdefault(bench_name, {}).setdefault(
-        lib_name, (point, lower, upper))
+    benches.setdefault(bench_name, {}).setdefault(lib_name, (point, se))
 
 
-def overlaps_best(entry, best):
-    """True when `entry`'s confidence interval overlaps the row minimum's.
+def is_equivalent(entry, best, margin):
+    """True when `entry` is not more than `margin` slower than `best`.
 
-    Falls back to the point estimate when a confidence interval is missing.
+    Non-inferiority test on the per-element slope: the upper bound of the
+    one-sided 95% interval for `entry - best` must not exceed `margin` times
+    the best point estimate. A library with a wide interval therefore fails
+    the test instead of being highlighted as indistinguishable.
     """
-    point, lower, upper = entry
-    best_point, best_lower, best_upper = best
-    lower = lower if lower is not None else point
-    upper = upper if upper is not None else point
-    best_lower = best_lower if best_lower is not None else best_point
-    best_upper = best_upper if best_upper is not None else best_point
-    return lower <= best_upper and upper >= best_lower
+    point, se = entry
+    best_point, best_se = best
+    diff = point - best_point
+    se_diff = math.sqrt(se * se + best_se * best_se)
+    return diff + EQUIVALENCE_Z * se_diff <= margin * best_point
 
 
 def main():
@@ -97,10 +111,14 @@ def main():
     parser.add_argument('-w', '--wide', action='store_true', help='include all wide libraries')
     parser.add_argument('-s', '--scalar', action='store_true', help='include all scalar libraries')
     parser.add_argument('-a', '--all', action='store_true', help='include all libraries')
+    parser.add_argument('-t', '--threshold', type=float, default=2.5,
+                        help='percent of the fastest row value within which a '
+                             'library is highlighted (default: 2.5)')
     parser.add_argument('libs', nargs='*', action=DefaultListAction,
                         default=DEFAULT,
                         help='choose from {0}'.format(CHOICES))
     args = parser.parse_args()
+    margin = args.threshold / 100.0
 
     if args.all or (args.wide and args.scalar):
         libs = CHOICES
@@ -154,14 +172,15 @@ def main():
             continue
 
         bench = benches[bench_name]
-        # Highlight every library whose confidence interval overlaps the
-        # fastest point estimate: those are statistically indistinguishable
-        # from the best and should not be presented as a winner.
+        # Highlight a library when it is not more than `margin` slower than
+        # the fastest in the row and the one-sided 95% interval for the
+        # difference rules out a slowdown larger than `margin`. The fastest
+        # library is the reference and is always highlighted.
         if len(libs) == 1:
-            best = None
+            best_lib = None
         else:
-            best = min((bench[x] for x in libs if x in bench),
-                       key=lambda entry: entry[0])
+            best_lib = min((x for x in libs if x in bench),
+                           key=lambda x: bench[x][0])
 
         value_strs = []
         for x in libs:
@@ -170,7 +189,9 @@ def main():
                 value_strs.append(fmt_value(None))
                 continue
             value = fmt_value(entry[0])
-            if best is not None and overlaps_best(entry, best):
+            if best_lib is not None and (
+                    x == best_lib
+                    or is_equivalent(entry, bench[best_lib], margin)):
                 value_strs.append(f'__{value}__')
             else:
                 value_strs.append(f'  {value}  ')

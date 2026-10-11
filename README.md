@@ -195,9 +195,10 @@ and `ultraviolet` on `f32` data.
 
 These benchmarks were performed on an [AMD Ryzen 7 3800X] CPU on Linux. They were
 compiled with the `1.99.0 (b940084d7 2026-09-28)` Rust compiler. Lower
-(better) numbers are highlighted when their confidence interval overlaps that of
-the fastest library in the same row, i.e. when they are statistically
-indistinguishable from the best.
+(better) numbers are highlighted when the library is within `-t` percent
+(default 2.5) of the fastest in the row and the one-sided 95% interval for the
+difference rules out a slowdown larger than that margin, i.e. when the library
+is practically equivalent to the best.
 
 The versions of the libraries tested were:
 
@@ -272,9 +273,10 @@ cargo bench --features scalar scalar
 
 These benchmarks were performed on an [AMD Ryzen 7 3800X] CPU on Linux. They were
 compiled with the `1.99.0 (b940084d7 2026-09-28)` Rust compiler. Lower
-(better) numbers are highlighted when their confidence interval overlaps that of
-the fastest library in the same row, i.e. when they are statistically
-indistinguishable from the best.
+(better) numbers are highlighted when the library is within `-t` percent
+(default 2.5) of the fastest in the row and the one-sided 95% interval for the
+difference rules out a slowdown larger than that margin, i.e. when the library
+is practically equivalent to the best.
 
 The versions of the libraries tested were:
 
@@ -349,8 +351,9 @@ When running "wide" benchmarks, be sure you compile with with the appropriate
 
 There is a script in `scripts/summary.sh` to summarize the results in a nice
 fashion. It prints the scalar benchmarks by default; pass `-w` for the wide
-benchmarks, or `-w -s` / `-a` to include both. e.g. to include all libraries and
-both row kinds and generate an ASCII table:
+benchmarks, or `-w -s` / `-a` to include both. `-t` sets the equivalence margin
+in percent used for highlighting (default 2.5). e.g. to include all libraries
+and both row kinds and generate an ASCII table:
 
 ```sh
 ./scripts/summary.sh -a
@@ -439,7 +442,7 @@ the benchmarks were run, including:
 * The Rust version
 * The build settings used, especially when they differ from the defaults
 * The specification of the hardware that was used
-* The output of `scripts/summary.py`
+* The output of `scripts/summary.sh`
 * The full Criterion output from `target/criterion`
 
 ## Adding a new library

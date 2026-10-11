@@ -36,6 +36,9 @@ macro_rules! bench_euler {
                     *velocity += *acceleration * dt;
                     *position += *velocity * dt;
                 }
+                // Keep the writes live so the loop cannot be optimized away.
+                std::hint::black_box(&data.pos[..]);
+                std::hint::black_box(&data.vel[..]);
             })
         });
     }};

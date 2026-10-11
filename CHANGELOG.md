@@ -32,8 +32,9 @@ The format is based on [Keep a Changelog].
   ray-sphere intersection benchmarks (previously `Vec3`)
 * Per-type "return self" benchmarks were renamed to "no-op baseline"
 * `scripts/summary.sh` runs the summary script in a local virtual environment.
-  The summary reports ns per element and highlights libraries whose confidence
-  interval overlaps the fastest
+  The summary reports ns per element and highlights a library when it is within
+  a configurable margin (`-t`, default 2.5%) of the fastest in the row and the
+  one-sided 95% interval rules out a larger slowdown
 
 ### Removed
 
@@ -128,7 +129,8 @@ The format is based on [Keep a Changelog].
   benchmarking functions has been silently deprecated in `0.3.0`.
 
 [Keep a Changelog]: https://keepachangelog.com/
-[Unreleased]: https://github.com/bitshifter/mathbench-rs/compare/0.4.0...HEAD
+[Unreleased]: https://github.com/bitshifter/mathbench-rs/compare/0.5.0...HEAD
+[0.5.0]: https://github.com/bitshifter/mathbench-rs/compare/0.4.0...0.5.0
 [0.4.0]: https://github.com/bitshifter/mathbench-rs/compare/0.3.2...0.4.0
 [0.3.2]: https://github.com/bitshifter/mathbench-rs/compare/0.3.1...0.3.2
 [0.3.1]: https://github.com/bitshifter/mathbench-rs/compare/0.3.0...0.3.1
