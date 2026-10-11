@@ -14,7 +14,7 @@ macro_rules! bench_intersection_wide_uv {
             result: Vec<$wt>,
         }
 
-        let mut rng = rand_pcg::Pcg64Mcg::new(rand::random());
+        let mut rng = rand_pcg::Pcg64Mcg::new(macros::BENCH_RNG_SEED);
         let ray_d = (0..*$size)
             .into_iter()
             .map(|_| <$t as mathbench::BenchValue>::random_value(&mut rng).normalized())
@@ -71,7 +71,7 @@ macro_rules! bench_intersection_wide_na {
             result: Vec<$wt>,
         }
 
-        let mut rng = rand_pcg::Pcg64Mcg::new(rand::random());
+        let mut rng = rand_pcg::Pcg64Mcg::new(macros::BENCH_RNG_SEED);
         let ray_d = (0..*$size)
             .into_iter()
             .map(|_| <$t as mathbench::BenchValue>::random_value(&mut rng).normalize())
@@ -126,7 +126,7 @@ macro_rules! bench_intersection_scalar {
             result: Vec<f32>,
         }
 
-        let mut rng = rand_pcg::Pcg64Mcg::new(rand::random());
+        let mut rng = rand_pcg::Pcg64Mcg::new(macros::BENCH_RNG_SEED);
         let ray_d = (0..*$size)
             .into_iter()
             .map(|_| <$t as mathbench::BenchValue>::random_value(&mut rng).$norm())
@@ -173,7 +173,14 @@ macro_rules! bench_intersection_scalar {
 }
 
 fn bench_ray_sphere_intersect_scalar(c: &mut Criterion) {
-    let mut group = c.benchmark_group("scalar ray-sphere intersection");
+    // The `unstable` feature forces the inner closure to not be inlined so the
+    // autovectorizer cannot vectorize across it. Flag that in the name so the
+    // two modes are not confused in the results.
+    #[cfg(feature = "unstable")]
+    let group_name = "scalar ray-sphere intersection (no inline)";
+    #[cfg(not(feature = "unstable"))]
+    let group_name = "scalar ray-sphere intersection";
+    let mut group = c.benchmark_group(group_name);
     {
         let size = &10000;
         group.throughput(Throughput::Elements(*size as u64));
@@ -206,7 +213,11 @@ fn bench_ray_sphere_intersect_scalar(c: &mut Criterion) {
 }
 
 fn bench_ray_sphere_intersect_wide(c: &mut Criterion) {
-    let mut group = c.benchmark_group("wide ray-sphere intersection");
+    #[cfg(feature = "unstable")]
+    let group_name = "wide ray-sphere intersection (no inline)";
+    #[cfg(not(feature = "unstable"))]
+    let group_name = "wide ray-sphere intersection";
+    let mut group = c.benchmark_group(group_name);
     {
         let size = &80000;
         group.throughput(Throughput::Elements(*size as u64));

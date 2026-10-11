@@ -13,7 +13,7 @@ macro_rules! bench_euler {
             pos: Vec<$t>,
         }
 
-        let mut rng = rand_pcg::Pcg64Mcg::new(rand::random());
+        let mut rng = rand_pcg::Pcg64Mcg::new(macros::BENCH_RNG_SEED);
         let mut data = TestData {
             acc: vec![<$t as mathbench::BenchValue>::random_value(&mut rng); *$size],
             vel: vec![$zero; *$size],
