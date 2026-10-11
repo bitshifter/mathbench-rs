@@ -20,7 +20,8 @@ The format is based on [Keep a Changelog].
   harness overhead and makes results comparable across libraries and across
   scalar and wide types
 * Scalar and wide "multiply vector" and transform benchmarks now reuse one
-  matrix or rotation across a batch of vectors or points
+  matrix or rotation across a batch of vectors or points (for wide types, one
+  packed value holding one transform per lane)
 * The `ray-sphere intersection` benchmark always measures the non-vectorized
   case through an `#[inline(never)]` function
 * The `euler` and `ray-sphere` workload benchmarks register their benchmark id

@@ -55,7 +55,7 @@ pub fn bench_context_sized<M, F, T>(
 ///
 /// **glam** (always compiled, no `#[cfg]` gate):
 /// ```ignore
-/// bench!("glam", group, |b| { bench_unop!(b, op => length, ty => Vec3) });
+/// bench!("glam", group, |b| { bench_unop!(b, op => length, ty => Vec3A) });
 /// ```
 ///
 /// **Gated library** (feature name == display name):

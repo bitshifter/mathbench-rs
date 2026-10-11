@@ -52,8 +52,10 @@ libraries and across scalar and wide types. The 16 point still carries a little
 of that fixed overhead (more so for wider types, which need fewer operations per
 batch); 1024 is close to pure throughput. Compare libraries at the same size. A
 single input pool is generated per benchmark and reused across sizes. The
-matrix/quaternion "multiply vector" and transform benches apply one transform to
-a batch of vectors or points, matching the throughput workload described above.
+matrix/quaternion "multiply vector" and transform benches broadcast one
+transform across a batch of vectors or points, matching the throughput workload
+described above. For wide types "one transform" is a single packed value (e.g.
+the four matrices in a `Mat4x4`) reused for the whole batch.
 
 Despite best attempts, take the results of micro benchmarks with a pinch of
 salt.
@@ -163,8 +165,7 @@ ones, with the examples of the Euler integration and ray-sphere intersection
 benchmarks from `mathbench`.
 
 Note that the `nalgebra` wide benchmarks use `simba`'s stable, `wide` crate
-backed types (`WideF32x4`, `WideF32x8` and `WideF64x4`), so they build on
-stable Rust.
+backed types (`WideF32x4` and `WideF32x8`), so they build on stable Rust.
 
 Additionally the `f32x8` benchmarks will require the `AVX2` instruction set, to
 enable that you will need to build with `RUSTFLAGS='-C target-feature=+avx2`.
@@ -447,19 +448,23 @@ the benchmarks were run, including:
 
 ## Adding a new library
 
-There are different steps involved for adding a unit tests and benchmarks for a
+There are different steps involved for adding unit tests and benchmarks for a
 new library.
 
-Benchmarks require an implementation of the `mathbench::RandomVec` trait for the
-types you want to benchmark. If the type implements the `rand` crate
-`distribution::Distribution` trait for `Standard` then you can simply use the
-`impl_random_vec!` macro in `src/lib.rs`. Otherwise you can provide a function
-that generates a new random value of your type pass that to `impl_random_vec!`.
+Benchmarks require an implementation of the `mathbench::BenchValue` trait for
+the types you want to benchmark. If a function returning your type (or a type
+convertible into it, such as a `mint` type) is available then you can use the
+`impl_bench_value!` macro in `src/lib.rs`, e.g.
+`impl_bench_value!(glam::Vec3, random_mint_vec3)`. Otherwise implement
+`BenchValue::random_value` by hand.
 
-To add the new libary type to a benchmark, add another `bench_function` call to
-the `Criterion` `BenchmarkGroup`.
+To add the new library type to a benchmark, add a `bench!` arm for it in the
+relevant `benches/*.rs` file and call one of the `bench_*` macros from
+`benches/support/macros.rs` (for example `bench_unop!` for a single-operand
+operation or `bench_binop!` for a two-operand one). The `bench!` macro gates the
+benchmark on the library's Cargo feature.
 
-Increment the patch version number of `mathbench` in the `Cargo.toml`.
+Increment the version number of `mathbench` in `Cargo.toml`.
 
 Update `CHANGELOG.md`.
 
