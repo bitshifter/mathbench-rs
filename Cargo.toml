@@ -86,10 +86,11 @@ package = "wide"
 version = "0.7"
 optional = true
 
-# Local prototype crate: lives on the `glam-fearless` branch of pathtrace-rs.
+# Prototype crate on the `glam-fearless` branch of pathtrace-rs.
 [dependencies.glam_fearless]
 package = "glam-fearless"
-path = "../pathtrace-rs/glam-fearless"
+git = "https://github.com/bitshifter/pathtrace-rs"
+branch = "glam-fearless"
 optional = true
 
 # `#[simd]` expands to paths in `fearless_simd`, so it must be a direct dependency.
