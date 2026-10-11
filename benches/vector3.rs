@@ -31,33 +31,6 @@ fn bench_vector3_ret_self(c: &mut Criterion) {
     group.finish();
 }
 
-fn bench_vector3_ret_self_wide(c: &mut Criterion) {
-    let mut group = c.benchmark_group("wide vector3 harness overhead");
-    bench!("glam_f32x1", group, |b| {
-        use glam::Vec3A;
-        bench_unop_wide!(b, width => 1, op => ret_self, ty => Vec3A)
-    });
-    bench!("ultraviolet_f32x4", group, |b| {
-        use ultraviolet::Vec3x4;
-        bench_unop_wide!(b, width => 4, op => ret_self, ty => Vec3x4)
-    });
-    bench!("nalgebra_f32x4", group, |b| {
-        use nalgebra::Vector3;
-        use simba::simd::WideF32x4;
-        bench_unop_wide!(b, width => 4, op => ret_self, ty => Vector3<WideF32x4>)
-    });
-    bench!("ultraviolet_f32x8", group, |b| {
-        use ultraviolet::Vec3x8;
-        bench_unop_wide!(b, width => 8, op => ret_self, ty => Vec3x8)
-    });
-    bench!("nalgebra_f32x8", group, |b| {
-        use nalgebra::Vector3;
-        use simba::simd::WideF32x8;
-        bench_unop_wide!(b, width => 8, op => ret_self, ty => Vector3<WideF32x8>)
-    });
-    group.finish();
-}
-
 fn bench_vector3_length(c: &mut Criterion) {
     let mut group = c.benchmark_group("scalar vector3 length");
     bench!("glam", group, |b| {
@@ -288,7 +261,6 @@ fn bench_vector3_cross_wide(c: &mut Criterion) {
 criterion_group!(
     vector3_benches,
     bench_vector3_ret_self,
-    bench_vector3_ret_self_wide,
     bench_vector3_length,
     bench_vector3_length_wide,
     bench_vector3_normalize,

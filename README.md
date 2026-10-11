@@ -208,28 +208,28 @@ cargo bench --features scalar scalar
 | matrix2 mul matrix2            |     1.1531 ns   |   __1.1030 ns__ |     1.2088 ns   |       N/A       |     8.8631 ns   |     1.1403 ns   |   __1.1052 ns__ |
 | matrix2 mul vector2 x1         |   __0.9283 ns__ |     1.1561 ns   |     1.1906 ns   |       N/A       |     4.6570 ns   |     0.9584 ns   |     1.1698 ns   |
 | matrix2 mul vector2 x100       | __171.1991 ns__ |   179.7413 ns   |   178.3703 ns   |       N/A       |   463.2815 ns   | __171.7605 ns__ |   178.8623 ns   |
-| matrix2 return self            |   __1.1184 ns__ |     1.6710 ns   |     1.6165 ns   |       N/A       |     1.7853 ns   |     1.6190 ns   |     1.7241 ns   |
+| matrix2 harness overhead            |   __1.1184 ns__ |     1.6710 ns   |     1.6165 ns   |       N/A       |     1.7853 ns   |     1.6190 ns   |     1.7241 ns   |
 | matrix2 transpose              |     1.2241 ns   |     1.3370 ns   |     1.3974 ns   |       N/A       |     0.9063 ns   |       N/A       |   __0.8504 ns__ |
 | matrix3 determinant            |   __2.1892 ns__ |     2.2352 ns   |   __2.1973 ns__ |       N/A       |   __2.1650 ns__ |       N/A       |    10.4218 ns   |
 | matrix3 inverse                |   __5.3608 ns__ |     9.0642 ns   |     5.6807 ns   |       N/A       |       N/A       |       N/A       |    12.2288 ns   |
 | matrix3 mul matrix3            |     4.6602 ns   |     5.6509 ns   |   __4.4501 ns__ |       N/A       |    36.7220 ns   |       N/A       |   __4.5589 ns__ |
 | matrix3 mul vector3 x1         |   __2.1895 ns__ |     3.4878 ns   |   __2.1900 ns__ |       N/A       |    12.7325 ns   |       N/A       |     2.3641 ns   |
 | matrix3 mul vector3 x100       |   __0.3649 us__ |     0.4132 us   |   __0.3661 us__ |       N/A       |      1.276 us   |       N/A       |   __0.3659 us__ |
-| matrix3 return self            |     2.9568 ns   |   __2.9042 ns__ |   __2.8369 ns__ |       N/A       |   __2.8971 ns__ |       N/A       |   __2.9001 ns__ |
+| matrix3 harness overhead            |     2.9568 ns   |   __2.9042 ns__ |   __2.8369 ns__ |       N/A       |   __2.8971 ns__ |       N/A       |   __2.9001 ns__ |
 | matrix3 transpose              |     2.1894 ns   |     2.1891 ns   |   __1.9596 ns__ |       N/A       |     2.1792 ns   |       N/A       |   __1.9453 ns__ |
 | matrix4 determinant            |   __4.3934 ns__ |     7.1764 ns   |    40.9609 ns   |    11.2154 ns   |    12.2779 ns   |       N/A       |     4.6378 ns   |
 | matrix4 inverse                |  __12.1455 ns__ |    30.8124 ns   |    40.8410 ns   |    54.4792 ns   |    27.3142 ns   |       N/A       |    20.0627 ns   |
 | matrix4 mul matrix4            |   __4.4589 ns__ |     6.2970 ns   |     4.7309 ns   |     6.4629 ns   |   103.4461 ns   |       N/A       |     5.0440 ns   |
 | matrix4 mul vector4 x1         |     2.1002 ns   |   __1.9625 ns__ |   __1.9185 ns__ |       N/A       |    24.5601 ns   |       N/A       |     2.2970 ns   |
 | matrix4 mul vector4 x100       |   __0.5092 us__ |     0.5362 us   |     0.5379 us   |       N/A       |      2.491 us   |       N/A       |     0.5361 us   |
-| matrix4 return self            |   __3.3286 ns__ |   __3.3602 ns__ |   __3.3612 ns__ |       N/A       |   __3.3757 ns__ |       N/A       |   __3.3850 ns__ |
+| matrix4 harness overhead            |   __3.3286 ns__ |   __3.3602 ns__ |   __3.3612 ns__ |       N/A       |   __3.3757 ns__ |       N/A       |   __3.3850 ns__ |
 | matrix4 transpose              |   __2.7248 ns__ |     7.6718 ns   |     7.7156 ns   |       N/A       |     7.6853 ns   |       N/A       |     7.6577 ns   |
 | ray-sphere intersection x10000 |    __13.37 us__ |     __13.3 us__ |    __13.37 us__ |    __13.31 us__ |    __13.37 us__ |       N/A       |     __13.3 us__ |
 | rotation3 inverse              |   __1.6893 ns__ |     2.5085 ns   |     2.5737 ns   |     2.5909 ns   |     2.4670 ns   |       N/A       |     2.5312 ns   |
 | rotation3 mul rotation3        |   __1.8869 ns__ |     2.6284 ns   |     2.4297 ns   |     3.4803 ns   |     3.0026 ns   |       N/A       |     3.2824 ns   |
 | rotation3 mul vector3 x1       |     3.1971 ns   |   __2.9104 ns__ |     3.3983 ns   |     3.1297 ns   |     5.1255 ns   |       N/A       |     4.3788 ns   |
 | rotation3 mul vector3 x100     |   347.7257 ns   | __307.8286 ns__ |   349.4552 ns   |   346.2632 ns   |   506.3045 ns   |       N/A       |   431.1647 ns   |
-| rotation3 return self          |   __1.4740 ns__ |     1.7942 ns   |     1.8652 ns   |       N/A       |     1.7913 ns   |       N/A       |     1.8121 ns   |
+| rotation3 harness overhead          |   __1.4740 ns__ |     1.7942 ns   |     1.8652 ns   |       N/A       |     1.7913 ns   |       N/A       |     1.8121 ns   |
 | transform point2 x1            |   __1.0489 ns__ |     2.0296 ns   |     2.4919 ns   |     1.3207 ns   |     4.4160 ns   |     1.0863 ns   |     1.8828 ns   |
 | transform point2 x100          |   268.6793 ns   |   335.3824 ns   |   357.9078 ns   | __233.8814 ns__ |   501.7938 ns   |   268.9675 ns   |   331.0402 ns   |
 | transform point3 x1            |   __1.9061 ns__ |    15.0678 ns   |     4.0615 ns   |     3.3012 ns   |    12.3817 ns   |     2.0046 ns   |     3.5482 ns   |
@@ -240,15 +240,15 @@ cargo bench --features scalar scalar
 | transform vector3 x100         |   __0.4938 us__ |       1.19 us   |     0.5509 us   |     0.5109 us   |      1.906 us   |       N/A       |      0.522 us   |
 | transform2 inverse             |   __2.2689 ns__ |       N/A       |     5.6429 ns   |     2.9631 ns   |       N/A       |     2.5809 ns   |       N/A       |
 | transform2 mul transform2      |     2.1811 ns   |       N/A       |     4.3640 ns   |   __1.9851 ns__ |       N/A       |     2.1966 ns   |       N/A       |
-| transform2 return self         |   __2.2848 ns__ |       N/A       |     2.9137 ns   |     2.4864 ns   |       N/A       |   __2.2808 ns__ |       N/A       |
+| transform2 harness overhead         |   __2.2848 ns__ |       N/A       |     2.9137 ns   |     2.4864 ns   |       N/A       |   __2.2808 ns__ |       N/A       |
 | transform3 inverse             |   __6.6932 ns__ |       N/A       |    40.6221 ns   |    38.0707 ns   |       N/A       |    20.7270 ns   |       N/A       |
 | transform3 mul transform3d     |   __3.5545 ns__ |       N/A       |     4.8629 ns   |     6.3285 ns   |       N/A       |     4.4894 ns   |       N/A       |
-| transform3 return self         |   __3.3643 ns__ |       N/A       |   __3.3640 ns__ |   __3.3515 ns__ |       N/A       |   __3.3487 ns__ |       N/A       |
+| transform3 harness overhead         |   __3.3643 ns__ |       N/A       |   __3.3640 ns__ |   __3.3515 ns__ |       N/A       |   __3.3487 ns__ |       N/A       |
 | vector3 cross                  |   __1.0511 ns__ |     1.5374 ns   |     1.5364 ns   |     1.5369 ns   |     1.5453 ns   |       N/A       |     1.5370 ns   |
 | vector3 dot                    |   __0.9757 ns__ |     1.2293 ns   |     1.2324 ns   |     1.2385 ns   |     1.2313 ns   |       N/A       |     1.2214 ns   |
 | vector3 length                 |   __1.3147 ns__ |   __1.3128 ns__ |   __1.3205 ns__ |   __1.3079 ns__ |   __1.3108 ns__ |       N/A       |   __1.3091 ns__ |
 | vector3 normalize              |   __2.1971 ns__ |     2.5868 ns   |     3.0146 ns   |     3.0183 ns   |     2.9928 ns   |       N/A       |     2.6405 ns   |
-| vector3 return self            |   __1.0859 ns__ |     1.9663 ns   |     1.9419 ns   |       N/A       |     1.9943 ns   |       N/A       |     2.1768 ns   |
+| vector3 harness overhead            |   __1.0859 ns__ |     1.9663 ns   |     1.9419 ns   |       N/A       |     1.9943 ns   |       N/A       |     2.1768 ns   |
 
 ### Wide benchmarks
 
@@ -279,7 +279,6 @@ RUSTFLAGS='-C target-feature=+avx2' cargo bench --features wide wide
 | matrix2 mul matrix2 x256       | __688.8713 ns__ |         844.2290 ns   |      851.0381 ns   |       __678.6878 ns__ |    __675.6790 ns__ |
 | matrix2 mul vector2 x16        |    12.8488 ns   |           7.3729 ns   |        7.4172 ns   |         __5.9231 ns__ |        6.0974 ns   |
 | matrix2 mul vector2 x256       |   482.0150 ns   |       __423.7576 ns__ |    __423.9817 ns__ |       __425.9341 ns__ |    __426.8713 ns__ |
-| matrix2 return self x16        |     9.8083 ns   |           9.8692 ns   |        9.9349 ns   |         __7.2746 ns__ |      __7.3264 ns__ |
 | matrix2 transpose x16          |     9.8868 ns   |          40.2972 ns   |       34.4561 ns   |          11.6302 ns   |      __9.0992 ns__ |
 | matrix3 determinant x16        |    28.6072 ns   |          10.9073 ns   |          N/A       |         __7.8069 ns__ |          N/A       |
 | matrix3 inverse x16            |    96.2555 ns   |          38.6667 ns   |          N/A       |        __22.0202 ns__ |          N/A       |
@@ -287,7 +286,6 @@ RUSTFLAGS='-C target-feature=+avx2' cargo bench --features wide wide
 | matrix3 mul matrix3 x256       |      1.619 us   |            1.615 us   |         1.656 us   |          __1.551 us__ |       __1.582 us__ |
 | matrix3 mul vector3 x16        |    34.1728 ns   |          13.8191 ns   |       13.7320 ns   |         __9.7462 ns__ |       10.6091 ns   |
 | matrix3 mul vector3 x256       |   954.4842 ns   |       __789.3333 ns__ |    __792.1095 ns__ |       __779.5657 ns__ |    __776.0663 ns__ |
-| matrix3 return self x16        |    43.1504 ns   |          35.2027 ns   |       35.3488 ns   |        __27.8165 ns__ |     __27.4926 ns__ |
 | matrix3 transpose x16          |    52.7683 ns   |          83.7157 ns   |       62.4901 ns   |          35.9252 ns   |     __31.9769 ns__ |
 | matrix4 determinant x16        |    62.0342 ns   |          20.9124 ns   |          N/A       |        __14.6545 ns__ |          N/A       |
 | matrix4 inverse x16            |   198.0560 ns   |       __104.5414 ns__ |          N/A       |         120.0865 ns   |          N/A       |
@@ -295,13 +293,11 @@ RUSTFLAGS='-C target-feature=+avx2' cargo bench --features wide wide
 | matrix4 mul matrix4 x256       |      3.414 us   |            2.978 us   |         3.131 us   |          __2.892 us__ |         3.857 us   |
 | matrix4 mul vector4 x16        |    34.5807 ns   |          29.2073 ns   |       29.1650 ns   |          22.6779 ns   |     __21.6758 ns__ |
 | matrix4 mul vector4 x256       |      1.312 us   |          __1.257 us__ |       __1.261 us__ |          __1.242 us__ |       __1.234 us__ |
-| matrix4 return self x16        |  __73.6516 ns__ |        __73.3864 ns__ |       76.9283 ns   |         153.5618 ns   |      149.6711 ns   |
 | matrix4 transpose x16          |  __73.5089 ns__ |          93.7827 ns   |       89.3917 ns   |          96.3356 ns   |       87.0057 ns   |
 | ray-sphere intersection x80000 |      497.6 us   |            49.65 us   |         50.09 us   |          __25.26 us__ |       __25.42 us__ |
 | rotation3 inverse x16          |     9.8997 ns   |           9.4487 ns   |        9.4114 ns   |           7.3071 ns   |      __6.9988 ns__ |
 | rotation3 mul rotation3 x16    |    26.5663 ns   |          13.1697 ns   |       13.1350 ns   |         __9.4821 ns__ |      __9.7145 ns__ |
 | rotation3 mul vector3 x16      |    53.2221 ns   |          17.5765 ns   |       14.6217 ns   |           9.5778 ns   |      __8.5011 ns__ |
-| rotation3 return self x16      |     9.7975 ns   |          10.6415 ns   |       10.5633 ns   |         __7.4200 ns__ |      __7.4645 ns__ |
 | transform point2 x16           |    15.6934 ns   |          12.4223 ns   |          N/A       |         __9.3164 ns__ |          N/A       |
 | transform point2 x256          | __691.7836 ns__ |       __676.6860 ns__ |          N/A       |       __683.5775 ns__ |          N/A       |
 | transform point3 x16           |    31.7974 ns   |          24.2547 ns   |          N/A       |        __18.1546 ns__ |          N/A       |
@@ -314,7 +310,6 @@ RUSTFLAGS='-C target-feature=+avx2' cargo bench --features wide wide
 | vector3 dot x16                |    12.9763 ns   |           6.5773 ns   |        6.5842 ns   |           4.7245 ns   |      __4.5946 ns__ |
 | vector3 length x16             |    20.5391 ns   |           5.5195 ns   |        5.5261 ns   |         __3.9270 ns__ |      __3.8417 ns__ |
 | vector3 normalize x16          |    35.2002 ns   |          10.3503 ns   |       15.2167 ns   |         __7.3365 ns__ |        8.5396 ns   |
-| vector3 return self x16        |     9.8028 ns   |          25.4662 ns   |       25.4119 ns   |         __5.6623 ns__ |      __5.6618 ns__ |
 
 [AMD Ryzen 7 3800X]: https://www.amd.com/en/products/cpu/amd-ryzen-7-3800x
 

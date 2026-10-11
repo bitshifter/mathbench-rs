@@ -32,33 +32,6 @@ fn bench_matrix4_ret_self(c: &mut Criterion) {
     group.finish();
 }
 
-fn bench_matrix4_ret_self_wide(c: &mut Criterion) {
-    let mut group = c.benchmark_group("wide matrix4 harness overhead");
-    bench!("glam_f32x1", group, |b| {
-        use glam::Mat4;
-        bench_unop_wide!(b, width => 1, op => ret_self, ty => Mat4)
-    });
-    bench!("ultraviolet_f32x4", group, |b| {
-        use ultraviolet::Mat4x4;
-        bench_unop_wide!(b, width => 4, op => ret_self, ty => Mat4x4)
-    });
-    bench!("nalgebra_f32x4", group, |b| {
-        use nalgebra::Matrix4;
-        use simba::simd::WideF32x4;
-        bench_unop_wide!(b, width => 4, op => ret_self, ty => Matrix4<WideF32x4>)
-    });
-    bench!("ultraviolet_f32x8", group, |b| {
-        use ultraviolet::Mat4x8;
-        bench_unop_wide!(b, width => 8, op => ret_self, ty => Mat4x8)
-    });
-    bench!("nalgebra_f32x8", group, |b| {
-        use nalgebra::Matrix4;
-        use simba::simd::WideF32x8;
-        bench_unop_wide!(b, width => 8, op => ret_self, ty => Matrix4<WideF32x8>)
-    });
-    group.finish();
-}
-
 fn bench_matrix4_transpose(c: &mut Criterion) {
     let mut group = c.benchmark_group("scalar matrix4 transpose");
     bench!("glam", group, |b| {
@@ -319,7 +292,6 @@ fn bench_matrix4_mul_vector4_wide(c: &mut Criterion) {
 criterion_group!(
     matrix4_benches,
     bench_matrix4_ret_self,
-    bench_matrix4_ret_self_wide,
     bench_matrix4_transpose,
     bench_matrix4_transpose_wide,
     bench_matrix4_determinant,

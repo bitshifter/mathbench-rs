@@ -32,33 +32,6 @@ fn bench_rotation3_nop(c: &mut Criterion) {
     group.finish();
 }
 
-fn bench_rotation3_nop_wide(c: &mut Criterion) {
-    let mut group = c.benchmark_group("wide rotation3 harness overhead");
-    bench!("glam_f32x1", group, |b| {
-        use glam::Quat;
-        bench_unop_wide!(b, width => 1, op => ret_self, ty => Quat)
-    });
-    bench!("ultraviolet_f32x4", group, |b| {
-        use ultraviolet::Rotor3x4;
-        bench_unop_wide!(b, width => 4, op => ret_self, ty => Rotor3x4)
-    });
-    bench!("nalgebra_f32x4", group, |b| {
-        use nalgebra::UnitQuaternion;
-        use simba::simd::WideF32x4;
-        bench_unop_wide!(b, width => 4, op => ret_self, ty => UnitQuaternion<WideF32x4>)
-    });
-    bench!("ultraviolet_f32x8", group, |b| {
-        use ultraviolet::Rotor3x8;
-        bench_unop_wide!(b, width => 8, op => ret_self, ty => Rotor3x8)
-    });
-    bench!("nalgebra_f32x8", group, |b| {
-        use nalgebra::UnitQuaternion;
-        use simba::simd::WideF32x8;
-        bench_unop_wide!(b, width => 8, op => ret_self, ty => UnitQuaternion<WideF32x8>)
-    });
-    group.finish();
-}
-
 fn bench_rotation3_inverse(c: &mut Criterion) {
     // unit quaternion inverse is the conjugate
     let mut group = c.benchmark_group("scalar rotation3 inverse");
@@ -235,7 +208,6 @@ fn bench_rotation3_mul_vector3_wide(c: &mut Criterion) {
 criterion_group!(
     rotation3_benches,
     bench_rotation3_nop,
-    bench_rotation3_nop_wide,
     bench_rotation3_inverse,
     bench_rotation3_inverse_wide,
     bench_rotation3_mul_rotation3,
