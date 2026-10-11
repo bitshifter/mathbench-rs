@@ -397,16 +397,12 @@ each benchmarked library.
   types from `ultraviolet` or `nalgebra` respectively.
 * `wide` - enables all "wide" type benchmarks, these build on stable Rust.
 * `all` - enables all supported libraries, including wide and scalar ones.
-* `unstable` - see next section
 
-#### `unstable` feature
-
-The `unstable` feature requires a nightly compiler, and it allows us to tell
-rustc not to inline certain functions within hot benchmark loops. This is used
-in the ray-sphere intersection benchmark in order to simulate situations where
-the autovectorizer would not be able to properly vectorize your code. The
-affected benchmark groups are suffixed with `(no inline)` so that results from
-the two modes are not confused.
+The `ray-sphere intersection` benchmark calls the per-element inner operation
+through a `#[inline(never)]` function. This keeps the autovectorizer from
+inlining it into the benchmark loop, so the benchmark measures the scalar,
+non-vectorized case, which is common in real code where the vectorizer cannot
+prove that vectorizing is safe.
 
 ## Running the tests
 

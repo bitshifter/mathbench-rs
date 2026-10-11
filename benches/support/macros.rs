@@ -363,23 +363,3 @@ macro_rules! by_ref {
         $e
     };
 }
-
-// necessary because this macro isn't used in every benchmark
-#[allow(unused_macros)]
-macro_rules! never_inline_closure {
-    (
-        |$($arg:ident: $argt:ty),*| $body:tt
-     ) => {{
-        #[cfg(not(feature = "unstable"))]
-        let closure = |$($arg: $argt),*| {
-            $body
-        };
-
-        #[cfg(feature = "unstable")]
-        let closure = #[inline(never)] |$($arg: $argt),*| {
-            $body
-        };
-
-        closure
-    }};
-}

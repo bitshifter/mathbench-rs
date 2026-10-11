@@ -1,4 +1,3 @@
-#![cfg_attr(feature = "unstable", feature(stmt_expr_attributes))]
 #[path = "support/macros.rs"]
 #[macro_use]
 mod macros;
@@ -29,7 +28,18 @@ macro_rules! bench_intersection_wide_uv {
         let sphere_r_sq = $wt::splat(100.0);
         let miss = $wt::splat($max);
 
-        let do_inner = never_inline_closure!(|ray_d: &$t, result: &mut $wt| {
+        // `#[inline(never)]` keeps the autovectorizer from inlining the inner
+        // operation into the benchmark loop, so the loop stays scalar. This is
+        // a stable equivalent of `#[inline(never)]` on a closure.
+        #[inline(never)]
+        fn do_inner(
+            ray_d: &$t,
+            result: &mut $wt,
+            ray_o: $t,
+            sphere_o: $t,
+            sphere_r_sq: $wt,
+            miss: $wt,
+        ) {
             let oc: $t = ray_o - sphere_o;
             let b = oc.dot(*ray_d);
             let c = oc.mag_sq() - sphere_r_sq;
@@ -50,12 +60,12 @@ macro_rules! bench_intersection_wide_uv {
             let t = t1_valid.blend(t1, t);
 
             *result = t;
-        });
+        }
         let name = $b.1;
         $b.0.bench_function(criterion::BenchmarkId::new(name, *$size), |bencher| {
             bencher.iter(|| {
                 for (ray_d, result) in data.ray_d.iter().zip(&mut data.result) {
-                    do_inner(ray_d, result);
+                    do_inner(ray_d, result, ray_o, sphere_o, sphere_r_sq, miss);
                 }
             })
         });
@@ -86,7 +96,15 @@ macro_rules! bench_intersection_wide_na {
         let sphere_r_sq = $wt::splat(100.0);
         let miss = $wt::splat($max);
 
-        let do_inner = never_inline_closure!(|ray_d: &$t, result: &mut $wt| {
+        #[inline(never)]
+        fn do_inner(
+            ray_d: &$t,
+            result: &mut $wt,
+            ray_o: $t,
+            sphere_o: $t,
+            sphere_r_sq: $wt,
+            miss: $wt,
+        ) {
             let oc: $t = ray_o - sphere_o;
             let b = oc.dot(ray_d);
             let c = oc.norm_squared() - sphere_r_sq;
@@ -107,12 +125,12 @@ macro_rules! bench_intersection_wide_na {
             let t = t1_valid.if_else(|| t1, || t);
 
             *result = t;
-        });
+        }
         let name = $b.1;
         $b.0.bench_function(criterion::BenchmarkId::new(name, *$size), |bencher| {
             bencher.iter(|| {
                 for (ray_d, result) in data.ray_d.iter().zip(&mut data.result) {
-                    do_inner(ray_d, result);
+                    do_inner(ray_d, result, ray_o, sphere_o, sphere_r_sq, miss);
                 }
             })
         });
@@ -140,7 +158,8 @@ macro_rules! bench_intersection_scalar {
         let sphere_r_sq = 100.0;
         let ray_o = <$t>::new(0.0, 0.0, -11.0);
 
-        let do_inner = never_inline_closure!(|ray_d: &$t, result: &mut f32| {
+        #[inline(never)]
+        fn do_inner(ray_d: &$t, result: &mut f32, ray_o: $t, sphere_o: $t, sphere_r_sq: f32) {
             let oc: $t = ray_o - sphere_o;
             let b = oc.dot($param!(ray_d));
             let c = oc.$mag_sq() - sphere_r_sq;
@@ -159,13 +178,13 @@ macro_rules! bench_intersection_scalar {
             } else {
                 f32::MAX
             };
-        });
+        }
 
         let name = $b.1;
         $b.0.bench_function(criterion::BenchmarkId::new(name, *$size), |bencher| {
             bencher.iter(|| {
                 for (ray_d, result) in data.ray_d.iter().zip(&mut data.result) {
-                    do_inner(ray_d, result);
+                    do_inner(ray_d, result, ray_o, sphere_o, sphere_r_sq);
                 }
             })
         });
@@ -173,14 +192,7 @@ macro_rules! bench_intersection_scalar {
 }
 
 fn bench_ray_sphere_intersect_scalar(c: &mut Criterion) {
-    // The `unstable` feature forces the inner closure to not be inlined so the
-    // autovectorizer cannot vectorize across it. Flag that in the name so the
-    // two modes are not confused in the results.
-    #[cfg(feature = "unstable")]
-    let group_name = "scalar ray-sphere intersection (no inline)";
-    #[cfg(not(feature = "unstable"))]
-    let group_name = "scalar ray-sphere intersection";
-    let mut group = c.benchmark_group(group_name);
+    let mut group = c.benchmark_group("scalar ray-sphere intersection");
     {
         let size = &10000;
         group.throughput(Throughput::Elements(*size as u64));
@@ -213,11 +225,7 @@ fn bench_ray_sphere_intersect_scalar(c: &mut Criterion) {
 }
 
 fn bench_ray_sphere_intersect_wide(c: &mut Criterion) {
-    #[cfg(feature = "unstable")]
-    let group_name = "wide ray-sphere intersection (no inline)";
-    #[cfg(not(feature = "unstable"))]
-    let group_name = "wide ray-sphere intersection";
-    let mut group = c.benchmark_group(group_name);
+    let mut group = c.benchmark_group("wide ray-sphere intersection");
     {
         let size = &80000;
         group.throughput(Throughput::Elements(*size as u64));
