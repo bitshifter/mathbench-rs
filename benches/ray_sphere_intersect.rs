@@ -2,7 +2,7 @@
 #[macro_use]
 mod macros;
 
-use criterion::{Criterion, Throughput, criterion_group, criterion_main};
+use criterion::{Criterion, criterion_group, criterion_main};
 
 #[cfg(any(feature = "ultraviolet_f32x4", feature = "ultraviolet_f32x8",))]
 macro_rules! bench_intersection_wide_uv {
@@ -197,7 +197,6 @@ fn bench_ray_sphere_intersect_scalar(c: &mut Criterion) {
     let mut group = c.benchmark_group("scalar ray-sphere intersection");
     {
         let size = &10000;
-        group.throughput(Throughput::Elements(*size as u64));
         bench!("glam", group, size, |b, size| {
             use glam::Vec3A;
             bench_intersection_scalar!(b, size, width => 1, ty => Vec3A, zero => Vec3A::ZERO, norm => normalize, mag_sq => length_squared, param => by_value);
@@ -230,7 +229,6 @@ fn bench_ray_sphere_intersect_wide(c: &mut Criterion) {
     let mut group = c.benchmark_group("wide ray-sphere intersection");
     {
         let size = &80000;
-        group.throughput(Throughput::Elements(*size as u64));
         bench!("glam_f32x1", group, size, |b, size| {
             use glam::Vec3A;
             bench_intersection_scalar!(b, size, width => 1, ty => Vec3A, zero => Vec3A::ZERO, norm => normalize, mag_sq => length_squared, param => by_value);

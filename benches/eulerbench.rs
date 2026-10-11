@@ -1,7 +1,7 @@
 #[path = "support/macros.rs"]
 #[macro_use]
 mod macros;
-use criterion::{Criterion, Throughput, criterion_group, criterion_main};
+use criterion::{Criterion, criterion_group, criterion_main};
 
 const UPDATE_RATE: f32 = 1.0 / 60.0;
 
@@ -41,7 +41,6 @@ fn bench_euler_3d(c: &mut Criterion) {
     let mut group = c.benchmark_group("scalar euler 3d");
     {
         let size = &10000;
-        group.throughput(Throughput::Elements(*size as u64));
         bench!("glam", group, size, |b, size| {
             use glam::Vec3A;
             bench_euler!(b, size, width => 1, ty => Vec3A, zero => Vec3A::ZERO, dt => Vec3A::splat(UPDATE_RATE))
@@ -79,7 +78,6 @@ fn bench_euler_3d_wide(c: &mut Criterion) {
     let mut group = c.benchmark_group("wide euler 3d");
     {
         let size = &80000;
-        group.throughput(Throughput::Elements(*size as u64));
         bench!("glam_f32x1", group, size, |b, size| {
             use glam::Vec3A;
             bench_euler!(b, size, width => 1, ty => Vec3A, zero => Vec3A::ZERO, dt => Vec3A::splat(UPDATE_RATE))
@@ -114,7 +112,6 @@ fn bench_euler_2d(c: &mut Criterion) {
     let mut group = c.benchmark_group("scalar euler 2d");
     {
         let size = &10000;
-        group.throughput(Throughput::Elements(*size as u64));
         bench!("glam", group, size, |b, size| {
             use glam::Vec2;
             bench_euler!(b, size, width => 1, ty => Vec2, zero => Vec2::ZERO, dt => Vec2::splat(UPDATE_RATE))
@@ -152,7 +149,6 @@ fn bench_euler_2d_wide(c: &mut Criterion) {
     let mut group = c.benchmark_group("wide euler 2d");
     {
         let size = &80000;
-        group.throughput(Throughput::Elements(*size as u64));
         bench!("glam_f32x1", group, size, |b, size| {
             use glam::Vec2;
             bench_euler!(b, size, width => 1, ty => Vec2, zero => Vec2::ZERO, dt => Vec2::splat(UPDATE_RATE))

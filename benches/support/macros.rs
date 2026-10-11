@@ -130,7 +130,7 @@ macro_rules! bench {
         #[cfg(feature = $lib)]
         macros::bench_context_sized(&mut $group, $lib, $size, $closure);
         #[cfg(not(feature = $lib))]
-        let _ = &mut $group;
+        let _ = (&mut $group, &$size);
     }};
 
     // Display-name override
@@ -144,7 +144,7 @@ macro_rules! bench {
         #[cfg(feature = $lib)]
         macros::bench_context_sized(&mut $group, $display, $size, $closure);
         #[cfg(not(feature = $lib))]
-        let _ = &mut $group;
+        let _ = (&mut $group, &$size);
     }};
 }
 
