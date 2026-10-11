@@ -75,25 +75,37 @@ macro_rules! bench {
         macros::bench_context_sized(&mut $group, "glam", $size, $closure)
     };
 
-    // Gated libraries (feature name = display name)
-    ($lib:literal, $group:ident, $closure:expr) => {
+    // Gated libraries (feature name = display name).
+    //
+    // The disabled branch still borrows `group` mutably so that `let mut group`
+    // is used even when every library in a group is compiled out (e.g. the wide
+    // benchmarks under a scalar-only feature set).
+    ($lib:literal, $group:ident, $closure:expr) => {{
         #[cfg(feature = $lib)]
-        macros::bench_context(&mut $group, $lib, $closure)
-    };
-    ($lib:literal, $group:ident, $size:expr, $closure:expr) => {
+        macros::bench_context(&mut $group, $lib, $closure);
+        #[cfg(not(feature = $lib))]
+        let _ = &mut $group;
+    }};
+    ($lib:literal, $group:ident, $size:expr, $closure:expr) => {{
         #[cfg(feature = $lib)]
-        macros::bench_context_sized(&mut $group, $lib, $size, $closure)
-    };
+        macros::bench_context_sized(&mut $group, $lib, $size, $closure);
+        #[cfg(not(feature = $lib))]
+        let _ = &mut $group;
+    }};
 
     // Display-name override
-    ($lib:literal as $display:literal, $group:ident, $closure:expr) => {
+    ($lib:literal as $display:literal, $group:ident, $closure:expr) => {{
         #[cfg(feature = $lib)]
-        macros::bench_context(&mut $group, $display, $closure)
-    };
-    ($lib:literal as $display:literal, $group:ident, $size:expr, $closure:expr) => {
+        macros::bench_context(&mut $group, $display, $closure);
+        #[cfg(not(feature = $lib))]
+        let _ = &mut $group;
+    }};
+    ($lib:literal as $display:literal, $group:ident, $size:expr, $closure:expr) => {{
         #[cfg(feature = $lib)]
-        macros::bench_context_sized(&mut $group, $display, $size, $closure)
-    };
+        macros::bench_context_sized(&mut $group, $display, $size, $closure);
+        #[cfg(not(feature = $lib))]
+        let _ = &mut $group;
+    }};
 }
 
 /// Run `$unop` on a batch of values and report per-element throughput.
