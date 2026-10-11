@@ -151,8 +151,8 @@ fn bench_rotation3_mul_rotation3_wide(c: &mut Criterion) {
 fn bench_rotation3_mul_vector3(c: &mut Criterion) {
     let mut group = c.benchmark_group("scalar rotation3 mul vector3");
     bench!("glam", group, |b| {
-        use glam::{Quat, Vec3};
-        bench_binop_broadcast!(b, op => mul, ty1 => Quat, ty2 => Vec3)
+        use glam::{Quat, Vec3A};
+        bench_binop_broadcast!(b, op => mul, ty1 => Quat, ty2 => Vec3A)
     });
     bench!("cgmath", group, |b| {
         use cgmath::{Quaternion, Vector3};
@@ -181,8 +181,8 @@ fn bench_rotation3_mul_vector3(c: &mut Criterion) {
 fn bench_rotation3_mul_vector3_wide(c: &mut Criterion) {
     let mut group = c.benchmark_group("wide rotation3 mul vector3");
     bench!("glam_f32x1", group, |b| {
-        use glam::{Quat, Vec3};
-        bench_binop_wide_broadcast!(b, width => 1, op => mul, ty1 => Quat, ty2 => Vec3)
+        use glam::{Quat, Vec3A};
+        bench_binop_wide_broadcast!(b, width => 1, op => mul, ty1 => Quat, ty2 => Vec3A)
     });
     bench!("ultraviolet_f32x4", group, |b| {
         use ultraviolet::{Rotor3x4, Vec3x4};

@@ -132,6 +132,7 @@ pub mod glam_support {
     use rand::RngExt;
     impl_bench_value!(glam::Mat2, random_mint_invertible_mat2);
     impl_bench_value!(glam::Mat3, random_mint_homogeneous_mat3);
+    impl_bench_value!(glam::Mat3A, random_mint_homogeneous_mat3);
     impl_bench_value!(glam::Mat4, random_mint_homogeneous_mat4);
     impl_bench_value!(glam::Quat, random_mint_quat);
     impl_bench_value!(glam::Vec2, random_mint_vec2);

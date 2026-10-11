@@ -26,6 +26,10 @@ The format is based on [Keep a Changelog].
 * The `euler` and `ray-sphere` workload benchmarks register their benchmark id
   in scalar elements rather than per-lane counts, so wide types of different
   widths share one id and are directly comparable
+* The scalar `glam` benchmarks now consistently use the SIMD-friendly padded
+  types where they exist: `Mat3A` for the matrix3 benchmarks (previously
+  `Mat3`), and `Vec3A` for the vector3 length, rotation3 "multiply vector" and
+  ray-sphere intersection benchmarks (previously `Vec3`)
 * Per-type "return self" benchmarks were renamed to "no-op baseline"
 * `scripts/summary.sh` runs the summary script in a local virtual environment.
   The summary reports ns per element and highlights libraries whose confidence

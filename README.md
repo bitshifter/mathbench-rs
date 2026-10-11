@@ -117,14 +117,15 @@ Most libraries provide quaternions for performing rotations except for
 
 ### Type representation and ABI
 
-The scalar `glam` benchmarks use the SIMD-friendly 16-byte types where they
-exist (`Vec3A`, `Mat3A`, `Affine3A`), while most other libraries use 12-byte
-`Vec3`/`Mat3` types. This has a measurable effect on the `no-op baseline`: a
-16-byte value can be returned in a register, whereas a 12-byte value is
-returned through a hidden pointer (sret). Differences in the `no-op baseline`
-therefore reflect type representation and calling convention, not library
-efficiency. The same applies to `euclid` transform types and to the
-`Option`-returning inverse methods noted above.
+The scalar `glam` benchmarks use the SIMD-friendly padded types where they
+exist (`Vec3A`, `Mat3A`, `Affine3A`), while other libraries use unpacked types
+such as a 12-byte `Vec3` or a 36-byte `Mat3`. The padded types carry an extra
+lane and 16-byte alignment, so a value is loaded, stored and operated on as a
+single 128-bit SIMD register, whereas an unpacked value takes several narrower
+moves. This shows up in the `no-op baseline`, which measures how a type is
+moved through the benchmark loop, so differences there reflect type
+representation rather than library efficiency. The same applies to `euclid`
+transform types and to the `Option`-returning inverse methods noted above.
 
 ## Wide benchmarks
 

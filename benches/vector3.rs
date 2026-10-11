@@ -34,8 +34,8 @@ fn bench_vector3_ret_self(c: &mut Criterion) {
 fn bench_vector3_length(c: &mut Criterion) {
     let mut group = c.benchmark_group("scalar vector3 length");
     bench!("glam", group, |b| {
-        use glam::Vec3;
-        bench_unop!(b, op => length, ty => Vec3)
+        use glam::Vec3A;
+        bench_unop!(b, op => length, ty => Vec3A)
     });
     bench!("cgmath", group, |b| {
         use cgmath::{InnerSpace, Vector3};

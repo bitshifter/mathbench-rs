@@ -8,8 +8,8 @@ use std::ops::Mul;
 fn bench_matrix3_ret_self(c: &mut Criterion) {
     let mut group = c.benchmark_group("scalar matrix3 no-op baseline");
     bench!("glam", group, |b| {
-        use glam::Mat3;
-        bench_unop!(b, op => ret_self, ty => Mat3)
+        use glam::Mat3A;
+        bench_unop!(b, op => ret_self, ty => Mat3A)
     });
     bench!("cgmath", group, |b| {
         use cgmath::Matrix3;
@@ -34,8 +34,8 @@ fn bench_matrix3_ret_self(c: &mut Criterion) {
 fn bench_matrix3_transpose(c: &mut Criterion) {
     let mut group = c.benchmark_group("scalar matrix3 transpose");
     bench!("glam", group, |b| {
-        use glam::Mat3;
-        bench_unop!(b, op => transpose, ty => Mat3)
+        use glam::Mat3A;
+        bench_unop!(b, op => transpose, ty => Mat3A)
     });
     bench!("cgmath", group, |b| {
         use cgmath::{Matrix3, prelude::*};
@@ -60,8 +60,8 @@ fn bench_matrix3_transpose(c: &mut Criterion) {
 fn bench_matrix3_transpose_wide(c: &mut Criterion) {
     let mut group = c.benchmark_group("wide matrix3 transpose");
     bench!("glam_f32x1", group, |b| {
-        use glam::Mat3;
-        bench_unop_wide!(b, width => 1, op => transpose, ty => Mat3)
+        use glam::Mat3A;
+        bench_unop_wide!(b, width => 1, op => transpose, ty => Mat3A)
     });
     bench!("ultraviolet_f32x4", group, |b| {
         use ultraviolet::Mat3x4;
@@ -87,8 +87,8 @@ fn bench_matrix3_transpose_wide(c: &mut Criterion) {
 fn bench_matrix3_determinant(c: &mut Criterion) {
     let mut group = c.benchmark_group("scalar matrix3 determinant");
     bench!("glam", group, |b| {
-        use glam::Mat3;
-        bench_unop!(b, op => determinant, ty => Mat3)
+        use glam::Mat3A;
+        bench_unop!(b, op => determinant, ty => Mat3A)
     });
     bench!("cgmath", group, |b| {
         use cgmath::{Matrix3, prelude::*};
@@ -113,8 +113,8 @@ fn bench_matrix3_determinant(c: &mut Criterion) {
 fn bench_matrix3_determinant_wide(c: &mut Criterion) {
     let mut group = c.benchmark_group("wide matrix3 determinant");
     bench!("glam_f32x1", group, |b| {
-        use glam::Mat3;
-        bench_unop_wide!(b, width => 1, op => determinant, ty => Mat3)
+        use glam::Mat3A;
+        bench_unop_wide!(b, width => 1, op => determinant, ty => Mat3A)
     });
     bench!("ultraviolet_f32x4", group, |b| {
         use ultraviolet::Mat3x4;
@@ -130,8 +130,8 @@ fn bench_matrix3_determinant_wide(c: &mut Criterion) {
 fn bench_matrix3_inverse(c: &mut Criterion) {
     let mut group = c.benchmark_group("scalar matrix3 inverse");
     bench!("glam", group, |b| {
-        use glam::Mat3;
-        bench_unop!(b, op => inverse, ty => Mat3)
+        use glam::Mat3A;
+        bench_unop!(b, op => inverse, ty => Mat3A)
     });
     bench!("cgmath", group, |b| {
         use cgmath::{Matrix3, prelude::*};
@@ -152,8 +152,8 @@ fn bench_matrix3_inverse(c: &mut Criterion) {
 fn bench_matrix3_inverse_wide(c: &mut Criterion) {
     let mut group = c.benchmark_group("wide matrix3 inverse");
     bench!("glam_f32x1", group, |b| {
-        use glam::Mat3;
-        bench_unop_wide!(b, width => 1, op => inverse, ty => Mat3)
+        use glam::Mat3A;
+        bench_unop_wide!(b, width => 1, op => inverse, ty => Mat3A)
     });
     bench!("ultraviolet_f32x4", group, |b| {
         use ultraviolet::Mat3x4;
@@ -169,8 +169,8 @@ fn bench_matrix3_inverse_wide(c: &mut Criterion) {
 fn bench_matrix3_mul_matrix3(c: &mut Criterion) {
     let mut group = c.benchmark_group("scalar matrix3 mul matrix3");
     bench!("glam", group, |b| {
-        use glam::Mat3;
-        bench_binop!(b, op => mul, ty1 => Mat3, ty2 => Mat3)
+        use glam::Mat3A;
+        bench_binop!(b, op => mul, ty1 => Mat3A, ty2 => Mat3A)
     });
     bench!("cgmath", group, |b| {
         use cgmath::Matrix3;
@@ -195,8 +195,8 @@ fn bench_matrix3_mul_matrix3(c: &mut Criterion) {
 fn bench_matrix3_mul_matrix3_wide(c: &mut Criterion) {
     let mut group = c.benchmark_group("wide matrix3 mul matrix3");
     bench!("glam_f32x1", group, |b| {
-        use glam::Mat3;
-        bench_binop_wide!(b, width => 1, op => mul, ty1 => Mat3, ty2 => Mat3)
+        use glam::Mat3A;
+        bench_binop_wide!(b, width => 1, op => mul, ty1 => Mat3A, ty2 => Mat3A)
     });
     bench!("ultraviolet_f32x4", group, |b| {
         use ultraviolet::Mat3x4;
@@ -222,8 +222,8 @@ fn bench_matrix3_mul_matrix3_wide(c: &mut Criterion) {
 fn bench_matrix3_mul_vector3(c: &mut Criterion) {
     let mut group = c.benchmark_group("scalar matrix3 mul vector3");
     bench!("glam", group, |b| {
-        use glam::{Mat3, Vec3};
-        bench_binop_broadcast!(b, op => mul, ty1 => Mat3, ty2 => Vec3)
+        use glam::{Mat3A, Vec3A};
+        bench_binop_broadcast!(b, op => mul, ty1 => Mat3A, ty2 => Vec3A)
     });
     bench!("cgmath", group, |b| {
         use cgmath::{Matrix3, Vector3};
@@ -248,8 +248,8 @@ fn bench_matrix3_mul_vector3(c: &mut Criterion) {
 fn bench_matrix3_mul_vector3_wide(c: &mut Criterion) {
     let mut group = c.benchmark_group("wide matrix3 mul vector3");
     bench!("glam_f32x1", group, |b| {
-        use glam::{Mat3, Vec3};
-        bench_binop_wide_broadcast!(b, width => 1, op => mul, ty1 => Mat3, ty2 => Vec3)
+        use glam::{Mat3A, Vec3A};
+        bench_binop_wide_broadcast!(b, width => 1, op => mul, ty1 => Mat3A, ty2 => Vec3A)
     });
     bench!("ultraviolet_f32x4", group, |b| {
         use ultraviolet::{Mat3x4, Vec3x4};

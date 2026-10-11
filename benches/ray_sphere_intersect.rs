@@ -206,8 +206,8 @@ fn bench_ray_sphere_intersect_scalar(c: &mut Criterion) {
         let size = &10000;
         group.throughput(Throughput::Elements(*size as u64));
         bench!("glam", group, size, |b, size| {
-            use glam::Vec3;
-            bench_intersection_scalar!(b, size, width => 1, ty => Vec3, zero => Vec3::ZERO, norm => normalize, mag_sq => length_squared, param => by_value);
+            use glam::Vec3A;
+            bench_intersection_scalar!(b, size, width => 1, ty => Vec3A, zero => Vec3A::ZERO, norm => normalize, mag_sq => length_squared, param => by_value);
         });
         bench!("cgmath", group, size, |b, size| {
             use cgmath::{Vector3, prelude::*};
