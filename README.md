@@ -32,8 +32,9 @@ games and graphics development, including:
 All benchmarks are performed using [Criterion.rs]. Benchmarks are logically into
 the following categories:
 
-* harness overhead - measures the per-type cost of the benchmarking harness
-  itself. Useful as a control, not as a library performance comparison.
+* no-op baseline - measures the per-type cost of running an identity operation
+  through the benchmark loop (load + store plus amortized loop overhead).
+  Useful as a floor and a control, not as a library performance comparison.
 * single operations - measure the performance of common operations on types,
   e.g. a matrix inverse, vector normalization or multiplying two matrices.
 * throughput operations - measure the performance of common operations on
@@ -208,28 +209,28 @@ cargo bench --features scalar scalar
 | matrix2 mul matrix2            |     1.1531 ns   |   __1.1030 ns__ |     1.2088 ns   |       N/A       |     8.8631 ns   |     1.1403 ns   |   __1.1052 ns__ |
 | matrix2 mul vector2 x1         |   __0.9283 ns__ |     1.1561 ns   |     1.1906 ns   |       N/A       |     4.6570 ns   |     0.9584 ns   |     1.1698 ns   |
 | matrix2 mul vector2 x100       | __171.1991 ns__ |   179.7413 ns   |   178.3703 ns   |       N/A       |   463.2815 ns   | __171.7605 ns__ |   178.8623 ns   |
-| matrix2 harness overhead            |   __1.1184 ns__ |     1.6710 ns   |     1.6165 ns   |       N/A       |     1.7853 ns   |     1.6190 ns   |     1.7241 ns   |
+| matrix2 no-op baseline            |   __1.1184 ns__ |     1.6710 ns   |     1.6165 ns   |       N/A       |     1.7853 ns   |     1.6190 ns   |     1.7241 ns   |
 | matrix2 transpose              |     1.2241 ns   |     1.3370 ns   |     1.3974 ns   |       N/A       |     0.9063 ns   |       N/A       |   __0.8504 ns__ |
 | matrix3 determinant            |   __2.1892 ns__ |     2.2352 ns   |   __2.1973 ns__ |       N/A       |   __2.1650 ns__ |       N/A       |    10.4218 ns   |
 | matrix3 inverse                |   __5.3608 ns__ |     9.0642 ns   |     5.6807 ns   |       N/A       |       N/A       |       N/A       |    12.2288 ns   |
 | matrix3 mul matrix3            |     4.6602 ns   |     5.6509 ns   |   __4.4501 ns__ |       N/A       |    36.7220 ns   |       N/A       |   __4.5589 ns__ |
 | matrix3 mul vector3 x1         |   __2.1895 ns__ |     3.4878 ns   |   __2.1900 ns__ |       N/A       |    12.7325 ns   |       N/A       |     2.3641 ns   |
 | matrix3 mul vector3 x100       |   __0.3649 us__ |     0.4132 us   |   __0.3661 us__ |       N/A       |      1.276 us   |       N/A       |   __0.3659 us__ |
-| matrix3 harness overhead            |     2.9568 ns   |   __2.9042 ns__ |   __2.8369 ns__ |       N/A       |   __2.8971 ns__ |       N/A       |   __2.9001 ns__ |
+| matrix3 no-op baseline            |     2.9568 ns   |   __2.9042 ns__ |   __2.8369 ns__ |       N/A       |   __2.8971 ns__ |       N/A       |   __2.9001 ns__ |
 | matrix3 transpose              |     2.1894 ns   |     2.1891 ns   |   __1.9596 ns__ |       N/A       |     2.1792 ns   |       N/A       |   __1.9453 ns__ |
 | matrix4 determinant            |   __4.3934 ns__ |     7.1764 ns   |    40.9609 ns   |    11.2154 ns   |    12.2779 ns   |       N/A       |     4.6378 ns   |
 | matrix4 inverse                |  __12.1455 ns__ |    30.8124 ns   |    40.8410 ns   |    54.4792 ns   |    27.3142 ns   |       N/A       |    20.0627 ns   |
 | matrix4 mul matrix4            |   __4.4589 ns__ |     6.2970 ns   |     4.7309 ns   |     6.4629 ns   |   103.4461 ns   |       N/A       |     5.0440 ns   |
 | matrix4 mul vector4 x1         |     2.1002 ns   |   __1.9625 ns__ |   __1.9185 ns__ |       N/A       |    24.5601 ns   |       N/A       |     2.2970 ns   |
 | matrix4 mul vector4 x100       |   __0.5092 us__ |     0.5362 us   |     0.5379 us   |       N/A       |      2.491 us   |       N/A       |     0.5361 us   |
-| matrix4 harness overhead            |   __3.3286 ns__ |   __3.3602 ns__ |   __3.3612 ns__ |       N/A       |   __3.3757 ns__ |       N/A       |   __3.3850 ns__ |
+| matrix4 no-op baseline            |   __3.3286 ns__ |   __3.3602 ns__ |   __3.3612 ns__ |       N/A       |   __3.3757 ns__ |       N/A       |   __3.3850 ns__ |
 | matrix4 transpose              |   __2.7248 ns__ |     7.6718 ns   |     7.7156 ns   |       N/A       |     7.6853 ns   |       N/A       |     7.6577 ns   |
 | ray-sphere intersection x10000 |    __13.37 us__ |     __13.3 us__ |    __13.37 us__ |    __13.31 us__ |    __13.37 us__ |       N/A       |     __13.3 us__ |
 | rotation3 inverse              |   __1.6893 ns__ |     2.5085 ns   |     2.5737 ns   |     2.5909 ns   |     2.4670 ns   |       N/A       |     2.5312 ns   |
 | rotation3 mul rotation3        |   __1.8869 ns__ |     2.6284 ns   |     2.4297 ns   |     3.4803 ns   |     3.0026 ns   |       N/A       |     3.2824 ns   |
 | rotation3 mul vector3 x1       |     3.1971 ns   |   __2.9104 ns__ |     3.3983 ns   |     3.1297 ns   |     5.1255 ns   |       N/A       |     4.3788 ns   |
 | rotation3 mul vector3 x100     |   347.7257 ns   | __307.8286 ns__ |   349.4552 ns   |   346.2632 ns   |   506.3045 ns   |       N/A       |   431.1647 ns   |
-| rotation3 harness overhead          |   __1.4740 ns__ |     1.7942 ns   |     1.8652 ns   |       N/A       |     1.7913 ns   |       N/A       |     1.8121 ns   |
+| rotation3 no-op baseline          |   __1.4740 ns__ |     1.7942 ns   |     1.8652 ns   |       N/A       |     1.7913 ns   |       N/A       |     1.8121 ns   |
 | transform point2 x1            |   __1.0489 ns__ |     2.0296 ns   |     2.4919 ns   |     1.3207 ns   |     4.4160 ns   |     1.0863 ns   |     1.8828 ns   |
 | transform point2 x100          |   268.6793 ns   |   335.3824 ns   |   357.9078 ns   | __233.8814 ns__ |   501.7938 ns   |   268.9675 ns   |   331.0402 ns   |
 | transform point3 x1            |   __1.9061 ns__ |    15.0678 ns   |     4.0615 ns   |     3.3012 ns   |    12.3817 ns   |     2.0046 ns   |     3.5482 ns   |
@@ -240,15 +241,15 @@ cargo bench --features scalar scalar
 | transform vector3 x100         |   __0.4938 us__ |       1.19 us   |     0.5509 us   |     0.5109 us   |      1.906 us   |       N/A       |      0.522 us   |
 | transform2 inverse             |   __2.2689 ns__ |       N/A       |     5.6429 ns   |     2.9631 ns   |       N/A       |     2.5809 ns   |       N/A       |
 | transform2 mul transform2      |     2.1811 ns   |       N/A       |     4.3640 ns   |   __1.9851 ns__ |       N/A       |     2.1966 ns   |       N/A       |
-| transform2 harness overhead         |   __2.2848 ns__ |       N/A       |     2.9137 ns   |     2.4864 ns   |       N/A       |   __2.2808 ns__ |       N/A       |
+| transform2 no-op baseline         |   __2.2848 ns__ |       N/A       |     2.9137 ns   |     2.4864 ns   |       N/A       |   __2.2808 ns__ |       N/A       |
 | transform3 inverse             |   __6.6932 ns__ |       N/A       |    40.6221 ns   |    38.0707 ns   |       N/A       |    20.7270 ns   |       N/A       |
 | transform3 mul transform3d     |   __3.5545 ns__ |       N/A       |     4.8629 ns   |     6.3285 ns   |       N/A       |     4.4894 ns   |       N/A       |
-| transform3 harness overhead         |   __3.3643 ns__ |       N/A       |   __3.3640 ns__ |   __3.3515 ns__ |       N/A       |   __3.3487 ns__ |       N/A       |
+| transform3 no-op baseline         |   __3.3643 ns__ |       N/A       |   __3.3640 ns__ |   __3.3515 ns__ |       N/A       |   __3.3487 ns__ |       N/A       |
 | vector3 cross                  |   __1.0511 ns__ |     1.5374 ns   |     1.5364 ns   |     1.5369 ns   |     1.5453 ns   |       N/A       |     1.5370 ns   |
 | vector3 dot                    |   __0.9757 ns__ |     1.2293 ns   |     1.2324 ns   |     1.2385 ns   |     1.2313 ns   |       N/A       |     1.2214 ns   |
 | vector3 length                 |   __1.3147 ns__ |   __1.3128 ns__ |   __1.3205 ns__ |   __1.3079 ns__ |   __1.3108 ns__ |       N/A       |   __1.3091 ns__ |
 | vector3 normalize              |   __2.1971 ns__ |     2.5868 ns   |     3.0146 ns   |     3.0183 ns   |     2.9928 ns   |       N/A       |     2.6405 ns   |
-| vector3 harness overhead            |   __1.0859 ns__ |     1.9663 ns   |     1.9419 ns   |       N/A       |     1.9943 ns   |       N/A       |     2.1768 ns   |
+| vector3 no-op baseline            |   __1.0859 ns__ |     1.9663 ns   |     1.9419 ns   |       N/A       |     1.9943 ns   |       N/A       |     2.1768 ns   |
 
 ### Wide benchmarks
 

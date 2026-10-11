@@ -6,7 +6,7 @@ use mathbench::BenchValue;
 use std::ops::Mul;
 
 fn bench_matrix3_ret_self(c: &mut Criterion) {
-    let mut group = c.benchmark_group("scalar matrix3 harness overhead");
+    let mut group = c.benchmark_group("scalar matrix3 no-op baseline");
     bench!("glam", group, |b| {
         use glam::Mat3;
         bench_unop!(b, op => ret_self, ty => Mat3)

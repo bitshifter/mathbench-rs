@@ -3,10 +3,10 @@
 mod macros;
 use criterion::{Criterion, criterion_group, criterion_main};
 
-// measures benchmark harness overhead for this type
+// measures benchmark no-op baseline for this type
 fn bench_transform3_ret_self(c: &mut Criterion) {
     use mathbench::BenchValue;
-    let mut group = c.benchmark_group("scalar transform3 harness overhead");
+    let mut group = c.benchmark_group("scalar transform3 no-op baseline");
     bench!("glam", group, |b| {
         use glam::Affine3A;
         bench_unop!(b, op => ret_self, ty => Affine3A)

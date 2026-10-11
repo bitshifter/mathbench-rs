@@ -5,7 +5,7 @@ use criterion::{Criterion, criterion_group, criterion_main};
 
 fn bench_transform2_ret_self(c: &mut Criterion) {
     use mathbench::BenchValue;
-    let mut group = c.benchmark_group("scalar transform2 harness overhead");
+    let mut group = c.benchmark_group("scalar transform2 no-op baseline");
     bench!("glam", group, |b| {
         use glam::Affine2;
         bench_unop!(b, op => ret_self, ty => Affine2)

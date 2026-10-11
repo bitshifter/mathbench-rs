@@ -5,9 +5,9 @@ use criterion::{Criterion, criterion_group, criterion_main};
 use mathbench::BenchValue;
 use std::ops::Mul;
 
-// measures benchmark harness overhead for this type
+// measures benchmark no-op baseline for this type
 fn bench_rotation3_nop(c: &mut Criterion) {
-    let mut group = c.benchmark_group("scalar rotation3 harness overhead");
+    let mut group = c.benchmark_group("scalar rotation3 no-op baseline");
     bench!("glam", group, |b| {
         use glam::Quat;
         bench_unop!(b, op => ret_self, ty => Quat)

@@ -2,7 +2,7 @@ use rand::RngExt;
 
 pub trait BenchValue {
     fn random_value<R: RngExt>(rng: &mut R) -> Self;
-    // Return self to measure benchmark harness overhead
+    // Return self to measure the no-op baseline
     fn ret_self(&self) -> Self
     where
         Self: Copy + std::marker::Sized,
