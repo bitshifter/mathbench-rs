@@ -249,25 +249,25 @@ fn bench_matrix3_mul_vector3_wide(c: &mut Criterion) {
     let mut group = c.benchmark_group("wide matrix3 mul vector3");
     bench!("glam_f32x1", group, |b| {
         use glam::{Mat3, Vec3};
-        bench_binop_wide!(b, width => 1, op => mul, ty1 => Mat3, ty2 => Vec3)
+        bench_binop_wide_broadcast!(b, width => 1, op => mul, ty1 => Mat3, ty2 => Vec3)
     });
     bench!("ultraviolet_f32x4", group, |b| {
         use ultraviolet::{Mat3x4, Vec3x4};
-        bench_binop_wide!(b, width => 4, op => mul, ty1 => Mat3x4, ty2 => Vec3x4)
+        bench_binop_wide_broadcast!(b, width => 4, op => mul, ty1 => Mat3x4, ty2 => Vec3x4)
     });
     bench!("nalgebra_f32x4", group, |b| {
         use nalgebra::{Matrix3, Vector3};
         use simba::simd::WideF32x4;
-        bench_binop_wide!(b, width => 4, op => mul, ty1 => Matrix3<WideF32x4>, ty2 => Vector3<WideF32x4>)
+        bench_binop_wide_broadcast!(b, width => 4, op => mul, ty1 => Matrix3<WideF32x4>, ty2 => Vector3<WideF32x4>)
     });
     bench!("ultraviolet_f32x8", group, |b| {
         use ultraviolet::{Mat3x8, Vec3x8};
-        bench_binop_wide!(b, width => 8, op => mul, ty1 => Mat3x8, ty2 => Vec3x8)
+        bench_binop_wide_broadcast!(b, width => 8, op => mul, ty1 => Mat3x8, ty2 => Vec3x8)
     });
     bench!("nalgebra_f32x8", group, |b| {
         use nalgebra::{Matrix3, Vector3};
         use simba::simd::WideF32x8;
-        bench_binop_wide!(b, width => 8, op => mul, ty1 => Matrix3<WideF32x8>, ty2 => Vector3<WideF32x8>)
+        bench_binop_wide_broadcast!(b, width => 8, op => mul, ty1 => Matrix3<WideF32x8>, ty2 => Vector3<WideF32x8>)
     });
     group.finish();
 }

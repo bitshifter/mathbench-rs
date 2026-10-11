@@ -36,15 +36,15 @@ fn bench_transform_vector3_wide(c: &mut Criterion) {
     let mut group = c.benchmark_group("wide transform vector3");
     bench!("glam_f32x1", group, |b| {
         use glam::{Affine3A, Vec3A};
-        bench_binop_wide!(b, width => 1, op => transform_vector3a, ty1 => Affine3A, ty2 => Vec3A)
+        bench_binop_wide_broadcast!(b, width => 1, op => transform_vector3a, ty1 => Affine3A, ty2 => Vec3A)
     });
     bench!("ultraviolet_f32x4", group, |b| {
         use ultraviolet::{Mat4x4, Vec3x4};
-        bench_binop_wide!(b, width => 4, op => transform_vec3, ty1 => Mat4x4, ty2 => Vec3x4)
+        bench_binop_wide_broadcast!(b, width => 4, op => transform_vec3, ty1 => Mat4x4, ty2 => Vec3x4)
     });
     bench!("ultraviolet_f32x8", group, |b| {
         use ultraviolet::{Mat4x8, Vec3x8};
-        bench_binop_wide!(b, width => 8, op => transform_vec3, ty1 => Mat4x8, ty2 => Vec3x8)
+        bench_binop_wide_broadcast!(b, width => 8, op => transform_vec3, ty1 => Mat4x8, ty2 => Vec3x8)
     });
     group.finish();
 }
@@ -88,15 +88,15 @@ fn bench_transform_point3_wide(c: &mut Criterion) {
     let mut group = c.benchmark_group("wide transform point3");
     bench!("glam_f32x1", group, |b| {
         use glam::{Affine3A, Vec3A};
-        bench_binop_wide!(b, width => 1, op => transform_point3a, ty1 => Affine3A, ty2 => Vec3A)
+        bench_binop_wide_broadcast!(b, width => 1, op => transform_point3a, ty1 => Affine3A, ty2 => Vec3A)
     });
     bench!("ultraviolet_f32x4", group, |b| {
         use ultraviolet::{Mat4x4, Vec3x4};
-        bench_binop_wide!(b, width => 4, op => transform_point3, ty1 => Mat4x4, ty2 => Vec3x4)
+        bench_binop_wide_broadcast!(b, width => 4, op => transform_point3, ty1 => Mat4x4, ty2 => Vec3x4)
     });
     bench!("ultraviolet_f32x8", group, |b| {
         use ultraviolet::{Mat4x8, Vec3x8};
-        bench_binop_wide!(b, width => 8, op => transform_point3, ty1 => Mat4x8, ty2 => Vec3x8)
+        bench_binop_wide_broadcast!(b, width => 8, op => transform_point3, ty1 => Mat4x8, ty2 => Vec3x8)
     });
     group.finish();
 }
@@ -140,15 +140,15 @@ fn bench_transform_point2_wide(c: &mut Criterion) {
     let mut group = c.benchmark_group("wide transform point2");
     bench!("glam_f32x1", group, |b| {
         use glam::{Affine2, Vec2};
-        bench_binop_wide!(b, width => 1, op => transform_point2, ty1 => Affine2, ty2 => Vec2)
+        bench_binop_wide_broadcast!(b, width => 1, op => transform_point2, ty1 => Affine2, ty2 => Vec2)
     });
     bench!("ultraviolet_f32x4", group, |b| {
         use ultraviolet::{Mat3x4, Vec2x4};
-        bench_binop_wide!(b, width => 4, op => transform_point2, ty1 => Mat3x4, ty2 => Vec2x4)
+        bench_binop_wide_broadcast!(b, width => 4, op => transform_point2, ty1 => Mat3x4, ty2 => Vec2x4)
     });
     bench!("ultraviolet_f32x8", group, |b| {
         use ultraviolet::{Mat3x8, Vec2x8};
-        bench_binop_wide!(b, width => 8, op => transform_point2, ty1 => Mat3x8, ty2 => Vec2x8)
+        bench_binop_wide_broadcast!(b, width => 8, op => transform_point2, ty1 => Mat3x8, ty2 => Vec2x8)
     });
     group.finish();
 }
@@ -184,15 +184,15 @@ fn bench_transform_vector2_wide(c: &mut Criterion) {
     let mut group = c.benchmark_group("wide transform vector2");
     bench!("glam_f32x1", group, |b| {
         use glam::{Affine2, Vec2};
-        bench_binop_wide!(b, width => 1, op => transform_vector2, ty1 => Affine2, ty2 => Vec2)
+        bench_binop_wide_broadcast!(b, width => 1, op => transform_vector2, ty1 => Affine2, ty2 => Vec2)
     });
     bench!("ultraviolet_f32x4", group, |b| {
         use ultraviolet::{Mat3x4, Vec2x4};
-        bench_binop_wide!(b, width => 4, op => transform_vec2, ty1 => Mat3x4, ty2 => Vec2x4)
+        bench_binop_wide_broadcast!(b, width => 4, op => transform_vec2, ty1 => Mat3x4, ty2 => Vec2x4)
     });
     bench!("ultraviolet_f32x8", group, |b| {
         use ultraviolet::{Mat3x8, Vec2x8};
-        bench_binop_wide!(b, width => 8, op => transform_vec2, ty1 => Mat3x8, ty2 => Vec2x8)
+        bench_binop_wide_broadcast!(b, width => 8, op => transform_vec2, ty1 => Mat3x8, ty2 => Vec2x8)
     });
     group.finish();
 }

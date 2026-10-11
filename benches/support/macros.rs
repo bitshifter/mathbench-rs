@@ -135,7 +135,7 @@ macro_rules! bench_unop {
                     for (input, output) in inputs.iter().zip(outputs.iter_mut()) {
                         *output = input.$unop();
                     }
-                    std::hint::black_box(&outputs);
+                    std::hint::black_box(&*outputs);
                 })
             });
         }
@@ -176,7 +176,7 @@ macro_rules! bench_binop {
                         {
                             *output = input1.$binop($param!(input2));
                         }
-                        std::hint::black_box(&outputs);
+                        std::hint::black_box(&*outputs);
                     })
                 });
         }
@@ -219,7 +219,7 @@ macro_rules! bench_binop_broadcast {
                         for (input2, output) in inputs2.iter().zip(outputs.iter_mut()) {
                             *output = input1.$binop($param!(input2));
                         }
-                        std::hint::black_box(&outputs);
+                        std::hint::black_box(&*outputs);
                     })
                 });
         }
@@ -262,7 +262,7 @@ macro_rules! bench_unop_wide {
                     for (input, output) in inputs.iter().zip(outputs.iter_mut()) {
                         *output = input.$unop();
                     }
-                    std::hint::black_box(&outputs);
+                    std::hint::black_box(&*outputs);
                 })
             });
         }
@@ -306,7 +306,7 @@ macro_rules! bench_binop_wide {
                         {
                             *output = input1.$binop($param!(input2));
                         }
-                        std::hint::black_box(&outputs);
+                        std::hint::black_box(&*outputs);
                     })
                 });
         }
@@ -319,6 +319,52 @@ macro_rules! bench_binop_wide {
     };
     ($b:ident, width => $width:expr, op => $binop:ident, ty => $ty:ty) => {
         bench_binop_wide!($b, width => $width, op => $binop, ty1 => $ty, ty2 => $ty)
+    };
+}
+
+/// Wide variant of [`bench_binop_broadcast`]. Sizes are scalar element counts;
+/// one `ty1` operand is reused across the batch.
+#[macro_export]
+macro_rules! bench_binop_wide_broadcast {
+    ($b:ident, width => $width:expr, op => $binop:ident, ty1 => $t1:ty, ty2 => $t2:ty, param => $param:tt) => {{
+        const SIZES: &[usize] = &[16, 1024];
+        let max_size = *SIZES.iter().max().unwrap();
+        let width: usize = $width;
+        let max_count = max_size.div_ceil(width);
+        let mut rng = rand_pcg::Pcg64Mcg::new($crate::macros::BENCH_RNG_SEED);
+        let input1 = <$t1 as mathbench::BenchValue>::random_value(&mut rng);
+        let inputs2 = (0..max_count)
+            .map(|_| <$t2 as mathbench::BenchValue>::random_value(&mut rng))
+            .collect::<Vec<$t2>>();
+        let mut outputs = inputs2
+            .iter()
+            .map(|input2| input1.$binop($param!(input2)))
+            .collect::<Vec<_>>();
+        let name = $b.1;
+        for &size in SIZES {
+            let count = size.div_ceil(width);
+            let inputs2 = &inputs2[..count];
+            let outputs = &mut outputs[..count];
+            $b.0.throughput(criterion::Throughput::Elements(size as u64));
+            $b.0
+                .bench_function(criterion::BenchmarkId::new(name, size), |bencher| {
+                    bencher.iter(|| {
+                        for (input2, output) in inputs2.iter().zip(outputs.iter_mut()) {
+                            *output = input1.$binop($param!(input2));
+                        }
+                        std::hint::black_box(&*outputs);
+                    })
+                });
+        }
+    }};
+    ($b:ident, width => $width:expr, op => $binop:ident, ty1 => $t1:ty, ty2 => $t2:ty) => {
+        bench_binop_wide_broadcast!($b, width => $width, op => $binop, ty1 => $t1, ty2 => $t2, param => by_value)
+    };
+    ($b:ident, width => $width:expr, op => $binop:ident, ty => $ty:ty, param => $param:tt) => {
+        bench_binop_wide_broadcast!($b, width => $width, op => $binop, ty1 => $ty, ty2 => $ty, param => $param)
+    };
+    ($b:ident, width => $width:expr, op => $binop:ident, ty => $ty:ty) => {
+        bench_binop_wide_broadcast!($b, width => $width, op => $binop, ty1 => $ty, ty2 => $ty)
     };
 }
 
