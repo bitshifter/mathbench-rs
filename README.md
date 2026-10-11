@@ -46,10 +46,12 @@ the following categories:
 
 Operation benchmarks run a batch of operations per timed iteration and report
 per-element throughput via Criterion's `Throughput::Elements`, at two sizes by
-default: 16 (L1-resident) and 1024 (adds cache pressure). This keeps the fixed
-per-iteration harness cost from dominating short operations, so results are
-directly comparable across libraries and across scalar and wide types. A single
-input pool is generated per benchmark and reused across sizes. The
+default: 16 (L1-resident) and 1024 (adds cache pressure). Batching amortizes the
+fixed per-iteration harness cost, so results are directly comparable across
+libraries and across scalar and wide types. The 16 point still carries a little
+of that fixed overhead (more so for wider types, which need fewer operations per
+batch); 1024 is close to pure throughput. Compare libraries at the same size. A
+single input pool is generated per benchmark and reused across sizes. The
 matrix/quaternion "multiply vector" and transform benches apply one transform to
 a batch of vectors or points, matching the throughput workload described above.
 
@@ -112,6 +114,17 @@ whereas `glam` and `euclid` do not. If a non-invertible matrix is inverted by
 
 Most libraries provide quaternions for performing rotations except for
 `ultraviolet` which provides rotors.
+
+### Type representation and ABI
+
+The scalar `glam` benchmarks use the SIMD-friendly 16-byte types where they
+exist (`Vec3A`, `Mat3A`, `Affine3A`), while most other libraries use 12-byte
+`Vec3`/`Mat3` types. This has a measurable effect on the `no-op baseline`: a
+16-byte value can be returned in a register, whereas a 12-byte value is
+returned through a hidden pointer (sret). Differences in the `no-op baseline`
+therefore reflect type representation and calling convention, not library
+efficiency. The same applies to `euclid` transform types and to the
+`Option`-returning inverse methods noted above.
 
 ## Wide benchmarks
 
@@ -391,7 +404,9 @@ each benchmarked library.
 The `unstable` feature requires a nightly compiler, and it allows us to tell
 rustc not to inline certain functions within hot benchmark loops. This is used
 in the ray-sphere intersection benchmark in order to simulate situations where
-the autovectorizer would not be able to properly vectorize your code.
+the autovectorizer would not be able to properly vectorize your code. The
+affected benchmark groups are suffixed with `(no inline)` so that results from
+the two modes are not confused.
 
 ## Running the tests
 
