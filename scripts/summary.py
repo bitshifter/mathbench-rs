@@ -181,7 +181,7 @@ def main():
     pt.sortby = 'benchmark'
     pt.align = 'r'
     pt.align['benchmark'] = 'l'
-    pt.hrules = prettytable.HEADER
+    pt.hrules = getattr(prettytable, 'HRuleStyle', prettytable).HEADER
     pt.junction_char = '|'
     print(pt)
 
