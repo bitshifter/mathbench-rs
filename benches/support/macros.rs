@@ -44,6 +44,40 @@ pub fn bench_context_sized<M, F, T>(
     closure(&mut ctx, size);
 }
 
+/// Register one benchmark case per size for a workload that owns its pools.
+///
+/// `build` is called once per size with the shared RNG and the scalar element
+/// count; `run` is the timed body and receives that state by `&mut`.
+///
+/// This is the skeleton every entry shares: the size list, per-size
+/// [`Throughput::Elements`](criterion::Throughput), the `BenchmarkId`, and the
+/// `iter` loop. The fixed-width `bench_*` macros pool per-lane values; a
+/// runtime-dispatched library pools SoA component slices and calls its
+/// `dispatch!` kernel here instead.
+#[allow(dead_code)]
+pub fn bench_workload<M, S, B, R>(
+    ctx: &mut (&mut criterion::BenchmarkGroup<'_, M>, &'static str),
+    sizes: &[usize],
+    mut build: B,
+    mut run: R,
+) where
+    M: criterion::measurement::Measurement,
+    B: FnMut(&mut rand_pcg::Pcg64Mcg, usize) -> S,
+    R: FnMut(&mut S),
+{
+    let name = ctx.1;
+    for &size in sizes {
+        let mut rng = rand_pcg::Pcg64Mcg::new(BENCH_RNG_SEED);
+        let mut state = build(&mut rng, size);
+        ctx.0
+            .throughput(criterion::Throughput::Elements(size as u64));
+        ctx.0
+            .bench_function(criterion::BenchmarkId::new(name, size), |bencher| {
+                bencher.iter(|| run(&mut state))
+            });
+    }
+}
+
 /// Register a Criterion benchmark for a math library.
 ///
 /// The closure is invoked with a context `(&mut BenchmarkGroup, lib_name)` and
