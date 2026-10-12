@@ -116,14 +116,15 @@ fn bench_euler_3d_wide(c: &mut Criterion) {
                 &[80000],
                 |rng, size| {
                     (
+                        gf::Euler3Entry::new(),
                         gf::random_soa(size, rng),
                         [vec![0.0f32; size], vec![0.0f32; size], vec![0.0f32; size]],
                         [vec![0.0f32; size], vec![0.0f32; size], vec![0.0f32; size]],
                     )
                 },
                 |s| {
-                    let (acc, vel, pos) = s;
-                    gf::euler3_soa_dispatch(gf::refs3(acc), vel, pos);
+                    let (euler3, acc, vel, pos) = s;
+                    euler3.call(gf::refs3(acc), gf::refs3_mut(vel), gf::refs3_mut(pos));
                     std::hint::black_box((&*vel, &*pos));
                 },
             )
@@ -205,14 +206,15 @@ fn bench_euler_2d_wide(c: &mut Criterion) {
                 &[80000],
                 |rng, size| {
                     (
+                        gf::Euler2Entry::new(),
                         gf::random_soa2(size, rng),
                         [vec![0.0f32; size], vec![0.0f32; size]],
                         [vec![0.0f32; size], vec![0.0f32; size]],
                     )
                 },
                 |s| {
-                    let (acc, vel, pos) = s;
-                    gf::euler2_soa_dispatch(gf::refs2(acc), vel, pos);
+                    let (euler2, acc, vel, pos) = s;
+                    euler2.call(gf::refs2(acc), gf::refs2_mut(vel), gf::refs2_mut(pos));
                     std::hint::black_box((&*vel, &*pos));
                 },
             )

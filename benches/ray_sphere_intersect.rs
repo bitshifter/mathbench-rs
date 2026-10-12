@@ -266,10 +266,16 @@ fn bench_ray_sphere_intersect_wide(c: &mut Criterion) {
             macros::bench_workload(
                 b,
                 &[80000],
-                |rng, size| (gf::random_unit_soa(size, rng), vec![0.0f32; size]),
+                |rng, size| {
+                    (
+                        gf::IntersectEntry::new(),
+                        gf::random_unit_soa(size, rng),
+                        vec![0.0f32; size],
+                    )
+                },
                 |s| {
-                    let (dirs, out) = s;
-                    gf::intersect_soa_dispatch(gf::refs3(dirs), out);
+                    let (intersect, dirs, out) = s;
+                    intersect.call(gf::refs3(dirs), out);
                     std::hint::black_box(&*out);
                 },
             )

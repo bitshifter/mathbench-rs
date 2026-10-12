@@ -94,10 +94,16 @@ fn bench_vector3_length_wide(c: &mut Criterion) {
         macros::bench_workload(
             b,
             &[16, 1024],
-            |rng, size| (gf::random_soa(size, rng), vec![0.0f32; size]),
+            |rng, size| {
+                (
+                    gf::LengthEntry::new(),
+                    gf::random_soa(size, rng),
+                    vec![0.0f32; size],
+                )
+            },
             |s| {
-                let (a, out) = s;
-                gf::length_soa_dispatch(gf::refs3(a), out);
+                let (length, a, out) = s;
+                length.call(gf::refs3(a), out);
                 std::hint::black_box(&*out);
             },
         )
@@ -164,6 +170,7 @@ fn bench_vector3_normalize_wide(c: &mut Criterion) {
             &[16, 1024],
             |rng, size| {
                 (
+                    gf::NormalizeEntry::new(),
                     gf::random_soa(size, rng),
                     vec![0.0f32; size],
                     vec![0.0f32; size],
@@ -171,8 +178,8 @@ fn bench_vector3_normalize_wide(c: &mut Criterion) {
                 )
             },
             |s| {
-                let (a, ox, oy, oz) = s;
-                gf::normalize_soa_dispatch(gf::refs3(a), ox, oy, oz);
+                let (normalize, a, ox, oy, oz) = s;
+                normalize.call(gf::refs3(a), ox, oy, oz);
                 std::hint::black_box((&*ox, &*oy, &*oz));
             },
         )
@@ -240,14 +247,15 @@ fn bench_vector3_dot_wide(c: &mut Criterion) {
             &[16, 1024],
             |rng, size| {
                 (
+                    gf::DotEntry::new(),
                     gf::random_soa(size, rng),
                     gf::random_soa(size, rng),
                     vec![0.0f32; size],
                 )
             },
             |s| {
-                let (a, c, out) = s;
-                gf::dot_soa_dispatch(gf::refs3(a), gf::refs3(c), out);
+                let (dot, a, c, out) = s;
+                dot.call(gf::refs3(a), gf::refs3(c), out);
                 std::hint::black_box(&*out);
             },
         )
@@ -315,6 +323,7 @@ fn bench_vector3_cross_wide(c: &mut Criterion) {
             &[16, 1024],
             |rng, size| {
                 (
+                    gf::CrossEntry::new(),
                     gf::random_soa(size, rng),
                     gf::random_soa(size, rng),
                     vec![0.0f32; size],
@@ -323,8 +332,8 @@ fn bench_vector3_cross_wide(c: &mut Criterion) {
                 )
             },
             |s| {
-                let (a, c, ox, oy, oz) = s;
-                gf::cross_soa_dispatch(gf::refs3(a), gf::refs3(c), ox, oy, oz);
+                let (cross, a, c, ox, oy, oz) = s;
+                cross.call(gf::refs3(a), gf::refs3(c), ox, oy, oz);
                 std::hint::black_box((&*ox, &*oy, &*oz));
             },
         )

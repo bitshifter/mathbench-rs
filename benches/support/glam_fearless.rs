@@ -1,11 +1,23 @@
-//! `glam_fearless` support: SoA kernels plus runtime dispatch wrappers.
+//! `glam_fearless` support: SoA kernels plus one entry point per kernel.
 //!
-//! `glam_fearless` values carry their SIMD token, so they cannot be constructed without one
-//! (and the width is chosen at runtime), which is why these entries take SoA component slices
-//! and dispatch per call instead of using the fixed-width `bench_*_wide!` macros. The dispatch
-//! match is negligible next to the kernel (measured: hoisting it changes the results by <=10%).
+//! `glam_fearless` values carry their SIMD token, so they cannot be constructed without one (and
+//! the width is chosen at runtime), which is why these entries take SoA component slices instead of
+//! using the fixed-width `bench_*_wide!` macros.
+//!
+//! Each kernel is a plain generic body over `S: Simd`, wrapped by `dispatch_entry!`. The pool
+//! builds the entry, which detects the level once, and the timed call goes straight to the kernel
+//! for that level: no match, no closure, and when the build enables the level's features, no
+//! indirect call either.
+//!
+//! Comparisons against the wide entries of other libraries are apples-for-apples only when the
+//! build enables AVX2 for them: without `-C target-cpu=native` (or an explicit AVX2 target) the
+//! `ultraviolet_f32x8` and `nalgebra_f32x8` entries are emulated as two `f32x4` halves and
+//! understate what those libraries can do on this hardware. That is the problem `glam_fearless`
+//! exists to solve rather than a caveat about it: it selects the width at run time, so one binary
+//! covers whatever the CPU supports, instead of the caller writing an x4 and an x8 path by hand
+//! or shipping a separate binary per SIMD level.
 
-use glam_fearless::{Level, QuatxN, Vec2xN, Vec3xN, dispatch, prelude::*, simd};
+use glam_fearless::{Affine3xN, Level, Mat3xN, QuatxN, Vec2xN, Vec3xN, dispatch_entry, prelude::*};
 
 /// Euler integration update rate, matching the other euler entries.
 pub const UPDATE_RATE: f32 = 1.0 / 60.0;
@@ -37,6 +49,12 @@ pub fn refs3(a: &[Vec<f32>; 3]) -> [&[f32]; 3] {
     [&a[0], &a[1], &a[2]]
 }
 
+/// Borrow two component arrays as mutable slices.
+pub fn refs2_mut(a: &mut [Vec<f32>; 2]) -> [&mut [f32]; 2] {
+    let [a0, a1] = a;
+    [a0.as_mut_slice(), a1.as_mut_slice()]
+}
+
 /// Random unit SoA directions.
 pub fn random_unit_soa(size: usize, rng: &mut Pcg64Mcg) -> [Vec<f32>; 3] {
     let mut out = [vec![0.0f32; size], vec![0.0f32; size], vec![0.0f32; size]];
@@ -50,7 +68,6 @@ pub fn random_unit_soa(size: usize, rng: &mut Pcg64Mcg) -> [Vec<f32>; 3] {
 }
 
 /// Ray/sphere test: sphere at the origin with radius 10, ray origin (0, 0, -11).
-#[simd]
 #[inline(always)]
 pub fn intersect_soa<S: Simd>(simd: S, dirs: [&[f32]; 3], out: &mut [f32]) {
     let n = Vec3xN::<S>::LANES;
@@ -82,7 +99,8 @@ pub fn intersect_soa<S: Simd>(simd: S, dirs: [&[f32]; 3], out: &mut [f32]) {
 }
 
 /// Per-lane length.
-#[simd]
+///
+/// A plain generic body, so `dispatch_entry!` can wrap it as well as `dispatch!`.
 #[inline(always)]
 pub fn length_soa<S: Simd>(simd: S, a: [&[f32]; 3], out: &mut [f32]) {
     let n = Vec3xN::<S>::LANES;
@@ -97,7 +115,6 @@ pub fn length_soa<S: Simd>(simd: S, a: [&[f32]; 3], out: &mut [f32]) {
 }
 
 /// Per-lane normalize.
-#[simd]
 #[inline(always)]
 pub fn normalize_soa<S: Simd>(
     simd: S,
@@ -121,7 +138,6 @@ pub fn normalize_soa<S: Simd>(
 }
 
 /// Per-lane dot product.
-#[simd]
 #[inline(always)]
 pub fn dot_soa<S: Simd>(simd: S, a: [&[f32]; 3], b: [&[f32]; 3], out: &mut [f32]) {
     let n = Vec3xN::<S>::LANES;
@@ -141,7 +157,6 @@ pub fn dot_soa<S: Simd>(simd: S, a: [&[f32]; 3], b: [&[f32]; 3], out: &mut [f32]
 }
 
 /// Per-lane cross product.
-#[simd]
 #[inline(always)]
 pub fn cross_soa<S: Simd>(
     simd: S,
@@ -171,43 +186,6 @@ pub fn cross_soa<S: Simd>(
     }
 }
 
-macro_rules! dispatch_wrapper {
-    ($name:ident, $kernel:ident) => {
-        /// Run the kernel at the best level this CPU supports.
-        pub fn $name(dirs: [&[f32]; 3], out: &mut [f32]) {
-            let level = Level::new();
-            dispatch!(level, simd => $kernel(simd, dirs, out))
-        }
-    };
-}
-
-dispatch_wrapper!(intersect_soa_dispatch, intersect_soa);
-dispatch_wrapper!(length_soa_dispatch, length_soa);
-
-/// Run the kernel at the best level this CPU supports.
-pub fn normalize_soa_dispatch(a: [&[f32]; 3], ox: &mut [f32], oy: &mut [f32], oz: &mut [f32]) {
-    let level = Level::new();
-    dispatch!(level, simd => normalize_soa(simd, a, ox, oy, oz))
-}
-
-/// Run the kernel at the best level this CPU supports.
-pub fn dot_soa_dispatch(a: [&[f32]; 3], b: [&[f32]; 3], out: &mut [f32]) {
-    let level = Level::new();
-    dispatch!(level, simd => dot_soa(simd, a, b, out))
-}
-
-/// Run the kernel at the best level this CPU supports.
-pub fn cross_soa_dispatch(
-    a: [&[f32]; 3],
-    b: [&[f32]; 3],
-    ox: &mut [f32],
-    oy: &mut [f32],
-    oz: &mut [f32],
-) {
-    let level = Level::new();
-    dispatch!(level, simd => cross_soa(simd, a, b, ox, oy, oz))
-}
-
 /// Random 2-component SoA.
 pub fn random_soa2(size: usize, rng: &mut Pcg64Mcg) -> [Vec<f32>; 2] {
     let mut out = [vec![0.0f32; size], vec![0.0f32; size]];
@@ -220,7 +198,6 @@ pub fn random_soa2(size: usize, rng: &mut Pcg64Mcg) -> [Vec<f32>; 2] {
 }
 
 /// One Euler integration step for 3D vectors, in place.
-#[simd]
 #[inline(always)]
 pub fn euler3_soa<S: Simd>(simd: S, acc: [&[f32]; 3], vel: [&mut [f32]; 3], pos: [&mut [f32]; 3]) {
     let n = Vec3xN::<S>::LANES;
@@ -260,7 +237,6 @@ pub fn euler3_soa<S: Simd>(simd: S, acc: [&[f32]; 3], vel: [&mut [f32]; 3], pos:
 }
 
 /// One Euler integration step for 2D vectors, in place.
-#[simd]
 #[inline(always)]
 pub fn euler2_soa<S: Simd>(simd: S, acc: [&[f32]; 2], vel: [&mut [f32]; 2], pos: [&mut [f32]; 2]) {
     let n = Vec2xN::<S>::LANES;
@@ -286,26 +262,6 @@ pub fn euler2_soa<S: Simd>(simd: S, acc: [&[f32]; 2], vel: [&mut [f32]; 2], pos:
         p.x.store_slice(px);
         p.y.store_slice(py);
     }
-}
-
-/// Euler integration step for 3D, at the best level this CPU supports.
-pub fn euler3_soa_dispatch(acc: [&[f32]; 3], vel: &mut [Vec<f32>; 3], pos: &mut [Vec<f32>; 3]) {
-    let level = Level::new();
-    let [v0, v1, v2] = vel;
-    let [p0, p1, p2] = pos;
-    let v: [&mut [f32]; 3] = [v0.as_mut_slice(), v1.as_mut_slice(), v2.as_mut_slice()];
-    let p: [&mut [f32]; 3] = [p0.as_mut_slice(), p1.as_mut_slice(), p2.as_mut_slice()];
-    dispatch!(level, simd => euler3_soa(simd, acc, v, p))
-}
-
-/// Euler integration step for 2D, at the best level this CPU supports.
-pub fn euler2_soa_dispatch(acc: [&[f32]; 2], vel: &mut [Vec<f32>; 2], pos: &mut [Vec<f32>; 2]) {
-    let level = Level::new();
-    let [v0, v1] = vel;
-    let [p0, p1] = pos;
-    let v: [&mut [f32]; 2] = [v0.as_mut_slice(), v1.as_mut_slice()];
-    let p: [&mut [f32]; 2] = [p0.as_mut_slice(), p1.as_mut_slice()];
-    dispatch!(level, simd => euler2_soa(simd, acc, v, p))
 }
 
 /// Random unit quaternions as SoA components.
@@ -359,7 +315,6 @@ pub fn refs3_mut(a: &mut [Vec<f32>; 3]) -> [&mut [f32]; 3] {
 }
 
 /// Quaternion conjugate, per lane.
-#[simd]
 #[inline(always)]
 pub fn quat_conjugate_soa<S: Simd>(simd: S, q: [&[f32]; 4], out: [&mut [f32]; 4]) {
     let n = S::f32s::LEN;
@@ -385,7 +340,6 @@ pub fn quat_conjugate_soa<S: Simd>(simd: S, q: [&[f32]; 4], out: [&mut [f32]; 4]
 }
 
 /// Quaternion multiply, per lane.
-#[simd]
 #[inline(always)]
 pub fn quat_mul_soa<S: Simd>(simd: S, a: [&[f32]; 4], b: [&[f32]; 4], out: [&mut [f32]; 4]) {
     let n = S::f32s::LEN;
@@ -419,7 +373,6 @@ pub fn quat_mul_soa<S: Simd>(simd: S, a: [&[f32]; 4], b: [&[f32]; 4], out: [&mut
 }
 
 /// Rotate a vector by a quaternion, per lane.
-#[simd]
 #[inline(always)]
 pub fn quat_rotate_soa<S: Simd>(simd: S, q: [&[f32]; 4], v: [&[f32]; 3], out: [&mut [f32]; 3]) {
     let n = S::f32s::LEN;
@@ -447,29 +400,10 @@ pub fn quat_rotate_soa<S: Simd>(simd: S, q: [&[f32]; 4], v: [&[f32]; 3], out: [&
     }
 }
 
-/// Quaternion conjugate, at the best level this CPU supports.
-pub fn quat_conjugate_soa_dispatch(q: [&[f32]; 4], out: [&mut [f32]; 4]) {
-    let level = Level::new();
-    dispatch!(level, simd => quat_conjugate_soa(simd, q, out))
-}
-
-/// Quaternion multiply, at the best level this CPU supports.
-pub fn quat_mul_soa_dispatch(a: [&[f32]; 4], b: [&[f32]; 4], out: [&mut [f32]; 4]) {
-    let level = Level::new();
-    dispatch!(level, simd => quat_mul_soa(simd, a, b, out))
-}
-
-/// Rotate a vector by a quaternion, at the best level this CPU supports.
-pub fn quat_rotate_soa_dispatch(q: [&[f32]; 4], v: [&[f32]; 3], out: [&mut [f32]; 3]) {
-    let level = Level::new();
-    dispatch!(level, simd => quat_rotate_soa(simd, q, v, out))
-}
-
 /// Rotate every lane of `v` by one quaternion, given as four scalars.
 ///
 /// This matches the `broadcast` benchmarks, where the rotation is held in registers while
 /// the vectors stream past, which is also how one rotation is applied to many points.
-#[simd]
 #[inline(always)]
 pub fn quat_rotate_broadcast_soa<S: Simd>(
     simd: S,
@@ -497,8 +431,266 @@ pub fn quat_rotate_broadcast_soa<S: Simd>(
     }
 }
 
-/// Rotate every lane of `v` by one quaternion, at the best level this CPU supports.
-pub fn quat_rotate_broadcast_soa_dispatch(q: [f32; 4], v: [&[f32]; 3], out: [&mut [f32]; 3]) {
-    let level = Level::new();
-    dispatch!(level, simd => quat_rotate_broadcast_soa(simd, q, v, out))
+// One entry per kernel: a pool selects the level once, and the timed call goes straight to the
+// kernel for that level.
+dispatch_entry! {
+    /// Ray/sphere test, selected once per pool.
+    pub struct IntersectEntry(level: Level) -> fn(dirs: [&[f32]; 3], out: &mut [f32]) = intersect_soa;
+}
+dispatch_entry! {
+    /// Per-lane length, selected once per pool.
+    pub struct LengthEntry(level: Level) -> fn(a: [&[f32]; 3], out: &mut [f32]) = length_soa;
+}
+dispatch_entry! {
+    /// Per-lane normalize, selected once per pool.
+    pub struct NormalizeEntry(level: Level) -> fn(a: [&[f32]; 3], ox: &mut [f32], oy: &mut [f32], oz: &mut [f32]) = normalize_soa;
+}
+dispatch_entry! {
+    /// Per-lane dot product, selected once per pool.
+    pub struct DotEntry(level: Level) -> fn(a: [&[f32]; 3], b: [&[f32]; 3], out: &mut [f32]) = dot_soa;
+}
+dispatch_entry! {
+    /// Per-lane cross product, selected once per pool.
+    pub struct CrossEntry(level: Level) -> fn(a: [&[f32]; 3], b: [&[f32]; 3], ox: &mut [f32], oy: &mut [f32], oz: &mut [f32]) = cross_soa;
+}
+dispatch_entry! {
+    /// Euler integration step for 3D, selected once per pool.
+    pub struct Euler3Entry(level: Level) -> fn(acc: [&[f32]; 3], vel: [&mut [f32]; 3], pos: [&mut [f32]; 3]) = euler3_soa;
+}
+dispatch_entry! {
+    /// Euler integration step for 2D, selected once per pool.
+    pub struct Euler2Entry(level: Level) -> fn(acc: [&[f32]; 2], vel: [&mut [f32]; 2], pos: [&mut [f32]; 2]) = euler2_soa;
+}
+dispatch_entry! {
+    /// Quaternion conjugate, selected once per pool.
+    pub struct QuatConjugateEntry(level: Level) -> fn(q: [&[f32]; 4], out: [&mut [f32]; 4]) = quat_conjugate_soa;
+}
+dispatch_entry! {
+    /// Quaternion multiply, selected once per pool.
+    pub struct QuatMulEntry(level: Level) -> fn(a: [&[f32]; 4], b: [&[f32]; 4], out: [&mut [f32]; 4]) = quat_mul_soa;
+}
+dispatch_entry! {
+    /// Rotate a vector by a quaternion, selected once per pool.
+    pub struct QuatRotateEntry(level: Level) -> fn(q: [&[f32]; 4], v: [&[f32]; 3], out: [&mut [f32]; 3]) = quat_rotate_soa;
+}
+dispatch_entry! {
+    /// Rotate every lane by one quaternion, selected once per pool.
+    pub struct QuatRotateBroadcastEntry(level: Level) -> fn(q: [f32; 4], v: [&[f32]; 3], out: [&mut [f32]; 3]) = quat_rotate_broadcast_soa;
+}
+
+// --- Matrix and affine pools. ---
+
+/// One array of conditioned random values.
+pub fn random_array(size: usize, _rng: &mut Pcg64Mcg, seed: f32) -> Vec<f32> {
+    (0..size)
+        .map(|i| {
+            let v = (i as f32 * 0.37 + seed).sin() * 2.0;
+            if v.abs() < 0.6 { v + 1.5 } else { v }
+        })
+        .collect()
+}
+
+/// `count` zeroed arrays, for outputs.
+pub fn zero_pool(count: usize, size: usize) -> Vec<Vec<f32>> {
+    (0..count).map(|_| vec![0.0f32; size]).collect()
+}
+
+/// Nine component pools in column-major order.
+pub fn random_mat3_pool(size: usize, rng: &mut Pcg64Mcg) -> Vec<Vec<f32>> {
+    (0..9).map(|c| random_array(size, rng, 1.0 + c as f32)).collect()
+}
+
+/// Twelve component pools: the nine matrix elements, then the translation.
+pub fn random_affine_pool(size: usize, rng: &mut Pcg64Mcg) -> Vec<Vec<f32>> {
+    (0..12).map(|c| random_array(size, rng, 1.0 + c as f32)).collect()
+}
+
+/// One scalar affine transform, for the broadcast transform benches.
+pub fn random_affine_scalar(rng: &mut Pcg64Mcg) -> glam::Affine3 {
+    let mut v = |seed: f32| random_array(1, rng, seed)[0];
+    glam::Affine3::from_mat3_translation(
+        glam::Mat3::from_cols(
+            glam::Vec3::new(v(1.0), v(2.0), v(3.0)),
+            glam::Vec3::new(v(4.0), v(5.0), v(6.0)),
+            glam::Vec3::new(v(7.0), v(8.0), v(9.0)),
+        ),
+        glam::Vec3::new(v(10.0), v(11.0), v(12.0)),
+    )
+}
+
+#[inline(always)]
+fn load_mat3<S: Simd>(simd: S, a: &[Vec<f32>], i: usize, n: usize) -> Mat3xN<S> {
+    let sl = |c: usize| &a[c][i..i + n];
+    Mat3xN::from_cols(
+        simd,
+        Vec3xN::from_slice(simd, sl(0), sl(1), sl(2)),
+        Vec3xN::from_slice(simd, sl(3), sl(4), sl(5)),
+        Vec3xN::from_slice(simd, sl(6), sl(7), sl(8)),
+    )
+}
+
+#[inline(always)]
+fn store_mat3<S: Simd>(m: Mat3xN<S>, out: &mut [Vec<f32>], i: usize, n: usize) {
+    let cols = m.cols();
+    let comps = [
+        cols[0].x, cols[0].y, cols[0].z,
+        cols[1].x, cols[1].y, cols[1].z,
+        cols[2].x, cols[2].y, cols[2].z,
+    ];
+    for (c, comp) in comps.iter().enumerate() {
+        out[c][i..i + n].copy_from_slice(comp.as_slice());
+    }
+}
+
+#[inline(always)]
+fn load_affine<S: Simd>(simd: S, a: &[Vec<f32>], i: usize, n: usize) -> Affine3xN<S> {
+    let sl = |c: usize| &a[c][i..i + n];
+    Affine3xN::from_mat3_translation(
+        simd,
+        Mat3xN::from_cols(
+            simd,
+            Vec3xN::from_slice(simd, sl(0), sl(1), sl(2)),
+            Vec3xN::from_slice(simd, sl(3), sl(4), sl(5)),
+            Vec3xN::from_slice(simd, sl(6), sl(7), sl(8)),
+        ),
+        Vec3xN::from_slice(simd, sl(9), sl(10), sl(11)),
+    )
+}
+
+#[inline(always)]
+fn store_affine<S: Simd>(r: Affine3xN<S>, out: &mut [Vec<f32>], i: usize, n: usize) {
+    let cols = r.matrix3.cols();
+    let comps = [
+        cols[0].x, cols[0].y, cols[0].z,
+        cols[1].x, cols[1].y, cols[1].z,
+        cols[2].x, cols[2].y, cols[2].z,
+        r.translation.x, r.translation.y, r.translation.z,
+    ];
+    for (c, comp) in comps.iter().enumerate() {
+        out[c][i..i + n].copy_from_slice(comp.as_slice());
+    }
+}
+
+/// Matrix3 ops. `op`: 0 transpose, 1 inverse, 2 determinant (into `det`).
+#[inline(always)]
+pub fn mat3_unop_soa<S: Simd>(
+    simd: S,
+    op: u32,
+    a: &[Vec<f32>],
+    out: &mut [Vec<f32>],
+    det: &mut [f32],
+) {
+    let n = S::f32s::LEN;
+    for i in (0..det.len()).step_by(n) {
+        let m = load_mat3(simd, a, i, n);
+        match op {
+            0 => store_mat3(m.transpose(), out, i, n),
+            1 => store_mat3(m.inverse(), out, i, n),
+            _ => m.determinant().store_slice(&mut det[i..i + n]),
+        }
+    }
+}
+
+/// Matrix3 times matrix3.
+#[inline(always)]
+pub fn mat3_mul_mat3_soa<S: Simd>(simd: S, a: &[Vec<f32>], b: &[Vec<f32>], out: &mut [Vec<f32>]) {
+    let n = S::f32s::LEN;
+    for i in (0..a[0].len()).step_by(n) {
+        let ma = load_mat3(simd, a, i, n);
+        let mb = load_mat3(simd, b, i, n);
+        store_mat3(ma * mb, out, i, n);
+    }
+}
+
+/// Matrix3 times vector3.
+#[inline(always)]
+pub fn mat3_mul_vec3_soa<S: Simd>(simd: S, a: &[Vec<f32>], v: &[Vec<f32>], out: &mut [Vec<f32>]) {
+    let n = S::f32s::LEN;
+    for i in (0..a[0].len()).step_by(n) {
+        let m = load_mat3(simd, a, i, n);
+        let rhs = Vec3xN::from_slice(
+            simd,
+            &v[0][i..i + n],
+            &v[1][i..i + n],
+            &v[2][i..i + n],
+        );
+        let r = m * rhs;
+        out[0][i..i + n].copy_from_slice(r.x.as_slice());
+        out[1][i..i + n].copy_from_slice(r.y.as_slice());
+        out[2][i..i + n].copy_from_slice(r.z.as_slice());
+    }
+}
+
+/// Affine inverse (`op` 0) or composition (`op` 1 with a second pool).
+#[inline(always)]
+pub fn affine_unop_soa<S: Simd>(simd: S, a: &[Vec<f32>], out: &mut [Vec<f32>]) {
+    let n = S::f32s::LEN;
+    for i in (0..a[0].len()).step_by(n) {
+        store_affine(load_affine(simd, a, i, n).inverse(), out, i, n);
+    }
+}
+
+/// Affine times affine.
+#[inline(always)]
+pub fn affine_mul_soa<S: Simd>(simd: S, a: &[Vec<f32>], b: &[Vec<f32>], out: &mut [Vec<f32>]) {
+    let n = S::f32s::LEN;
+    for i in (0..a[0].len()).step_by(n) {
+        let ma = load_affine(simd, a, i, n);
+        let mb = load_affine(simd, b, i, n);
+        store_affine(ma * mb, out, i, n);
+    }
+}
+
+/// One transform applied to many points (`op` 0) or vectors (`op` 1).
+#[inline(always)]
+pub fn affine_transform_broadcast_soa<S: Simd>(
+    simd: S,
+    a: glam::Affine3,
+    op: u32,
+    v: &[Vec<f32>],
+    out: &mut [Vec<f32>],
+) {
+    let n = S::f32s::LEN;
+    let affine = Affine3xN::splat_affine3(simd, a);
+    for i in (0..v[0].len()).step_by(n) {
+        let p = Vec3xN::from_slice(
+            simd,
+            &v[0][i..i + n],
+            &v[1][i..i + n],
+            &v[2][i..i + n],
+        );
+        let r = if op == 0 {
+            affine.transform_point3(p)
+        } else {
+            affine.transform_vector3(p)
+        };
+        out[0][i..i + n].copy_from_slice(r.x.as_slice());
+        out[1][i..i + n].copy_from_slice(r.y.as_slice());
+        out[2][i..i + n].copy_from_slice(r.z.as_slice());
+    }
+}
+
+dispatch_entry! {
+    /// Matrix3 transpose, inverse or determinant, selected once per pool.
+    pub struct Mat3UnopEntry(level: Level) -> fn(op: u32, a: &[Vec<f32>], out: &mut [Vec<f32>], det: &mut [f32]) = mat3_unop_soa;
+}
+dispatch_entry! {
+    /// Matrix3 times matrix3, selected once per pool.
+    pub struct Mat3MulMat3Entry(level: Level) -> fn(a: &[Vec<f32>], b: &[Vec<f32>], out: &mut [Vec<f32>]) = mat3_mul_mat3_soa;
+}
+dispatch_entry! {
+    /// Matrix3 times vector3, selected once per pool.
+    pub struct Mat3MulVec3Entry(level: Level) -> fn(a: &[Vec<f32>], v: &[Vec<f32>], out: &mut [Vec<f32>]) = mat3_mul_vec3_soa;
+}
+dispatch_entry! {
+    /// Affine inverse, selected once per pool.
+    pub struct AffineUnopEntry(level: Level) -> fn(a: &[Vec<f32>], out: &mut [Vec<f32>]) = affine_unop_soa;
+}
+dispatch_entry! {
+    /// Affine times affine, selected once per pool.
+    pub struct AffineMulEntry(level: Level) -> fn(a: &[Vec<f32>], b: &[Vec<f32>], out: &mut [Vec<f32>]) = affine_mul_soa;
+}
+dispatch_entry! {
+    /// One transform applied to many points or vectors, selected once per pool.
+    pub struct AffineTransformEntry(level: Level) -> fn(a: glam::Affine3, op: u32, v: &[Vec<f32>], out: &mut [Vec<f32>]) = affine_transform_broadcast_soa;
 }

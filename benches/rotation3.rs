@@ -99,11 +99,11 @@ fn bench_rotation3_inverse_wide(c: &mut Criterion) {
             &[16, 1024],
             |rng, size| {
                 let q = gf::random_quat_soa(size, rng);
-                (q, gf::zero_soa4(size))
+                (gf::QuatConjugateEntry::new(), q, gf::zero_soa4(size))
             },
             |s| {
-                let (q, out) = s;
-                gf::quat_conjugate_soa_dispatch(gf::refs4(q), gf::refs4_mut(out));
+                let (conjugate, q, out) = s;
+                conjugate.call(gf::refs4(q), gf::refs4_mut(out));
                 std::hint::black_box(&*out);
             },
         )
@@ -172,11 +172,11 @@ fn bench_rotation3_mul_rotation3_wide(c: &mut Criterion) {
             |rng, size| {
                 let a = gf::random_quat_soa(size, rng);
                 let c = gf::random_quat_soa(size, rng);
-                (a, c, gf::zero_soa4(size))
+                (gf::QuatMulEntry::new(), a, c, gf::zero_soa4(size))
             },
             |s| {
-                let (a, c, out) = s;
-                gf::quat_mul_soa_dispatch(gf::refs4(a), gf::refs4(c), gf::refs4_mut(out));
+                let (mul, a, c, out) = s;
+                mul.call(gf::refs4(a), gf::refs4(c), gf::refs4_mut(out));
                 std::hint::black_box(&*out);
             },
         )
@@ -246,14 +246,15 @@ fn bench_rotation3_mul_vector3_wide(c: &mut Criterion) {
                 let q = glam::Quat::random_value(rng).normalize();
                 let v = gf::random_soa(size, rng);
                 (
+                    gf::QuatRotateBroadcastEntry::new(),
                     [q.x, q.y, q.z, q.w],
                     v,
                     [vec![0.0f32; size], vec![0.0f32; size], vec![0.0f32; size]],
                 )
             },
             |s| {
-                let (q, v, out) = s;
-                gf::quat_rotate_broadcast_soa_dispatch(*q, gf::refs3(v), gf::refs3_mut(out));
+                let (rotate, q, v, out) = s;
+                rotate.call(*q, gf::refs3(v), gf::refs3_mut(out));
                 std::hint::black_box(&*out);
             },
         )

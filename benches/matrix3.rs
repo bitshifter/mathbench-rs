@@ -1,6 +1,11 @@
 #[path = "support/macros.rs"]
 #[macro_use]
 mod macros;
+#[cfg(feature = "glam_fearless")]
+#[allow(dead_code)] // shared with the other benches
+#[path = "support/glam_fearless.rs"]
+mod gf;
+
 use criterion::{Criterion, criterion_group, criterion_main};
 use mathbench::BenchValue;
 use std::ops::Mul;
@@ -81,6 +86,23 @@ fn bench_matrix3_transpose_wide(c: &mut Criterion) {
         use simba::simd::WideF32x8;
         bench_unop_wide!(b, width => 8, op => transpose, ty => Matrix3<WideF32x8>)
     });
+    bench!("glam_fearless", group, |b| {
+        macros::bench_workload(
+            b,
+            &[16, 1024],
+            |rng, size| (
+                gf::Mat3UnopEntry::new(),
+                gf::random_mat3_pool(size, rng),
+                gf::zero_pool(9, size),
+                vec![0.0f32; size],
+            ),
+            |s| {
+                let (op, a, out, det) = s;
+                op.call(0, a, out, det);
+                std::hint::black_box(&*out);
+            },
+        )
+    });
     group.finish();
 }
 
@@ -124,6 +146,23 @@ fn bench_matrix3_determinant_wide(c: &mut Criterion) {
         use ultraviolet::Mat3x8;
         bench_unop_wide!(b, width => 8, op => determinant, ty => Mat3x8)
     });
+    bench!("glam_fearless", group, |b| {
+        macros::bench_workload(
+            b,
+            &[16, 1024],
+            |rng, size| (
+                gf::Mat3UnopEntry::new(),
+                gf::random_mat3_pool(size, rng),
+                gf::zero_pool(9, size),
+                vec![0.0f32; size],
+            ),
+            |s| {
+                let (op, a, out, det) = s;
+                op.call(2, a, out, det);
+                std::hint::black_box(&*det);
+            },
+        )
+    });
     group.finish();
 }
 
@@ -162,6 +201,23 @@ fn bench_matrix3_inverse_wide(c: &mut Criterion) {
     bench!("ultraviolet_f32x8", group, |b| {
         use ultraviolet::Mat3x8;
         bench_unop_wide!(b, width => 8, op => inversed, ty => Mat3x8)
+    });
+    bench!("glam_fearless", group, |b| {
+        macros::bench_workload(
+            b,
+            &[16, 1024],
+            |rng, size| (
+                gf::Mat3UnopEntry::new(),
+                gf::random_mat3_pool(size, rng),
+                gf::zero_pool(9, size),
+                vec![0.0f32; size],
+            ),
+            |s| {
+                let (op, a, out, det) = s;
+                op.call(1, a, out, det);
+                std::hint::black_box(&*out);
+            },
+        )
     });
     group.finish();
 }
@@ -216,6 +272,23 @@ fn bench_matrix3_mul_matrix3_wide(c: &mut Criterion) {
         use simba::simd::WideF32x8;
         bench_binop_wide!(b, width => 8, op => mul, ty1 => Matrix3<WideF32x8>, ty2 => Matrix3<WideF32x8>)
     });
+    bench!("glam_fearless", group, |b| {
+        macros::bench_workload(
+            b,
+            &[16, 1024],
+            |rng, size| (
+                gf::Mat3MulMat3Entry::new(),
+                gf::random_mat3_pool(size, rng),
+                gf::random_mat3_pool(size, rng),
+                gf::zero_pool(9, size),
+            ),
+            |s| {
+                let (mul, a, c, out) = s;
+                mul.call(a, c, out);
+                std::hint::black_box(&*out);
+            },
+        )
+    });
     group.finish();
 }
 
@@ -268,6 +341,23 @@ fn bench_matrix3_mul_vector3_wide(c: &mut Criterion) {
         use nalgebra::{Matrix3, Vector3};
         use simba::simd::WideF32x8;
         bench_binop_wide_broadcast!(b, width => 8, op => mul, ty1 => Matrix3<WideF32x8>, ty2 => Vector3<WideF32x8>)
+    });
+    bench!("glam_fearless", group, |b| {
+        macros::bench_workload(
+            b,
+            &[16, 1024],
+            |rng, size| (
+                gf::Mat3MulVec3Entry::new(),
+                gf::random_mat3_pool(size, rng),
+                (0..3).map(|_| gf::random_array(size, rng, 1.0)).collect::<Vec<_>>(),
+                gf::zero_pool(3, size),
+            ),
+            |s| {
+                let (mul, a, v, out) = s;
+                mul.call(a, v, out);
+                std::hint::black_box(&*out);
+            },
+        )
     });
     group.finish();
 }

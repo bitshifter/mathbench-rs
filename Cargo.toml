@@ -90,7 +90,7 @@ optional = true
 [dependencies.glam_fearless]
 package = "glam-fearless"
 git = "https://github.com/bitshifter/pathtrace-rs"
-rev = "a8a788cef03ef2f8ec064233b6342470fd7345a7"
+rev = "db299cc"
 optional = true
 
 # `#[simd]` expands to paths in `fearless_simd`, so it must be a direct dependency.

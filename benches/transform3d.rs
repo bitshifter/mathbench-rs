@@ -1,6 +1,11 @@
 #[path = "support/macros.rs"]
 #[macro_use]
 mod macros;
+#[cfg(feature = "glam_fearless")]
+#[allow(dead_code)] // shared with the other benches
+#[path = "support/glam_fearless.rs"]
+mod gf;
+
 use criterion::{Criterion, criterion_group, criterion_main};
 
 // measures benchmark no-op baseline for this type
@@ -69,10 +74,55 @@ fn bench_transform3_mul_transform3(c: &mut Criterion) {
     group.finish();
 }
 
+fn bench_transform3_inverse_wide(c: &mut Criterion) {
+    let mut group = c.benchmark_group("wide transform3 inverse");
+    bench!("glam_fearless", group, |b| {
+        macros::bench_workload(
+            b,
+            &[16, 1024],
+            |rng, size| (
+                gf::AffineUnopEntry::new(),
+                gf::random_affine_pool(size, rng),
+                gf::zero_pool(12, size),
+            ),
+            |s| {
+                let (inv, a, out) = s;
+                inv.call(a, out);
+                std::hint::black_box(&*out);
+            },
+        )
+    });
+    group.finish();
+}
+
+fn bench_transform3_mul_transform3_wide(c: &mut Criterion) {
+    let mut group = c.benchmark_group("wide transform3 mul transform3");
+    bench!("glam_fearless", group, |b| {
+        macros::bench_workload(
+            b,
+            &[16, 1024],
+            |rng, size| (
+                gf::AffineMulEntry::new(),
+                gf::random_affine_pool(size, rng),
+                gf::random_affine_pool(size, rng),
+                gf::zero_pool(12, size),
+            ),
+            |s| {
+                let (mul, a, c, out) = s;
+                mul.call(a, c, out);
+                std::hint::black_box(&*out);
+            },
+        )
+    });
+    group.finish();
+}
+
 criterion_group!(
     transform3d_benches,
     bench_transform3_ret_self,
     bench_transform3_inverse,
     bench_transform3_mul_transform3,
+    bench_transform3_inverse_wide,
+    bench_transform3_mul_transform3_wide,
 );
 criterion_main!(transform3d_benches);

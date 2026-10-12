@@ -1,6 +1,11 @@
 #[path = "support/macros.rs"]
 #[macro_use]
 mod macros;
+#[cfg(feature = "glam_fearless")]
+#[allow(dead_code)] // shared with the other benches
+#[path = "support/glam_fearless.rs"]
+mod gf;
+
 use criterion::{Criterion, criterion_group, criterion_main};
 
 fn bench_transform_vector3(c: &mut Criterion) {
@@ -45,6 +50,22 @@ fn bench_transform_vector3_wide(c: &mut Criterion) {
     bench!("ultraviolet_f32x8", group, |b| {
         use ultraviolet::{Mat4x8, Vec3x8};
         bench_binop_wide_broadcast!(b, width => 8, op => transform_vec3, ty1 => Mat4x8, ty2 => Vec3x8)
+    });
+    bench!("glam_fearless", group, |b| {
+        macros::bench_workload(
+            b,
+            &[16, 1024],
+            |rng, size| {
+                let a = gf::random_affine_scalar(rng);
+                let v = (0..3).map(|_| gf::random_array(size, rng, 1.0)).collect::<Vec<_>>();
+                (gf::AffineTransformEntry::new(), a, v, gf::zero_pool(3, size))
+            },
+            |s| {
+                let (transform, a, v, out) = s;
+                transform.call(*a, 1, v, out);
+                std::hint::black_box(&*out);
+            },
+        )
     });
     group.finish();
 }
@@ -97,6 +118,22 @@ fn bench_transform_point3_wide(c: &mut Criterion) {
     bench!("ultraviolet_f32x8", group, |b| {
         use ultraviolet::{Mat4x8, Vec3x8};
         bench_binop_wide_broadcast!(b, width => 8, op => transform_point3, ty1 => Mat4x8, ty2 => Vec3x8)
+    });
+    bench!("glam_fearless", group, |b| {
+        macros::bench_workload(
+            b,
+            &[16, 1024],
+            |rng, size| {
+                let a = gf::random_affine_scalar(rng);
+                let v = (0..3).map(|_| gf::random_array(size, rng, 1.0)).collect::<Vec<_>>();
+                (gf::AffineTransformEntry::new(), a, v, gf::zero_pool(3, size))
+            },
+            |s| {
+                let (transform, a, v, out) = s;
+                transform.call(*a, 0, v, out);
+                std::hint::black_box(&*out);
+            },
+        )
     });
     group.finish();
 }
