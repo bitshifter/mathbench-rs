@@ -216,6 +216,8 @@ The versions of the libraries tested were:
 * `ultraviolet` - `0.10.0`
 * `vek` - `0.17.2`
 
+See the full [mathbench report] for more detailed results.
+
 ### Scalar benchmarks
 
 Run with the command:
@@ -385,6 +387,7 @@ RUSTFLAGS='-C target-cpu=native' cargo bench --features wide wide
 | vector3 normalize x16          |    2.1252 ns   |           0.5527 ns   |        0.9365 ns   |         __0.2800 ns__ |        0.4691 ns   |
 
 [AMD Ryzen 7 3800X]: https://www.amd.com/en/products/cpu/amd-ryzen-7-3800x
+[mathbench report]: https://bitshifter.github.io/mathbench/0.5.0/report/index.html
 
 ## Running the benchmarks
 
