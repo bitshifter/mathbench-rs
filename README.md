@@ -168,7 +168,8 @@ Note that the `nalgebra` wide benchmarks use `simba`'s stable, `wide` crate
 backed types (`WideF32x4` and `WideF32x8`), so they build on stable Rust.
 
 Additionally the `f32x8` benchmarks will require the `AVX2` instruction set, to
-enable that you will need to build with `RUSTFLAGS='-C target-feature=+avx2`.
+enable that you will need to build with `RUSTFLAGS='-C target-feature=+avx2'`
+(or `RUSTFLAGS='-C target-cpu=native'`).
 
 ## Build settings
 
@@ -181,7 +182,10 @@ will need to decided on a minimum specification that they will target. Deciding
 on a minimum specifiction dictates the potential audience size for a project.
 This is an important decision for any game and it will be different for every
 project. `mathbench` doesn't want to make assumptions about what build settings
-any particular project may want to use which is why default settings are used.
+any particular project may want to use which is why the `profile.bench` settings
+are left at their defaults. The results published here add
+`-C target-cpu=native` on top of those defaults; the exact command used is shown
+with each table.
 
 I would encourage users who to use build settigs different to the defaults to
 run the benchmarks themselves and consider publishing their results.
@@ -195,7 +199,8 @@ performance to `cgmath`, `nalgebra`, `euclid`, `vek`, `pathfinder_geometry`,
 and `ultraviolet` on `f32` data.
 
 These benchmarks were performed on an [AMD Ryzen 7 3800X] CPU on Linux. They were
-compiled with the `1.99.0 (b940084d7 2026-09-28)` Rust compiler. Lower
+compiled with the `1.99.0 (b940084d7 2026-09-28)` Rust compiler with
+`RUSTFLAGS='-C target-cpu=native'`. Lower
 (better) numbers are highlighted when the library is within `-t` percent
 (default 2.5) of the fastest in the row and the one-sided 95% interval for the
 difference rules out a slowdown larger than that margin, i.e. when the library
@@ -216,64 +221,94 @@ The versions of the libraries tested were:
 Run with the command:
 
 ```sh
-cargo bench --features scalar scalar
+RUSTFLAGS='-C target-cpu=native' cargo bench --features scalar scalar
 ```
 
-| benchmark                      |          glam   |        cgmath   |      nalgebra   |        euclid   |           vek   |    pathfinder   |   ultraviolet   |
-|--------------------------------|-----------------|-----------------|-----------------|-----------------|-----------------|-----------------|-----------------|
-| euler 2d x10000                |    __5.163 us__ |    __5.116 us__ |      7.093 us   |    __5.124 us__ |    __5.158 us__ |      5.894 us   |    __5.121 us__ |
-| euler 3d x10000                |    __5.864 us__ |      16.56 us   |       16.5 us   |      16.48 us   |      16.46 us   |    __5.852 us__ |       16.6 us   |
-| matrix2 determinant            |   __1.0262 ns__ |     1.1390 ns   |     1.1387 ns   |       N/A       |     1.1361 ns   |     1.1469 ns   |     1.1384 ns   |
-| matrix2 inverse                |   __1.4776 ns__ |     2.0499 ns   |     2.0399 ns   |       N/A       |       N/A       |     1.6476 ns   |     1.7388 ns   |
-| matrix2 mul matrix2            |     1.1531 ns   |   __1.1030 ns__ |     1.2088 ns   |       N/A       |     8.8631 ns   |     1.1403 ns   |   __1.1052 ns__ |
-| matrix2 mul vector2 x1         |   __0.9283 ns__ |     1.1561 ns   |     1.1906 ns   |       N/A       |     4.6570 ns   |     0.9584 ns   |     1.1698 ns   |
-| matrix2 mul vector2 x100       | __171.1991 ns__ |   179.7413 ns   |   178.3703 ns   |       N/A       |   463.2815 ns   | __171.7605 ns__ |   178.8623 ns   |
-| matrix2 no-op baseline            |   __1.1184 ns__ |     1.6710 ns   |     1.6165 ns   |       N/A       |     1.7853 ns   |     1.6190 ns   |     1.7241 ns   |
-| matrix2 transpose              |     1.2241 ns   |     1.3370 ns   |     1.3974 ns   |       N/A       |     0.9063 ns   |       N/A       |   __0.8504 ns__ |
-| matrix3 determinant            |   __2.1892 ns__ |     2.2352 ns   |   __2.1973 ns__ |       N/A       |   __2.1650 ns__ |       N/A       |    10.4218 ns   |
-| matrix3 inverse                |   __5.3608 ns__ |     9.0642 ns   |     5.6807 ns   |       N/A       |       N/A       |       N/A       |    12.2288 ns   |
-| matrix3 mul matrix3            |     4.6602 ns   |     5.6509 ns   |   __4.4501 ns__ |       N/A       |    36.7220 ns   |       N/A       |   __4.5589 ns__ |
-| matrix3 mul vector3 x1         |   __2.1895 ns__ |     3.4878 ns   |   __2.1900 ns__ |       N/A       |    12.7325 ns   |       N/A       |     2.3641 ns   |
-| matrix3 mul vector3 x100       |   __0.3649 us__ |     0.4132 us   |   __0.3661 us__ |       N/A       |      1.276 us   |       N/A       |   __0.3659 us__ |
-| matrix3 no-op baseline            |     2.9568 ns   |   __2.9042 ns__ |   __2.8369 ns__ |       N/A       |   __2.8971 ns__ |       N/A       |   __2.9001 ns__ |
-| matrix3 transpose              |     2.1894 ns   |     2.1891 ns   |   __1.9596 ns__ |       N/A       |     2.1792 ns   |       N/A       |   __1.9453 ns__ |
-| matrix4 determinant            |   __4.3934 ns__ |     7.1764 ns   |    40.9609 ns   |    11.2154 ns   |    12.2779 ns   |       N/A       |     4.6378 ns   |
-| matrix4 inverse                |  __12.1455 ns__ |    30.8124 ns   |    40.8410 ns   |    54.4792 ns   |    27.3142 ns   |       N/A       |    20.0627 ns   |
-| matrix4 mul matrix4            |   __4.4589 ns__ |     6.2970 ns   |     4.7309 ns   |     6.4629 ns   |   103.4461 ns   |       N/A       |     5.0440 ns   |
-| matrix4 mul vector4 x1         |     2.1002 ns   |   __1.9625 ns__ |   __1.9185 ns__ |       N/A       |    24.5601 ns   |       N/A       |     2.2970 ns   |
-| matrix4 mul vector4 x100       |   __0.5092 us__ |     0.5362 us   |     0.5379 us   |       N/A       |      2.491 us   |       N/A       |     0.5361 us   |
-| matrix4 no-op baseline            |   __3.3286 ns__ |   __3.3602 ns__ |   __3.3612 ns__ |       N/A       |   __3.3757 ns__ |       N/A       |   __3.3850 ns__ |
-| matrix4 transpose              |   __2.7248 ns__ |     7.6718 ns   |     7.7156 ns   |       N/A       |     7.6853 ns   |       N/A       |     7.6577 ns   |
-| ray-sphere intersection x10000 |    __13.37 us__ |     __13.3 us__ |    __13.37 us__ |    __13.31 us__ |    __13.37 us__ |       N/A       |     __13.3 us__ |
-| rotation3 inverse              |   __1.6893 ns__ |     2.5085 ns   |     2.5737 ns   |     2.5909 ns   |     2.4670 ns   |       N/A       |     2.5312 ns   |
-| rotation3 mul rotation3        |   __1.8869 ns__ |     2.6284 ns   |     2.4297 ns   |     3.4803 ns   |     3.0026 ns   |       N/A       |     3.2824 ns   |
-| rotation3 mul vector3 x1       |     3.1971 ns   |   __2.9104 ns__ |     3.3983 ns   |     3.1297 ns   |     5.1255 ns   |       N/A       |     4.3788 ns   |
-| rotation3 mul vector3 x100     |   347.7257 ns   | __307.8286 ns__ |   349.4552 ns   |   346.2632 ns   |   506.3045 ns   |       N/A       |   431.1647 ns   |
-| rotation3 no-op baseline          |   __1.4740 ns__ |     1.7942 ns   |     1.8652 ns   |       N/A       |     1.7913 ns   |       N/A       |     1.8121 ns   |
-| transform point2 x1            |   __1.0489 ns__ |     2.0296 ns   |     2.4919 ns   |     1.3207 ns   |     4.4160 ns   |     1.0863 ns   |     1.8828 ns   |
-| transform point2 x100          |   268.6793 ns   |   335.3824 ns   |   357.9078 ns   | __233.8814 ns__ |   501.7938 ns   |   268.9675 ns   |   331.0402 ns   |
-| transform point3 x1            |   __1.9061 ns__ |    15.0678 ns   |     4.0615 ns   |     3.3012 ns   |    12.3817 ns   |     2.0046 ns   |     3.5482 ns   |
-| transform point3 x100          |   __0.4933 us__ |      1.552 us   |     0.5895 us   |     0.5714 us   |      1.301 us   |   __0.5015 us__ |     0.5653 us   |
-| transform vector2 x1           |   __0.9408 ns__ |       N/A       |     2.0241 ns   |     1.2064 ns   |     8.6210 ns   |       N/A       |     1.3573 ns   |
-| transform vector2 x100         |   259.8743 ns   |       N/A       |   330.1703 ns   | __230.7005 ns__ |   862.0694 ns   |       N/A       |   306.3204 ns   |
-| transform vector3 x1           |   __1.9841 ns__ |    11.6743 ns   |     2.7202 ns   |     2.2886 ns   |    18.1540 ns   |       N/A       |     2.7037 ns   |
-| transform vector3 x100         |   __0.4938 us__ |       1.19 us   |     0.5509 us   |     0.5109 us   |      1.906 us   |       N/A       |      0.522 us   |
-| transform2 inverse             |   __2.2689 ns__ |       N/A       |     5.6429 ns   |     2.9631 ns   |       N/A       |     2.5809 ns   |       N/A       |
-| transform2 mul transform2      |     2.1811 ns   |       N/A       |     4.3640 ns   |   __1.9851 ns__ |       N/A       |     2.1966 ns   |       N/A       |
-| transform2 no-op baseline         |   __2.2848 ns__ |       N/A       |     2.9137 ns   |     2.4864 ns   |       N/A       |   __2.2808 ns__ |       N/A       |
-| transform3 inverse             |   __6.6932 ns__ |       N/A       |    40.6221 ns   |    38.0707 ns   |       N/A       |    20.7270 ns   |       N/A       |
-| transform3 mul transform3d     |   __3.5545 ns__ |       N/A       |     4.8629 ns   |     6.3285 ns   |       N/A       |     4.4894 ns   |       N/A       |
-| transform3 no-op baseline         |   __3.3643 ns__ |       N/A       |   __3.3640 ns__ |   __3.3515 ns__ |       N/A       |   __3.3487 ns__ |       N/A       |
-| vector3 cross                  |   __1.0511 ns__ |     1.5374 ns   |     1.5364 ns   |     1.5369 ns   |     1.5453 ns   |       N/A       |     1.5370 ns   |
-| vector3 dot                    |   __0.9757 ns__ |     1.2293 ns   |     1.2324 ns   |     1.2385 ns   |     1.2313 ns   |       N/A       |     1.2214 ns   |
-| vector3 length                 |   __1.3147 ns__ |   __1.3128 ns__ |   __1.3205 ns__ |   __1.3079 ns__ |   __1.3108 ns__ |       N/A       |   __1.3091 ns__ |
-| vector3 normalize              |   __2.1971 ns__ |     2.5868 ns   |     3.0146 ns   |     3.0183 ns   |     2.9928 ns   |       N/A       |     2.6405 ns   |
-| vector3 no-op baseline            |   __1.0859 ns__ |     1.9663 ns   |     1.9419 ns   |       N/A       |     1.9943 ns   |       N/A       |     2.1768 ns   |
+| benchmark                        |         glam   |       cgmath   |     nalgebra   |       euclid   |          vek   |   pathfinder   |   ultraviolet   |
+|----------------------------------|----------------|----------------|----------------|----------------|----------------|----------------|-----------------|
+| euler 2d x10000                  |  __0.4993 ns__ |  __0.5047 ns__ |    0.5977 ns   |  __0.4994 ns__ |  __0.5008 ns__ |    0.5959 ns   |   __0.5009 ns__ |
+| euler 3d x10000                  |  __0.5815 ns__ |    1.4042 ns   |    1.4056 ns   |    1.4009 ns   |    1.4034 ns   |  __0.5858 ns__ |     1.3889 ns   |
+| matrix2 determinant x1024        |  __0.4799 ns__ |    0.7045 ns   |    0.7149 ns   |      N/A       |    0.7145 ns   |    0.7129 ns   |     0.7101 ns   |
+| matrix2 determinant x16          |  __0.5018 ns__ |    0.7091 ns   |    0.7186 ns   |      N/A       |    0.7118 ns   |    0.7118 ns   |     0.7121 ns   |
+| matrix2 inverse x1024            |  __0.9549 ns__ |    1.2330 ns   |    1.2120 ns   |      N/A       |      N/A       |    1.0188 ns   |     1.9215 ns   |
+| matrix2 inverse x16              |  __0.9061 ns__ |    1.2145 ns   |    1.2080 ns   |      N/A       |      N/A       |    1.0010 ns   |     1.9143 ns   |
+| matrix2 mul matrix2 x1024        |  __0.6627 ns__ |    2.2528 ns   |    2.2675 ns   |      N/A       |    2.1962 ns   |    0.7281 ns   |     2.2407 ns   |
+| matrix2 mul matrix2 x16          |  __0.6547 ns__ |    2.2541 ns   |    2.2568 ns   |      N/A       |    2.1825 ns   |    0.7263 ns   |     2.2290 ns   |
+| matrix2 mul vector2 x1024        |    0.4906 ns   |    0.2369 ns   |    0.2360 ns   |      N/A       |  __0.2196 ns__ |    0.4208 ns   |     0.2396 ns   |
+| matrix2 mul vector2 x16          |    0.5076 ns   |    0.2302 ns   |    0.2681 ns   |      N/A       |  __0.2210 ns__ |    0.4172 ns   |     0.2290 ns   |
+| matrix2 no-op baseline x1024     |    0.3672 ns   |    0.3697 ns   |  __0.2609 ns__ |      N/A       |  __0.2592 ns__ |  __0.2611 ns__ |     0.3600 ns   |
+| matrix2 no-op baseline x16       |    0.2856 ns   |    0.2829 ns   |  __0.2790 ns__ |      N/A       |  __0.2752 ns__ |    0.2841 ns   |     0.2801 ns   |
+| matrix2 transpose x1024          |    0.3712 ns   |  __0.1780 ns__ |  __0.1770 ns__ |      N/A       |  __0.1777 ns__ |      N/A       |   __0.1772 ns__ |
+| matrix2 transpose x16            |    0.2749 ns   |  __0.1616 ns__ |  __0.1613 ns__ |      N/A       |  __0.1620 ns__ |      N/A       |     0.2604 ns   |
+| matrix3 determinant x1024        |    1.1539 ns   |  __1.0718 ns__ |  __1.0894 ns__ |      N/A       |  __1.0846 ns__ |      N/A       |   __1.0755 ns__ |
+| matrix3 determinant x16          |    1.1450 ns   |  __1.0644 ns__ |    1.0999 ns   |      N/A       |    1.1057 ns   |      N/A       |   __1.0620 ns__ |
+| matrix3 inverse x1024            |    4.1165 ns   |    8.5685 ns   |    4.8496 ns   |      N/A       |      N/A       |      N/A       |   __3.1408 ns__ |
+| matrix3 inverse x16              |    4.1170 ns   |    8.6799 ns   |    4.7974 ns   |      N/A       |      N/A       |      N/A       |   __3.1086 ns__ |
+| matrix3 mul matrix3 x1024        |  __2.1312 ns__ |    5.4942 ns   |    3.1003 ns   |      N/A       |    3.3554 ns   |      N/A       |     3.3554 ns   |
+| matrix3 mul matrix3 x16          |  __2.0814 ns__ |    5.7367 ns   |    3.1068 ns   |      N/A       |    3.2544 ns   |      N/A       |     3.3398 ns   |
+| matrix3 mul vector3 x1024        |  __0.7485 ns__ |    2.6675 ns   |    0.8289 ns   |      N/A       |    0.7689 ns   |      N/A       |     0.8302 ns   |
+| matrix3 mul vector3 x16          |  __0.7300 ns__ |    2.4659 ns   |    0.8215 ns   |      N/A       |    0.7713 ns   |      N/A       |     0.8329 ns   |
+| matrix3 no-op baseline x1024     |    0.8868 ns   |    0.8212 ns   |  __0.7389 ns__ |      N/A       |  __0.7373 ns__ |      N/A       |   __0.7386 ns__ |
+| matrix3 no-op baseline x16       |    0.7276 ns   |  __0.6947 ns__ |  __0.6945 ns__ |      N/A       |  __0.6946 ns__ |      N/A       |   __0.6943 ns__ |
+| matrix3 transpose x1024          |    0.9584 ns   |  __0.8514 ns__ |    0.9389 ns   |      N/A       |    0.9467 ns   |      N/A       |     0.9410 ns   |
+| matrix3 transpose x16            |    0.9451 ns   |  __0.7178 ns__ |    0.9404 ns   |      N/A       |    0.9388 ns   |      N/A       |     0.9382 ns   |
+| matrix4 determinant x1024        |    3.4266 ns   |  __2.3661 ns__ |   40.7346 ns   |    9.2307 ns   |   10.2196 ns   |      N/A       |   __2.3333 ns__ |
+| matrix4 determinant x16          |    3.4243 ns   |  __2.3779 ns__ |   38.6588 ns   |    8.9597 ns   |   10.2938 ns   |      N/A       |   __2.3292 ns__ |
+| matrix4 inverse x1024            |   10.9287 ns   |   25.2419 ns   |   26.7860 ns   |   31.8244 ns   |   22.2220 ns   |      N/A       |   __6.1286 ns__ |
+| matrix4 inverse x16              |   11.1835 ns   |   25.1730 ns   |   26.5568 ns   |   31.6973 ns   |   22.4290 ns   |      N/A       |   __6.0777 ns__ |
+| matrix4 mul matrix4 x1024        |  __3.2445 ns__ |    6.2365 ns   |    6.3150 ns   |    6.1518 ns   |    4.9908 ns   |      N/A       |     6.6484 ns   |
+| matrix4 mul matrix4 x16          |  __3.1375 ns__ |    6.1132 ns   |    6.2880 ns   |    6.1607 ns   |    4.9355 ns   |      N/A       |     6.6406 ns   |
+| matrix4 mul vector4 x1024        |  __0.8177 ns__ |    1.7610 ns   |    1.7164 ns   |      N/A       |    1.6457 ns   |      N/A       |     1.7689 ns   |
+| matrix4 mul vector4 x16          |  __0.8160 ns__ |    1.7681 ns   |    1.6911 ns   |      N/A       |    1.6540 ns   |      N/A       |     1.7641 ns   |
+| matrix4 no-op baseline x1024     |    1.1265 ns   |  __1.0486 ns__ |  __1.0543 ns__ |      N/A       |  __1.0355 ns__ |      N/A       |   __1.0486 ns__ |
+| matrix4 no-op baseline x16       |    0.9516 ns   |    0.9497 ns   |  __0.5030 ns__ |      N/A       |    0.9550 ns   |      N/A       |     0.9497 ns   |
+| matrix4 transpose x1024          |  __1.4243 ns__ |    1.9234 ns   |    1.9390 ns   |      N/A       |    1.9388 ns   |      N/A       |     1.9410 ns   |
+| matrix4 transpose x16            |  __1.4100 ns__ |    1.8846 ns   |    1.8967 ns   |      N/A       |    1.8995 ns   |      N/A       |     1.8857 ns   |
+| ray-sphere intersection x10000   |    8.0682 ns   |   16.3118 ns   |   17.5249 ns   |   16.3678 ns   |   17.4790 ns   |      N/A       |   __5.7654 ns__ |
+| rotation3 inverse x1024          |    0.3725 ns   |  __0.1663 ns__ |  __0.1665 ns__ |  __0.1663 ns__ |  __0.1668 ns__ |      N/A       |   __0.1654 ns__ |
+| rotation3 inverse x16            |    0.2605 ns   |  __0.1694 ns__ |  __0.1691 ns__ |    0.2617 ns   |  __0.1678 ns__ |      N/A       |   __0.1692 ns__ |
+| rotation3 mul rotation3 x1024    |  __1.2935 ns__ |    2.5332 ns   |    2.5375 ns   |    2.4943 ns   |    2.4460 ns   |      N/A       |     2.4295 ns   |
+| rotation3 mul rotation3 x16      |  __1.1628 ns__ |    2.5452 ns   |    2.5393 ns   |    2.4759 ns   |    2.4740 ns   |      N/A       |     2.4166 ns   |
+| rotation3 mul vector3 x1024      |    1.6042 ns   |    1.2165 ns   |    1.1947 ns   |  __1.1409 ns__ |    1.2763 ns   |      N/A       |     1.1699 ns   |
+| rotation3 mul vector3 x16        |    1.5737 ns   |    1.2135 ns   |    1.1702 ns   |  __1.1390 ns__ |    1.2643 ns   |      N/A       |   __1.1539 ns__ |
+| rotation3 no-op baseline x1024   |  __0.3687 ns__ |    0.4945 ns   |    0.4955 ns   |      N/A       |    0.4753 ns   |      N/A       |     0.4950 ns   |
+| rotation3 no-op baseline x16     |  __0.2739 ns__ |    0.5263 ns   |    0.5284 ns   |      N/A       |    0.5255 ns   |      N/A       |     0.5297 ns   |
+| transform point2 x1024           |    0.4793 ns   |    1.2990 ns   |    0.7113 ns   |    0.2574 ns   |  __0.2261 ns__ |    0.4789 ns   |     0.4079 ns   |
+| transform point2 x16             |    0.5054 ns   |    1.3714 ns   |    0.7081 ns   |    0.2522 ns   |  __0.2236 ns__ |    0.5005 ns   |     0.4100 ns   |
+| transform point3 x1024           |  __0.8019 ns__ |    3.0887 ns   |    1.0391 ns   |    2.3868 ns   |  __0.8077 ns__ |  __0.8171 ns__ |     1.0302 ns   |
+| transform point3 x16             |  __0.7748 ns__ |    2.8913 ns   |    1.0344 ns   |    2.3855 ns   |    0.8045 ns   |    0.8165 ns   |     1.0375 ns   |
+| transform vector2 x1024          |    0.4203 ns   |      N/A       |    0.8512 ns   |  __0.2288 ns__ |    0.2715 ns   |      N/A       |     0.2513 ns   |
+| transform vector2 x16            |    0.4173 ns   |      N/A       |    0.8517 ns   |  __0.2317 ns__ |    0.2690 ns   |      N/A       |     0.2516 ns   |
+| transform vector3 x1024          |  __0.7452 ns__ |    2.5915 ns   |    1.4770 ns   |    0.8279 ns   |    0.8165 ns   |      N/A       |     0.8785 ns   |
+| transform vector3 x16            |  __0.7224 ns__ |    2.5385 ns   |    1.4683 ns   |    0.8301 ns   |    0.8238 ns   |      N/A       |     0.8854 ns   |
+| transform2 inverse x1024         |  __1.8010 ns__ |      N/A       |    4.8340 ns   |    1.9033 ns   |      N/A       |    1.9623 ns   |       N/A       |
+| transform2 inverse x16           |  __1.7954 ns__ |      N/A       |    4.7348 ns   |    1.8994 ns   |      N/A       |    1.9412 ns   |       N/A       |
+| transform2 mul transform2 x1024  |  __1.1528 ns__ |      N/A       |    3.0817 ns   |    3.2475 ns   |      N/A       |  __1.1720 ns__ |       N/A       |
+| transform2 mul transform2 x16    |  __1.1318 ns__ |      N/A       |    3.1102 ns   |    3.2381 ns   |      N/A       |  __1.1316 ns__ |       N/A       |
+| transform2 no-op baseline x1024  |    0.9335 ns   |      N/A       |    0.7345 ns   |    0.5776 ns   |      N/A       |  __0.5565 ns__ |       N/A       |
+| transform2 no-op baseline x16    |  __0.4958 ns__ |      N/A       |    0.6983 ns   |    0.5540 ns   |      N/A       |    0.5066 ns   |       N/A       |
+| transform3 inverse x1024         |  __5.8707 ns__ |      N/A       |   26.5732 ns   |   36.8259 ns   |      N/A       |   15.3330 ns   |       N/A       |
+| transform3 inverse x16           |  __5.8248 ns__ |      N/A       |   26.8705 ns   |   36.5833 ns   |      N/A       |   15.3115 ns   |       N/A       |
+| transform3 mul transform3d x1024 |  __2.8067 ns__ |      N/A       |    6.3013 ns   |    6.2758 ns   |      N/A       |    3.1992 ns   |       N/A       |
+| transform3 mul transform3d x16   |  __2.7414 ns__ |      N/A       |    6.2623 ns   |    6.1434 ns   |      N/A       |    3.1437 ns   |       N/A       |
+| transform3 no-op baseline x1024  |    1.1351 ns   |      N/A       |    1.0115 ns   |    1.3669 ns   |      N/A       |  __0.9612 ns__ |       N/A       |
+| transform3 no-op baseline x16    |    0.9554 ns   |      N/A       |  __0.5066 ns__ |  __0.5041 ns__ |      N/A       |  __0.4980 ns__ |       N/A       |
+| vector3 cross x1024              |  __0.7430 ns__ |    0.9712 ns   |    0.9659 ns   |    0.9660 ns   |    0.9612 ns   |      N/A       |     0.9537 ns   |
+| vector3 cross x16                |  __0.7205 ns__ |    0.9389 ns   |    0.9381 ns   |    0.9378 ns   |    0.9404 ns   |      N/A       |     0.9290 ns   |
+| vector3 dot x1024                |    0.4997 ns   |  __0.4782 ns__ |  __0.4849 ns__ |  __0.4786 ns__ |  __0.4779 ns__ |      N/A       |   __0.4802 ns__ |
+| vector3 dot x16                  |    0.5172 ns   |  __0.4850 ns__ |  __0.4877 ns__ |  __0.4842 ns__ |  __0.4887 ns__ |      N/A       |   __0.4890 ns__ |
+| vector3 length x1024             |    1.2799 ns   |  __0.3100 ns__ |  __0.3107 ns__ |  __0.3133 ns__ |  __0.3096 ns__ |      N/A       |   __0.3135 ns__ |
+| vector3 length x16               |    1.2801 ns   |  __0.3128 ns__ |  __0.3110 ns__ |  __0.3107 ns__ |  __0.3116 ns__ |      N/A       |     0.3200 ns   |
+| vector3 no-op baseline x1024     |  __0.3560 ns__ |    0.5423 ns   |    0.5016 ns   |      N/A       |    0.5044 ns   |      N/A       |     0.5471 ns   |
+| vector3 no-op baseline x16       |  __0.2864 ns__ |    0.5236 ns   |    0.5293 ns   |      N/A       |    0.5430 ns   |      N/A       |     0.5230 ns   |
+| vector3 normalize x1024          |    2.1077 ns   |    1.0334 ns   |  __0.9517 ns__ |  __0.9462 ns__ |  __0.9626 ns__ |      N/A       |     1.0223 ns   |
+| vector3 normalize x16            |    2.1279 ns   |    1.0323 ns   |  __0.9489 ns__ |  __0.9554 ns__ |  __0.9555 ns__ |      N/A       |     1.0332 ns   |
 
 ### Wide benchmarks
 
 These benchmarks were performed on an [AMD Ryzen 7 3800X] CPU on Linux. They were
-compiled with the `1.99.0 (b940084d7 2026-09-28)` Rust compiler. Lower
+compiled with the `1.99.0 (b940084d7 2026-09-28)` Rust compiler with
+`RUSTFLAGS='-C target-cpu=native'`. Lower
 (better) numbers are highlighted when the library is within `-t` percent
 (default 2.5) of the fastest in the row and the one-sided 95% interval for the
 difference rules out a slowdown larger than that margin, i.e. when the library
@@ -288,50 +323,66 @@ The versions of the libraries tested were:
 Run with the command:
 
 ```sh
-RUSTFLAGS='-C target-feature=+avx2' cargo bench --features wide wide
+RUSTFLAGS='-C target-cpu=native' cargo bench --features wide wide
 ```
 
-| benchmark                      |    glam_f32x1   |   ultraviolet_f32x4   |   nalgebra_f32x4   |   ultraviolet_f32x8   |   nalgebra_f32x8   |
-|--------------------------------|-----------------|-----------------------|--------------------|-----------------------|--------------------|
-| euler 2d x80000                |      41.87 us   |            25.65 us   |         25.59 us   |          __18.94 us__ |       __18.57 us__ |
-| euler 3d x80000                |      58.97 us   |            40.25 us   |         39.78 us   |          __28.54 us__ |       __28.73 us__ |
-| matrix2 determinant x16        |    12.3683 ns   |           5.0255 ns   |          N/A       |         __3.6438 ns__ |          N/A       |
-| matrix2 inverse x16            |    18.2726 ns   |          10.2942 ns   |          N/A       |         __7.4352 ns__ |          N/A       |
-| matrix2 mul matrix2 x16        |    16.4108 ns   |          10.9767 ns   |       11.0702 ns   |         __9.2553 ns__ |      __9.3122 ns__ |
-| matrix2 mul matrix2 x256       | __688.8713 ns__ |         844.2290 ns   |      851.0381 ns   |       __678.6878 ns__ |    __675.6790 ns__ |
-| matrix2 mul vector2 x16        |    12.8488 ns   |           7.3729 ns   |        7.4172 ns   |         __5.9231 ns__ |        6.0974 ns   |
-| matrix2 mul vector2 x256       |   482.0150 ns   |       __423.7576 ns__ |    __423.9817 ns__ |       __425.9341 ns__ |    __426.8713 ns__ |
-| matrix2 transpose x16          |     9.8868 ns   |          40.2972 ns   |       34.4561 ns   |          11.6302 ns   |      __9.0992 ns__ |
-| matrix3 determinant x16        |    28.6072 ns   |          10.9073 ns   |          N/A       |         __7.8069 ns__ |          N/A       |
-| matrix3 inverse x16            |    96.2555 ns   |          38.6667 ns   |          N/A       |        __22.0202 ns__ |          N/A       |
-| matrix3 mul matrix3 x16        |    81.2391 ns   |          41.5798 ns   |       42.1062 ns   |        __33.2499 ns__ |       35.2442 ns   |
-| matrix3 mul matrix3 x256       |      1.619 us   |            1.615 us   |         1.656 us   |          __1.551 us__ |       __1.582 us__ |
-| matrix3 mul vector3 x16        |    34.1728 ns   |          13.8191 ns   |       13.7320 ns   |         __9.7462 ns__ |       10.6091 ns   |
-| matrix3 mul vector3 x256       |   954.4842 ns   |       __789.3333 ns__ |    __792.1095 ns__ |       __779.5657 ns__ |    __776.0663 ns__ |
-| matrix3 transpose x16          |    52.7683 ns   |          83.7157 ns   |       62.4901 ns   |          35.9252 ns   |     __31.9769 ns__ |
-| matrix4 determinant x16        |    62.0342 ns   |          20.9124 ns   |          N/A       |        __14.6545 ns__ |          N/A       |
-| matrix4 inverse x16            |   198.0560 ns   |       __104.5414 ns__ |          N/A       |         120.0865 ns   |          N/A       |
-| matrix4 mul matrix4 x16        | __163.5378 ns__ |         207.9730 ns   |      198.9647 ns   |       __167.0614 ns__ |      204.1703 ns   |
-| matrix4 mul matrix4 x256       |      3.414 us   |            2.978 us   |         3.131 us   |          __2.892 us__ |         3.857 us   |
-| matrix4 mul vector4 x16        |    34.5807 ns   |          29.2073 ns   |       29.1650 ns   |          22.6779 ns   |     __21.6758 ns__ |
-| matrix4 mul vector4 x256       |      1.312 us   |          __1.257 us__ |       __1.261 us__ |          __1.242 us__ |       __1.234 us__ |
-| matrix4 transpose x16          |  __73.5089 ns__ |          93.7827 ns   |       89.3917 ns   |          96.3356 ns   |       87.0057 ns   |
-| ray-sphere intersection x80000 |      497.6 us   |            49.65 us   |         50.09 us   |          __25.26 us__ |       __25.42 us__ |
-| rotation3 inverse x16          |     9.8997 ns   |           9.4487 ns   |        9.4114 ns   |           7.3071 ns   |      __6.9988 ns__ |
-| rotation3 mul rotation3 x16    |    26.5663 ns   |          13.1697 ns   |       13.1350 ns   |         __9.4821 ns__ |      __9.7145 ns__ |
-| rotation3 mul vector3 x16      |    53.2221 ns   |          17.5765 ns   |       14.6217 ns   |           9.5778 ns   |      __8.5011 ns__ |
-| transform point2 x16           |    15.6934 ns   |          12.4223 ns   |          N/A       |         __9.3164 ns__ |          N/A       |
-| transform point2 x256          | __691.7836 ns__ |       __676.6860 ns__ |          N/A       |       __683.5775 ns__ |          N/A       |
-| transform point3 x16           |    31.7974 ns   |          24.2547 ns   |          N/A       |        __18.1546 ns__ |          N/A       |
-| transform point3 x256          |      1.278 us   |          __1.144 us__ |          N/A       |          __1.131 us__ |          N/A       |
-| transform vector2 x16          |    13.4952 ns   |          10.1578 ns   |          N/A       |         __9.0737 ns__ |          N/A       |
-| transform vector2 x256         |   669.8862 ns   |       __649.1890 ns__ |          N/A       |         690.8455 ns   |          N/A       |
-| transform vector3 x16          |    30.0967 ns   |          21.6747 ns   |          N/A       |        __18.1976 ns__ |          N/A       |
-| transform vector3 x256         |      1.267 us   |          __1.107 us__ |          N/A       |            1.174 us   |          N/A       |
-| vector3 cross x16              |    15.2375 ns   |           8.9911 ns   |        8.8311 ns   |         __7.6224 ns__ |      __7.4720 ns__ |
-| vector3 dot x16                |    12.9763 ns   |           6.5773 ns   |        6.5842 ns   |           4.7245 ns   |      __4.5946 ns__ |
-| vector3 length x16             |    20.5391 ns   |           5.5195 ns   |        5.5261 ns   |         __3.9270 ns__ |      __3.8417 ns__ |
-| vector3 normalize x16          |    35.2002 ns   |          10.3503 ns   |       15.2167 ns   |         __7.3365 ns__ |        8.5396 ns   |
+| benchmark                      |   glam_f32x1   |   ultraviolet_f32x4   |   nalgebra_f32x4   |   ultraviolet_f32x8   |   nalgebra_f32x8   |
+|--------------------------------|----------------|-----------------------|--------------------|-----------------------|--------------------|
+| euler 2d x80000                |    0.5061 ns   |           0.3225 ns   |        0.3215 ns   |         __0.2277 ns__ |        0.2371 ns   |
+| euler 3d x80000                |    0.6870 ns   |           0.4902 ns   |        0.4904 ns   |         __0.3578 ns__ |      __0.3553 ns__ |
+| matrix2 determinant x1024      |    0.4775 ns   |           0.1503 ns   |          N/A       |         __0.0784 ns__ |          N/A       |
+| matrix2 determinant x16        |    0.5030 ns   |           0.1338 ns   |          N/A       |         __0.0750 ns__ |          N/A       |
+| matrix2 inverse x1024          |    0.9681 ns   |           0.3466 ns   |          N/A       |         __0.2167 ns__ |          N/A       |
+| matrix2 inverse x16            |    0.9065 ns   |           0.3281 ns   |          N/A       |         __0.1648 ns__ |          N/A       |
+| matrix2 mul matrix2 x1024      |    0.6692 ns   |           0.4692 ns   |        0.5984 ns   |         __0.3992 ns__ |        0.4293 ns   |
+| matrix2 mul matrix2 x16        |    0.6571 ns   |           0.3971 ns   |        0.6152 ns   |         __0.2073 ns__ |        0.2183 ns   |
+| matrix2 mul vector2 x1024      |    0.4884 ns   |           0.1816 ns   |        0.1817 ns   |         __0.0955 ns__ |      __0.0943 ns__ |
+| matrix2 mul vector2 x16        |    0.5095 ns   |           0.1921 ns   |        0.1915 ns   |         __0.1051 ns__ |      __0.1042 ns__ |
+| matrix2 transpose x1024        |    0.3804 ns   |           1.9288 ns   |        1.7474 ns   |           0.4949 ns   |      __0.3598 ns__ |
+| matrix2 transpose x16          |  __0.2762 ns__ |           2.0442 ns   |        1.8250 ns   |           0.4945 ns   |        0.3761 ns   |
+| matrix3 determinant x1024      |    1.1506 ns   |           0.4810 ns   |          N/A       |         __0.3136 ns__ |          N/A       |
+| matrix3 determinant x16        |    1.1441 ns   |           0.4300 ns   |          N/A       |         __0.2191 ns__ |          N/A       |
+| matrix3 inverse x1024          |    4.1142 ns   |           1.5726 ns   |          N/A       |         __0.8339 ns__ |          N/A       |
+| matrix3 inverse x16            |    4.1096 ns   |           1.5500 ns   |          N/A       |         __0.7919 ns__ |          N/A       |
+| matrix3 mul matrix3 x1024      |    2.1455 ns   |           1.1577 ns   |        1.2924 ns   |         __0.8606 ns__ |        0.9531 ns   |
+| matrix3 mul matrix3 x16        |    2.3720 ns   |           1.1672 ns   |        1.2841 ns   |         __0.5913 ns__ |        0.7141 ns   |
+| matrix3 mul vector3 x1024      |    0.7485 ns   |           0.3405 ns   |        0.3420 ns   |         __0.1728 ns__ |      __0.1728 ns__ |
+| matrix3 mul vector3 x16        |    0.7296 ns   |           0.3563 ns   |        0.3750 ns   |         __0.1894 ns__ |      __0.1881 ns__ |
+| matrix3 transpose x1024        |  __1.0265 ns__ |           5.5623 ns   |        3.2017 ns   |           1.5549 ns   |        1.2423 ns   |
+| matrix3 transpose x16          |  __0.9433 ns__ |           5.5360 ns   |        3.2043 ns   |           1.5342 ns   |        1.2288 ns   |
+| matrix4 determinant x1024      |    3.4429 ns   |           1.0488 ns   |          N/A       |         __0.5266 ns__ |          N/A       |
+| matrix4 determinant x16        |    3.4131 ns   |           0.9526 ns   |          N/A       |         __0.4872 ns__ |          N/A       |
+| matrix4 inverse x1024          |   11.0112 ns   |           4.4601 ns   |          N/A       |         __2.8535 ns__ |          N/A       |
+| matrix4 inverse x16            |   11.1364 ns   |           4.4673 ns   |          N/A       |         __2.8421 ns__ |          N/A       |
+| matrix4 mul matrix4 x1024      |    3.1637 ns   |           3.4517 ns   |        7.4823 ns   |         __2.5313 ns__ |        4.5643 ns   |
+| matrix4 mul matrix4 x16        |    3.1588 ns   |           3.4346 ns   |        7.8127 ns   |         __2.2894 ns__ |        4.1740 ns   |
+| matrix4 mul vector4 x1024      |    0.7989 ns   |           0.7317 ns   |        0.5645 ns   |           0.3762 ns   |      __0.3084 ns__ |
+| matrix4 mul vector4 x16        |    0.8231 ns   |           0.7497 ns   |        0.5898 ns   |           0.3842 ns   |      __0.3119 ns__ |
+| matrix4 transpose x1024        |  __1.4185 ns__ |           5.6545 ns   |        3.7571 ns   |           2.4720 ns   |        1.9211 ns   |
+| matrix4 transpose x16          |  __1.4212 ns__ |           5.1007 ns   |        3.6512 ns   |           2.3998 ns   |        1.8304 ns   |
+| ray-sphere intersection x80000 |    9.2936 ns   |           1.2298 ns   |        1.2658 ns   |         __0.7473 ns__ |        0.7690 ns   |
+| rotation3 inverse x1024        |    0.3745 ns   |           0.2421 ns   |        0.3098 ns   |         __0.1582 ns__ |      __0.1599 ns__ |
+| rotation3 inverse x16          |    0.2603 ns   |           0.2617 ns   |        0.3214 ns   |         __0.1483 ns__ |        0.1764 ns   |
+| rotation3 mul rotation3 x1024  |    1.3080 ns   |           0.7166 ns   |        0.7241 ns   |         __0.4513 ns__ |        0.4834 ns   |
+| rotation3 mul rotation3 x16    |    1.1636 ns   |           0.6297 ns   |        0.6280 ns   |         __0.3250 ns__ |      __0.3278 ns__ |
+| rotation3 mul vector3 x1024    |    1.5995 ns   |           0.8711 ns   |        0.7122 ns   |           0.4429 ns   |      __0.3611 ns__ |
+| rotation3 mul vector3 x16      |    1.5737 ns   |           0.8632 ns   |        0.7171 ns   |           0.4328 ns   |      __0.3661 ns__ |
+| transform point2 x1024         |    0.4908 ns   |           0.3759 ns   |          N/A       |         __0.1928 ns__ |          N/A       |
+| transform point2 x16           |    0.5074 ns   |           0.3779 ns   |          N/A       |         __0.1904 ns__ |          N/A       |
+| transform point3 x1024         |    0.8207 ns   |           0.7699 ns   |          N/A       |         __0.3933 ns__ |          N/A       |
+| transform point3 x16           |    0.7732 ns   |           0.7876 ns   |          N/A       |         __0.4073 ns__ |          N/A       |
+| transform vector2 x1024        |    0.4941 ns   |           0.2034 ns   |          N/A       |         __0.1049 ns__ |          N/A       |
+| transform vector2 x16          |    0.5070 ns   |           0.2208 ns   |          N/A       |         __0.1187 ns__ |          N/A       |
+| transform vector3 x1024        |    0.7454 ns   |           0.6061 ns   |          N/A       |         __0.3072 ns__ |          N/A       |
+| transform vector3 x16          |    0.7229 ns   |           0.6176 ns   |          N/A       |         __0.3225 ns__ |          N/A       |
+| vector3 cross x1024            |    0.7318 ns   |           0.4837 ns   |        0.4686 ns   |         __0.3525 ns__ |        0.3650 ns   |
+| vector3 cross x16              |    0.7188 ns   |           0.3537 ns   |        0.3119 ns   |           0.1881 ns   |      __0.1628 ns__ |
+| vector3 dot x1024              |    0.4906 ns   |           0.1834 ns   |        0.1815 ns   |         __0.0945 ns__ |      __0.0945 ns__ |
+| vector3 dot x16                |    0.5069 ns   |           0.1923 ns   |        0.1922 ns   |           0.1076 ns   |      __0.1053 ns__ |
+| vector3 length x1024           |    1.2698 ns   |           0.3208 ns   |        0.3200 ns   |         __0.1621 ns__ |      __0.1615 ns__ |
+| vector3 length x16             |    1.2707 ns   |           0.3183 ns   |        0.3200 ns   |         __0.1629 ns__ |      __0.1629 ns__ |
+| vector3 normalize x1024        |    2.1367 ns   |           0.5522 ns   |        0.9400 ns   |         __0.2775 ns__ |        0.4700 ns   |
+| vector3 normalize x16          |    2.1252 ns   |           0.5527 ns   |        0.9365 ns   |         __0.2800 ns__ |        0.4691 ns   |
 
 [AMD Ryzen 7 3800X]: https://www.amd.com/en/products/cpu/amd-ryzen-7-3800x
 
